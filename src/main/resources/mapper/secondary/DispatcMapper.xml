@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asiainfo.omp.dao.secondary.DispatcDao">
+	<resultMap type="com.asiainfo.omp.model.Dispatc" id="DispatcResultMap">
+	    <id column="ID" property="id" jdbcType="INTEGER" />
+	    <result column="STATUS" property="status" jdbcType="INTEGER" />
+	    <result column="TASK_ID" property="taskId" jdbcType="INTEGER" />
+   		<result column="TASK_NAME" property="flowName" jdbcType="VARCHAR" />
+   		<result column="NODE_NAME" property="nodeName" jdbcType="VARCHAR" />
+   		<result column="BEGIN_DATE" property="beginDate" jdbcType="VARCHAR" />
+   		<result column="ACTUAL_DATE" property="actualDate" jdbcType="VARCHAR" />
+   		<result column="DEMAIN_DATE" property="demainDate" jdbcType="VARCHAR" />
+   		<result column="errorDec" property="errorDec" jdbcType="VARCHAR" />
+   		<result column="UPDATE_TIME" property="updateTime" jdbcType="TIME" />
+	</resultMap>
+	<sql id="Base_Column_List" >
+   		 TASK_ID,TASK_NAME, STATUS,NODE_NAME, BEGIN_DATE, ACTUAL_DATE,DEMAIN_DATE,errorDec,UPDATE_TIME
+    </sql>
+	<!-- 获取表空间列表数据 -->
+ 	<select id="queryDispatcInfoList" resultMap="DispatcResultMap" parameterType="map">
+ 		select 
+ 		 <include refid="Base_Column_List" />
+ 			 from dispatc_info
+ 			 where 1=1
+ 		 <if test="dataSource != null and dataSource != ''  and dataSource != 99">
+ 	      and DATA_SOURCE=#{dataSource,jdbcType=VARCHAR}
+ 	     </if>
+ 		 <if test="taskName != null and taskName != ''">
+ 		  and TASK_NAME like '%${taskName}%'
+ 		 </if>
+ 		 <if test="isDay != null and isDay !=''">
+ 		   <choose>
+ 		     <when test="isDay != 'all'">and is_day = #{isDay}</when>
+ 		   </choose>
+   		 </if>
+   		 <if test="dispatcType !=null and dispatcType !=''">
+   		   <choose>
+ 		     <when test="dispatcType != 'all'">and dispatc_type = #{dispatcType}</when>
+ 		   </choose>
+   		 </if>
+         <if test="status != null and status !=''">
+            <choose>
+   		 		<when test="status == 'success'"> and status = 0</when>
+   		 		<when test="status == 'fail'"> and status = -1</when>
+   		 		<when test="status == 'process'"> and status = 3</when>
+   		 		<when test="status == 'notstart'"> and status = 4</when>
+   		 		<when test="status == 'timeout'"> and status = 99</when>
+   		 	</choose>
+         </if>
+   		 <if test="pageNum!= null">
+   		    limit #{pageNum},#{pageSize}
+   		 </if>
+ 	</select>
+ 	
+   <select id="queryDispatcNum" resultType="Map">
+ 	    select 
+ 	     sum(case when STATUS =4 then 1 else 0 end) as notstart,
+		 sum(case when STATUS =3 then 1 else 0 end) as process,
+		 sum(case when STATUS =0 then 1 else 0 end) as success,
+		 sum(case when STATUS =-1 then 1 else 0 end) as fail,
+		 sum(case when STATUS =99 then 1 else 0 end) as timeout,
+		 sum(1) totalnum
+ 	    from dispatc_info
+ 	    where 1=1
+ 	    <if test="dataSource != null and dataSource != ''  and dataSource !=99 ">
+ 	      and DATA_SOURCE=#{dataSource,jdbcType=VARCHAR}
+ 	    </if>
+ 	    <if test="taskName != null and taskName != ''">
+ 		  and TASK_NAME like '%${taskName}%'
+ 		 </if>
+ 		  <if test="isDay != null and isDay !=''">
+ 		   <choose>
+ 		     <when test="isDay != 'all'">and is_day = #{isDay}</when>
+ 		   </choose>
+   		 </if>
+   		 <if test="dispatcType !=null and dispatcType !=''">
+   		   <choose>
+ 		     <when test="dispatcType != 'all'">and dispatc_type = #{dispatcType}</when>
+ 		   </choose>
+   		 </if>
+   		<!--  <if test="status != null and status !=''">
+   		 	<choose>
+   		 		<when test="status == 'success'"> and status = 0</when>
+   		 		<when test="status == 'fail'"> and status = -1</when>
+   		 		<when test="status == 'process'"> and status = 2</when>
+   		 		<when test="status == 'notstart'"> and status = 3</when>
+   		 		<when test="status == 'timeout'"> and status = 99</when>
+   		 	</choose>
+         </if> -->
+ 	</select>
+ 	<select id="queryAllDispatcNum" resultType="Map">
+ 	 select 
+ 	     sum(case when STATUS =4 then 1 else 0 end) as notstart,
+		 sum(case when STATUS =3 then 1 else 0 end) as process,
+		 sum(case when STATUS =0 then 1 else 0 end) as success,
+		 sum(case when STATUS =-1 then 1 else 0 end) as fail,
+		 sum(case when STATUS =99 then 1 else 0 end) as timeout,
+		 sum(1) totalnum
+ 	    from dispatc_info
+ 	</select>
+</mapper>

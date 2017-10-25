@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 获取表空间列表数据 -->
+<mapper namespace="com.asiainfo.omp.dao.secondary.AttachmentDao">
+	<insert id="saveAttachmentInfo" useGeneratedKeys="true" keyProperty="id" parameterType="com.asiainfo.omp.model.Attachment">
+		insert into acctachment_info(attach_name,attach_path,upload_time)
+		values(#{attName},#{attPath},CURRENT_TIMESTAMP)
+	</insert>
+	<delete id="deleteAttachmentInfo" parameterType="int">
+	    delete from acctachment_info where id=#{attId}
+	</delete>
+	<update id="updateAttachment" parameterType="map">
+		update acctachment_info set fault_flow_id = #{flowId} where id=#{attId}
+	</update>
+	<delete id="deleteAttByFaultId" parameterType="int">
+		 delete from acctachment_info where fault_flow_id=#{faultId}
+	</delete>
+ </mapper>

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 获取表空间列表数据 -->
+<mapper namespace="com.asiainfo.omp.dao.secondary.ConfigManagerDao">
+	 <!-- 文件配置开始 -->
+	 <resultMap type="com.asiainfo.omp.model.FileConfig" id="FileConfigMap">
+	    <id column="id" property="id" jdbcType="INTEGER" /> 
+	 	<result column="file_ip" property="fileIp" jdbcType="VARCHAR"/>
+	 	<result column="file_path" property="filePath" jdbcType="VARCHAR"/>
+	 	<result column="threshold" property="threshold" jdbcType="DOUBLE"/>
+	 	<result column="creator" property="creator" jdbcType="VARCHAR"/>
+	 	<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+	 </resultMap>
+	 <sql id="file_column_list">
+	 	id ,file_ip,file_path,threshold,creator,DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time
+	 </sql>
+	 
+	 <resultMap type="com.asiainfo.omp.model.TableSpaceConfig" id="TableSpaceConfigMap">
+	    <id column="id" property="id" jdbcType="INTEGER" /> 
+	 	<result column="data_source" property="dataSource" jdbcType="INTEGER"/>
+	 	<result column="table_space_name" property="tableSpaceName" jdbcType="VARCHAR"/>
+	 	<result column="threshold" property="threshold" jdbcType="DOUBLE"/>
+	 	<result column="creator" property="creator" jdbcType="VARCHAR"/>
+	 	<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+	 </resultMap>
+	  <sql id="tablespace_column_list">
+	 	id ,data_source,table_space_name,threshold,creator,DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time
+	 </sql>
+	 
+	 <resultMap type="com.asiainfo.omp.model.DispatcConfig" id="DispatcConfigMap">
+	    <id column="id" property="id" jdbcType="INTEGER" /> 
+	 	<result column="data_source" property="dataSource" jdbcType="INTEGER"/>
+	 	<result column="node_id" property="nodeId" jdbcType="INTEGER"/>
+	 	<result column="demain_date" property="demainTime" jdbcType="VARCHAR"/>
+	 	<result column="is_day" property="isDay" jdbcType="VARCHAR"/>
+	 	<result column="dispatc_type" property="dispatcType" jdbcType="VARCHAR"/>
+	 	<result column="creator" property="creator" jdbcType="VARCHAR"/>
+	 	<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+	 </resultMap>
+	 <sql id="dispatc_column_list">
+	 	id ,data_source,node_id,demain_date,is_day,creator,dispatc_type,DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time
+	 </sql>
+	 
+	 <resultMap type="com.asiainfo.omp.model.InterFaceConfig" id="InterFaceConfigMap">
+	    <id column="id" property="id" jdbcType="INTEGER" /> 
+	 	<result column="data_source" property="dataSource" jdbcType="INTEGER"/>
+	 	<result column="inter_no" property="interNo" jdbcType="VARCHAR"/>
+	 	<result column="demain_time" property="demainTime" jdbcType="VARCHAR"/>
+	 	<result column="creator" property="creator" jdbcType="VARCHAR"/>
+	 	<result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+	 	<result column="isImport" property="isImport" jdbcType="VARCHAR"/>
+	 	<result column="inter_type" property="interType" jdbcType="VARCHAR"/>
+	 </resultMap>
+	 <sql id="inter_column_list">
+	 	id,data_source,demain_time,creator,DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time,inter_no,inter_type,isImport
+	 </sql>
+	 
+	 <!--获取文件配置列表 -->
+	 <select id="queryFileConfigList" resultMap="FileConfigMap">
+	    select 
+	    <include refid="file_column_list" />
+	    from
+	    	file_conf_info
+	    	where 1=1
+	    <if test="fileIp !=null and fileIp != ''">
+	    	and file_ip like '%${fileIp}%'
+	    </if>
+	     <if test="pageNum!= null and pageNum >0" >
+   		    limit #{pageNum},#{pageSize}
+   		 </if>
+     </select>
+     <select id="checkFileExit" resultMap="FileConfigMap">
+      select 
+	    <include refid="file_column_list" />
+	    from
+	    	file_conf_info
+	    	where 1=1
+	    <if test="fileIp !=null and fileIp != ''">
+	    	and file_ip='${fileIp}'
+	    </if>
+	    <if test="filePath !=null and filePath != ''">
+	    	and file_path='${filePath}'
+	    </if>
+     </select>
+     <insert id="saveFileConfigInfo" useGeneratedKeys="true" keyProperty="id" parameterType="com.asiainfo.omp.model.FileConfig">
+     	insert into file_conf_info(file_ip,file_path,threshold,creator,create_time)
+		values(#{fileIp},#{filePath},#{threshold},#{creator},CURRENT_TIMESTAMP)
+     </insert>
+     <delete id="deleteFileConfigInfo" parameterType="int">
+        delete from file_conf_info where id = #{fileId}
+     </delete>
+     <update id="updateFileConfigInfo" parameterType="com.asiainfo.omp.model.FileConfig">
+      update file_conf_info set file_ip=#{fileIp},file_path=#{filePath},threshold=#{threshold},creator=#{creator},create_time=CURRENT_TIMESTAMP
+      where id = #{id}
+     </update>
+	 <!--文件配置结束 -->
+	 
+	 <!--获取表空间配置列表 -->
+	 <select id="queryTableSpaceConfigList" resultMap="TableSpaceConfigMap">
+	    select 
+	    <include refid="tablespace_column_list" />
+	    from
+	    	table_space_conf_info
+	    	where 1=1
+	    <if test="tableSpaceName !=null and tableSpaceName != ''">
+	    	and table_space_name like '%${tableSpaceName}%'
+	    </if>
+	     <if test="pageNum!= null and pageNum >0" >
+   		    limit #{pageNum},#{pageSize}
+   		 </if>
+     </select>
+     <select id="checkTableSpaceExit" resultMap="TableSpaceConfigMap">
+      select 
+	    <include refid="tablespace_column_list" />
+	    from
+	    	table_space_conf_info
+	    	where 1=1
+	    <if test="tableSpaceName !=null and tableSpaceName != ''">
+	    	and table_space_name='${tableSpaceName}'
+	    </if>
+	    <if test="dataSource !=null and dataSource != ''">
+	    	and data_source=${dataSource}
+	    </if>
+     </select>
+     <insert id="saveTableSpaceConfigInfo" useGeneratedKeys="true" keyProperty="id" parameterType="com.asiainfo.omp.model.FileConfig">
+     	insert into table_space_conf_info(data_source,table_space_name,threshold,creator,create_time)
+		values(#{dataSource},#{tableSpaceName},#{threshold},#{creator},CURRENT_TIMESTAMP)
+     </insert>
+     <delete id="deleteTableSpaceConfigInfo" parameterType="int">
+        delete from table_space_conf_info where id = #{tableSpaceId}
+     </delete>
+     <update id="updateTableSpaceConfigInfo" parameterType="com.asiainfo.omp.model.FileConfig">
+      update table_space_conf_info set data_source=#{dataSource},table_space_name=#{tableSpaceName},threshold=#{threshold},creator=#{creator},create_time=CURRENT_TIMESTAMP
+      where id = #{id}
+     </update>
+	 <!--文件表空间配置结束 -->
+	 
+	 
+	 <!--获取调度配置列表 -->
+	 <select id="queryDispatcConfigList" resultMap="DispatcConfigMap">
+	    select 
+	    <include refid="dispatc_column_list" />
+	    from
+	    	disp_conf_info
+	    	where 1=1
+	    <if test="nodeId !=null and nodeId != ''">
+	    	and node_id like '%${nodeId}%'
+	    </if>
+	     <if test="pageNum!= null and pageNum >0" >
+   		    limit #{pageNum},#{pageSize}
+   		 </if>
+     </select>
+     <select id="checkDispatcExit" resultMap="DispatcConfigMap">
+      select 
+	    <include refid="dispatc_column_list" />
+	    from
+	    	disp_conf_info
+	    	where 1=1
+	    <if test="nodeId !=null and nodeId != ''">
+	    	and node_id='${nodeId}'
+	    </if>
+     </select>
+     <insert id="saveDispatcConfigInfo" useGeneratedKeys="true" keyProperty="id" parameterType="com.asiainfo.omp.model.DispatcConfig">
+     	insert into disp_conf_info(node_id,data_source,demain_date,is_day,dispatc_type,creator,create_time)
+		values(#{nodeId},#{dataSource},#{demainTime},#{isDay},#{dispatcType},#{creator},CURRENT_TIMESTAMP)
+     </insert>
+     <delete id="deleteDispatcConfigInfo" parameterType="int">
+        delete from disp_conf_info where id = #{nodeId}
+     </delete>
+     <update id="updateDispatcConfigInfo" parameterType="com.asiainfo.omp.model.DispatcConfig">
+      update disp_conf_info set node_id=#{nodeId},data_source=#{dataSource},demain_date=#{demainTime},is_day=#{isDay},dispatc_type=#{dispatcType},creator=#{creator},create_time=CURRENT_TIMESTAMP
+      where id = #{id}
+     </update>
+	 <!--调度配置结束 -->
+	 
+	 
+	  <!--获取接口配置列表 -->
+	 <select id="queryInterFaceConfigList" resultMap="InterFaceConfigMap">
+	    select 
+	    <include refid="inter_column_list" />
+	    from
+	    	interface_conf_info
+	    	where 1=1
+	    <if test="interNo !=null and interNo != ''">
+	    	and inter_no like '%${interNo}%'
+	    </if>
+	     <if test="pageNum!= null and pageNum >0" >
+   		    limit #{pageNum},#{pageSize}
+   		 </if>
+     </select>
+     <select id="checkInterFaceExit" resultMap="InterFaceConfigMap">
+      select 
+	    <include refid="inter_column_list" />
+	    from
+	    	interface_conf_info
+	    	where 1=1
+	   <if test="interNo !=null and interNo != ''">
+	    	and inter_no = '${interNo}'
+	   </if>
+	   <if test="dataSource !=null and dataSource != ''">
+	    	and data_source = '${dataSource}'
+	   </if>
+     </select>
+     <insert id="saveInterfaceConfigInfo" useGeneratedKeys="true" keyProperty="id" parameterType="com.asiainfo.omp.model.InterFaceConfig">
+     	insert into interface_conf_info(inter_no,data_source,demain_time,creator,create_time,isImport,inter_type)
+		values(#{interNo},#{dataSource},#{demainTime},#{creator},CURRENT_TIMESTAMP,#{isImport},#{interType})
+     </insert>
+     <delete id="deleteInterfaceConfigInfo" parameterType="int">
+        delete from interface_conf_info where id = #{interfaceId}
+     </delete>
+     <update id="updateInterfaceConfigInfo" parameterType="com.asiainfo.omp.model.InterFaceConfig">
+      update interface_conf_info set inter_no=#{interNo},data_source=#{dataSource},demain_time=#{demainTime},creator=#{creator},
+      create_time=CURRENT_TIMESTAMP,inter_type=#{interType},isImport=#{isImport}
+      where id = #{id}
+     </update>
+	 <!--接口配置结束 -->
+</mapper>

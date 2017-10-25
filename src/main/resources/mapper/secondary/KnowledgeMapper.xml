@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asiainfo.omp.dao.secondary.KnowledgeDao">
+	<resultMap type="com.asiainfo.omp.model.FaultFLow" id="faultResultMap">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+	    <result column="fault_name" property="faultName" jdbcType="VARCHAR" />
+	    <result column="type_name" property="typeName" jdbcType="VARCHAR" />
+	    <result column="fault_content" property="faultContent" jdbcType="VARCHAR" />
+	    <result column="deal_method" property="dealMethod" jdbcType="VARCHAR" />
+	    <result column="deal_person" property="dealPersons" jdbcType="VARCHAR" />
+	    <result column="deal_date" property="lastDealDate" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+	 ID,fault_name,type_name,fault_content,deal_method,deal_person,DATE_FORMAT(deal_date,'%Y-%m-%d %H:%i:%s') as deal_date
+	</sql>
+	<select id="queryKnowledgeInfoList" resultMap="faultResultMap" parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+ 			 from falut_flow
+ 			 where 1=1
+ 	    <if test="faultFlowName != null and faultFlowName != ''">
+ 	         and fault_name like '%#{faultFlowName}%'
+ 	    </if>
+ 	    <if test="pageNum!= null">
+   		    limit #{pageNum},#{pageSize}
+   		</if>
+	</select>
+	
+	<select id="queryAttachByFaultId" resultType="map" parameterType="map">
+		select id,attach_name,attach_path
+		from acctachment_info
+		where fault_flow_id = #{faultId,jdbcType=INTEGER}
+	</select>
+	<insert id="saveFaultInfo" useGeneratedKeys="true" keyProperty="id" parameterType="com.asiainfo.omp.model.FaultFLow">
+		insert into falut_flow(fault_name,type_name,fault_content,deal_method,deal_person,deal_date)
+		values(#{faultName},#{typeName},#{faultContent},#{dealMethod},#{dealPersons},CURRENT_TIMESTAMP)
+	</insert>
+	
+	<update id="updateFaultInfo" parameterType="com.asiainfo.omp.model.FaultFLow">
+	    update falut_flow set fault_name=#{faultName},type_name=#{typeName},fault_content=#{faultContent},
+	    deal_method=#{dealMethod},deal_person=#{dealPersons},deal_date=CURRENT_TIMESTAMP
+	    where id=#{id}
+	</update>
+	<delete id="deleteFaultInfo" parameterType="int">
+		delete from falut_flow where id=#{faultId}
+	</delete>
+</mapper>

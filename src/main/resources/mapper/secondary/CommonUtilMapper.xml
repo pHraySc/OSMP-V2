@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 获取表空间列表数据 -->
+<mapper namespace="com.asiainfo.omp.dao.secondary.CommonUtilDao">
+	<sql id="Base_Column_List" >
+   		 type_id,type_name		 
+    </sql>
+ 	<select id="queryTypeByModuleId" resultType="Map">
+ 		select 
+ 		 <include refid="Base_Column_List" />
+ 			 from module_type_info
+ 			 where 1=1
+ 		 <if test="moduleId != null and moduleId != ''">
+ 	      and module_id = #{moduleId}
+ 	     </if>
+ 	     order by priority 
+ 	</select>
+ </mapper>

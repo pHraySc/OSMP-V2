@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asiainfo.omp.dao.secondary.TableSpaceInfoDao">
+	<resultMap type="com.asiainfo.omp.model.TableSpaceInfo" id="TableResultMap">
+	    <!-- <id column="ID" property="id" jdbcType="INTEGER" /> -->
+   		<result column="TABLE_SPACE_NAME" property="tableSpaceName" jdbcType="VARCHAR" />
+   		<result column="TOTAL_SPACE" property="totalSpace" jdbcType="VARCHAR" />
+   		<result column="REMAIN_SPACE" property="remainSpace" jdbcType="VARCHAR" />
+   		<result column="DATA_SOURCE" property="dataSource" jdbcType="VARCHAR" />
+   		<result column="ACUTAL_PERCENT" property="actualPercent" jdbcType="VARCHAR" />
+   		<result column="THRESHOLD" property="threshold" jdbcType="VARCHAR" />
+   		<result column="STATUS" property="status" jdbcType="INTEGER" />
+   		<result column="UPDATE_TIME" property="updateTime" jdbcType="TIME" />
+	</resultMap>
+	<sql id="Base_Column_List" >
+   		a.STATUS, a.TABLE_SPACE_NAME,a.UPDATE_TIME, a.TOTAL_SPACE, a.REMAIN_SPACE, a.DATA_SOURCE,THRESHOLD,a.ACUTAL_PERCENT
+    </sql>
+	<!-- 获取表空间列表数据 -->
+ 	<select id="queryTableSpaceInfoList" resultMap="TableResultMap" parameterType="map">
+ 		select 
+ 		 <include refid="Base_Column_List" />
+ 			 from table_space_info a
+ 			 JOIN (
+				SELECT
+					table_space_name,
+					MIN(remain_space) AS remain_space
+				FROM
+					table_space_info where 1=1
+ 	     <if test="dataSource != null and dataSource != '' and dataSource != 99">
+ 	      and DATA_SOURCE=#{dataSource,jdbcType=VARCHAR}
+ 	     </if>
+ 	      GROUP BY
+					table_space_name
+		  ) b ON a.table_space_name = b.table_space_name
+		  AND a.remain_space = b.remain_space
+		  where 1=1
+ 		 <if test="tableSpaceName != null and tableSpaceName != ''">
+ 		  and a.TABLE_SPACE_NAME like '%${tableSpaceName}%'
+ 		 </if>
+ 		 <if test="status !=null and status != ''">
+ 		 	<choose>
+ 		 		<when test="status =='success'">and a.STATUS=0</when>
+ 		 		<otherwise>and a.STATUS = 1</otherwise>
+ 		 	</choose>
+ 		 </if>
+ 		 <if test="pageNum!= null">
+   		    limit #{pageNum},#{pageSize}
+   		 </if>
+ 	</select>
+ 	<!-- 获取表空间数量 -->
+ 	<select id="queryTableSpaceNum" resultType="Map">
+ 	    select 
+ 	     SUM(CASE WHEN a.STATUS=1 THEN 1 ELSE 0 END) AS expNum , 
+   		 SUM(CASE WHEN a.STATUS=0 THEN 1 ELSE 0 END) AS normalNum,
+   		 sum(1) as totalnum
+ 	    from table_space_info a
+ 	    JOIN (
+				SELECT
+					table_space_name,
+					MIN(remain_space) AS remain_space
+				FROM
+					table_space_info where 1=1
+ 	    <if test="dataSource != null and dataSource != '' and dataSource != 99">
+ 	      and DATA_SOURCE=#{dataSource,jdbcType=VARCHAR}
+ 	    </if>
+ 	    GROUP BY
+					table_space_name
+		) b ON a.table_space_name = b.table_space_name
+		AND a.remain_space = b.remain_space
+		where 1=1
+ 	    <if test="tableSpaceName != null and tableSpaceName != ''">
+ 		  and a.TABLE_SPACE_NAME like '%${tableSpaceName}%'
+ 		</if>
+ 	</select>
+ 	<!-- 首页视图数量查询 -->
+ 	<select id="queryAllTableSpaceNum" resultType="Map">
+ 		select 
+	 	     SUM(CASE WHEN a.STATUS=1 THEN 1 ELSE 0 END) AS expNum , 
+	   		 SUM(CASE WHEN a.STATUS=0 THEN 1 ELSE 0 END) AS normalNum,
+	   		 sum(1) as totalnum
+	 	    from table_space_info a
+			JOIN (
+				SELECT
+					table_space_name,
+					MIN(remain_space) AS remain_space
+				FROM
+					table_space_info
+				GROUP BY
+					table_space_name
+			) b ON a.table_space_name = b.table_space_name
+			AND a.remain_space = b.remain_space
+	 	    
+ 	</select>
+ 	
+ 	<select id="queryAllByTableName" resultType="Map">
+ 	    select 
+ 		   STATUS as status,TOTAL_SPACE as totalSpace,REMAIN_SPACE as remainSpace,ACUTAL_PERCENT as actualPercent,NODE_ID as nodeId
+ 			 from table_space_info
+ 			 where 1=1
+ 		<if test="dataSource != null and dataSource != '' and dataSource != 99">
+ 	      and DATA_SOURCE=#{dataSource,jdbcType=VARCHAR}
+ 	    </if>
+ 		 <if test="tableSpaceName != null and tableSpaceName != ''">
+ 		  and TABLE_SPACE_NAME like '%${tableSpaceName}%'
+ 		</if>
+ 		  order by REMAIN_SPACE
+ 	</select>
+</mapper>

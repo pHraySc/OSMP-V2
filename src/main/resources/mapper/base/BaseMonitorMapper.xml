@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asiainfo.omp.dao.base.BaseMonitorDao">
+    <resultMap type="com.asiainfo.omp.model.OsmpBaseInfo" id="baseInfo">
+      <id column="id" property="id"/>
+      <result column="inter_no" property="interNo"/>
+      <result column="status" property="status"/>
+      <result column="start_time" property="startTime"/>
+      <result column="end_time" property="endTime"/>
+      <result column="last_succ_num" property="lastSuccNum"/>
+      <result column="succ_num" property="succNum"/>
+      <result column="table_name" property="tableName"/>
+      <result column="error_msg" property="errorMsg"/>
+      <result column="schedule_time" property="scheduleTime"/>
+      <result column="insert_time" property="insertTime"/>
+      <result column="wave_num" property="waveNum"/>
+      <result column="wave_status" property="waveStatus"/>
+      <result column="time_out" property="timeOut"/>
+      <result column="notstart" property="notstart"/>
+      <result column="process" property="process"/>
+      <result column="success" property="success"/>
+      <result column="fail" property="fail"/>
+      <result column="wavestatus" property="wavestatus"/>
+      <result column="timeout" property="timeout"/>
+      <result column="totalnum" property="totalnum"/>
+    </resultMap>
+	<!-- 定时任务    接口信息查询 -->
+	<select id="getOsmpBaseInfoAll" resultMap="baseInfo">
+	  <![CDATA[
+	    select 
+		ici.int_no as inter_no,date_format((case when ici.dm_flag = 'M' then  CONCAT(DATE_FORMAT(CURRENT_DATE,'%Y-%m-'),ici.ftp_time)
+										      else CONCAT(DATE_FORMAT(CURRENT_DATE,'%Y-%m-%d '),ici.ftp_time) end ),'%Y-%m-%d %H:%i:%s') as schedule_time,
+		IFNULL((case when ifl.status=3 and ill.status <> 3 then ill.status
+		      when ifl.status=3 and ill.status = 3  then iul.status
+		else ifl.status end),1) as status,
+		ifl.start_time,
+		(case when ifl.status=3 and ill.status <> 3 then ill.end_time
+		      when ifl.status=3 and ill.status = 3  then iul.end_time
+		else ifl.end_time end) as end_time,
+		IFNULL(ill.succ_num,0) as succ_num,
+		ifnull(obih.succ_num,0) as last_succ_num,
+		(case when ifl.status=3 and ill.status <> 3 then ill.error_msg
+		      when ifl.status=3 and ill.status = 3  then iul.error_msg
+		else '文件未到' end) as error_msg
+		 from 
+		bass_int_info_cfg_demo ici
+		left join 
+		(select inter_no,
+		(case when sum(err) > 0 then -2
+		      when sum(success)/count(1) = 1 then 3 
+		      when sum(notstart)/count(1)=1 then 1
+		      else 2 end) as status,
+		COALESCE(min(source_file_time),min(update_time)) as start_time,
+		COALESCE(max(source_file_time),max(update_time)) as end_time
+		 from (
+		select op_time,inter_no,
+		(case when status = 0 or status = 1 then 1 else 0 end) as notstart,
+		(case when status = -3 or status = -2 then 1 else 0 end) as err,
+		(case when status = 3 then 1 else 0 end) as success,
+		(case when status = 2 then 1 else 0 end) as process,
+		update_time,source_file_time,put_time from inter_file_log
+		where op_time=DATE_FORMAT(date_add(CURRENT_DATE, interval -2 month),'%Y%m')) a 
+		group by inter_no) ifl on ici.int_no =ifl.inter_no
+		left join 
+		(select inter_no,(case when sum(err) > 0 then -2
+		      when sum(success)/count(1) = 1 then 3 
+		      when sum(notstart)/count(1)=1 then 1
+		      else 2 end) as status,sum(succ_num) as succ_num,max(error_msg) as error_msg,max(update_time) as end_time
+		 from 
+		(select 
+		 inter_no,(case when status = 0 or status = 1 then 1 else 0 end) as notstart,
+		(case when status = -3 or status = -2 then 1 else 0 end) as err,
+		(case when status = 3 then 1 else 0 end) as success,
+		(case when status = 2 then 1 else 0 end) as process,succ_num,error_msg,update_time
+		 from inter_load_log where op_time=DATE_FORMAT(date_add(CURRENT_DATE, interval -2 month),'%Y%m')) b 
+		group by inter_no) ill on ici.int_no = ill.inter_no
+		left join 
+		(select inter_no,
+		(case when sum(err) > 0 then -2
+		      when sum(success)/count(1) = 1 then 3 
+		      when sum(notstart)/count(1)=1 then 1
+		      else 2 end) as status,
+		max(update_time) as end_time,max(error_msg) as error_msg
+		 from (
+		select inter_no,(case when status = 0 or status = 1 then 1 else 0 end) as notstart,
+		(case when status = -3 or status = -2 then 1 else 0 end) as err,
+		(case when status = 3 then 1 else 0 end) as success,
+		(case when status = 2 then 1 else 0 end) as process,update_time,error_msg from inter_union_rename_log
+		where op_time=DATE_FORMAT(date_add(CURRENT_DATE, interval -2 month),'%Y%m'))c
+		group by inter_no) iul on ici.int_no=iul.inter_no
+		left join (select inter_no,succ_num,history_time from osmp_base_info_history where (inter_no,history_time) 
+		in (select inter_no,max(history_time) from osmp_base_info_history)) obih on ici.int_no=obih.inter_no
+	  ]]>
+	</select>
+	<insert id="insertOmspBaseInfo" parameterType="com.asiainfo.omp.model.OsmpBaseInfo">
+	       insert into osmp_base_info (inter_no,status,start_time,end_time,last_succ_num,succ_num,table_name,error_msg,schedule_time,insert_time,wave_num,wave_status,time_out)
+	       select #{interNo},
+	              #{status},
+	              #{startTime},
+	              #{endTime},
+	              #{lastSuccNum},
+	              #{succNum},
+	              #{tableName},
+	              #{errorMsg},
+	              #{scheduleTime},
+	              CURRENT_TIMESTAMP,
+	              #{waveNum},
+	              #{waveStatus},
+	              #{timeOut} from dual
+	       where not exists(select 1 from osmp_base_info where inter_no= #{interNo})
+	</insert>
+	<update id="updateOmspBaseInfo" parameterType="com.asiainfo.omp.model.OsmpBaseInfo">
+	      update osmp_base_info
+	         set status=#{status},
+	             start_time=#{startTime},
+	             end_time=#{endTime},
+	             last_succ_num=#{lastSuccNum},
+	             succ_num=#{succNum},
+	             table_name=#{tableName},
+	             error_msg=#{errorMsg},
+	             schedule_time=#{scheduleTime},
+	             insert_time=CURRENT_TIMESTAMP,
+	             wave_num=#{waveNum},
+	             wave_status=#{waveStatus},
+	             time_out=#{timeOut}
+	      where  inter_no= #{interNo}
+	</update>
+	<!-- <select id="queryOsmpBaseInfo" resultMap="baseInfo" parameterType="map">
+	    <![CDATA[
+	    select a.*,b.* from (
+		select sum(case when status =1 then 1 else 0 end) as notstart,
+		sum(case when status =2 then 1 else 0 end) as process,
+		sum(case when status =3 then 1 else 0 end) as success,
+		sum(case when status =-2 then 1 else 0 end) as fail,
+		sum(case when wave_status =1 then 1 else 0 end) as wavestatus,
+		sum(case when time_out =1 then 1 else 0 end) as timeout,
+		count(1) totalnum from osmp_base_info where inter_no like '%${qryStr}%') a
+		left join osmp_base_info b on 1=1 and b.inter_no like '%${qryStr}%'
+	    limit #{startIdx},#{endIdx}
+	    ]]>
+	</select> -->
+</mapper>

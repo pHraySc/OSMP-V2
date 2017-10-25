@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.asiainfo.omp.dao.secondary.InterfaceInfoDao">
+	<resultMap type="com.asiainfo.omp.model.InterfaceInfo" id="InterfaceResultMap">
+	    <!-- <id column="ID" property="id" jdbcType="INTEGER" /> -->
+	    <result column="STATUS" property="status" jdbcType="INTEGER" />
+   		<result column="INTER_NAME" property="interName" jdbcType="VARCHAR" />
+   		<result column="TABLE_NAME" property="tableName" jdbcType="VARCHAR" />
+   		<result column="BEGIN_TIME" property="beginDate" jdbcType="TIMESTAMP" />
+   		<result column="END_TIME" property="actualFinDate" jdbcType="TIMESTAMP" />
+   		<result column="DEMAIN_DATE" property="demainDate" jdbcType="TIMESTAMP" />
+   		<result column="ARVI_TIME" property="arriveDate" jdbcType="DATE" />
+   		<result column="INTER_NUM" property="sumMum" jdbcType="INTEGER" />
+   		<result column="WAVENUM" property="waveNum" jdbcType="INTEGER" />
+   		<result column="notstart" property="notstart" jdbcType="INTEGER" />
+   		<result column="process" property="process" jdbcType="INTEGER" />
+   		<result column="success" property="success" jdbcType="INTEGER" />
+   		<result column="fail" property="fail" jdbcType="INTEGER" />
+   		<result column="wavestatus" property="wavestatus" jdbcType="INTEGER" />
+   		<result column="errorDec" property="errorDec" jdbcType="VARCHAR" />
+   		<result column="UPDATE_TIME" property="updateTime" jdbcType="TIME" />
+	</resultMap>
+	<sql id="Base_Column_List" >
+   		 TABLE_NAME, INTER_NAME,DATE_FORMAT(BEGIN_TIME,'%Y-%m-%d %H:%i:%s') as BEGIN_TIME,DATE_FORMAT(END_TIME,'%Y-%m-%d %H:%i:%s') as END_TIME,UPDATE_TIME,
+   		 DATE_FORMAT(DEMAIN_DATE,'%Y-%m-%d %H:%i:%s') as DEMAIN_DATE,INTER_NUM,WAVENUM,STATUS,DATE_FORMAT(ARVI_TIME,'%Y-%m-%d %H:%i:%s') as ARVI_TIME,errorDec
+    </sql>
+	<!-- 获取表空间列表数据 -->
+ 	<select id="queryInterfaceInfoList" resultMap="InterfaceResultMap" parameterType="map">
+ 		select 
+ 		 <include refid="Base_Column_List" />
+ 			 from interface_info
+ 			 where 1=1
+ 		<if test="dataSource != null and dataSource != ''  and dataSource != 99">
+ 	      and DATA_SOURCE=#{dataSource,jdbcType=VARCHAR}
+ 	     </if>
+ 		 <if test="interName != null and interName != ''">
+ 		  and INTER_NAME like '%${interName}%'
+ 		 </if>
+ 		 <if test="interType != null and interType !=''">
+ 		  <choose>
+ 		  	<when test="interType=='day'">and inter_type = 'D'</when>
+ 		  	<when test="interType=='mon'">and inter_type = 'M'</when>
+ 		  	<otherwise></otherwise>
+ 		  </choose>
+   		 </if>
+   		 <if test="isImport !=null and isImport !=''">
+   		  <choose>
+   		    <when test="isImport=='base'">and isImport = 'base'</when>
+ 		  	<when test="isImport=='4g'">and isImport = '4g'</when>
+ 		  	<when test="isImport=='imp'">and isImport = 'imp'</when>
+ 		  	<otherwise></otherwise>
+ 		  </choose>
+   		 </if>
+         <if test="status != null and status !=''">
+            <choose>
+   		 		<when test="status == 'success'"> and status = 0</when>
+   		 		<when test="status == 'fail'"> and status = -1</when>
+   		 		<when test="status == 'wavestatus'"> and status = 2</when>
+   		 		<when test="status == 'process'"> and status = 3</when>
+   		 		<when test="status == 'notstart'"> and status = 4</when>
+   		 		<when test="status == 'timeout'"> and status = 99</when>
+   		 	</choose>
+         </if>
+   		 <if test="pageNum!= null">
+   		    limit #{pageNum},#{pageSize}
+   		 </if>
+ 	</select>
+ 	
+   <select id="queryInterfacemNum" resultType="Map">
+ 	    select 
+ 	     sum(case when STATUS =4 then 1 else 0 end) as notstart,
+		 sum(case when STATUS =3 then 1 else 0 end) as process,
+		 sum(case when STATUS =0 then 1 else 0 end) as success,
+		 sum(case when STATUS =-1 then 1 else 0 end) as fail,
+		 sum(case when STATUS =2 then 1 else 0 end) as wavestatus,
+		 sum(case when STATUS =99 then 1 else 0 end) as timeout,
+		 sum(1) totalnum
+ 	    from interface_info
+ 	    where 1=1 
+ 	    <if test="dataSource != null and dataSource != ''  and dataSource != 99">
+ 	      and DATA_SOURCE=#{dataSource,jdbcType=VARCHAR}
+ 	     </if>
+ 	    <if test="fileSystemName != null and fileSystemName != ''">
+ 		  and file_name like '%${fileSystemName}%'
+ 		</if>
+ 		 		 <if test="interType != null and interType !=''">
+ 		  <choose>
+ 		  	<when test="interType=='day'">and inter_type = 'D'</when>
+ 		  	<when test="interType=='mon'">and inter_type = 'M'</when>
+ 		  	<otherwise></otherwise>
+ 		  </choose>
+   		 </if>
+   		 <if test="isImport !=null and isImport !=''">
+   		  <choose>
+   		    <when test="isImport=='base'">and isImport = 'base'</when>
+ 		  	<when test="isImport=='4g'">and isImport = '4g'</when>
+ 		  	<when test="isImport=='imp'">and isImport = 'imp'</when>
+ 		  	<otherwise></otherwise>
+ 		  </choose>
+   		 </if>
+   		 <!-- <if test="status != null and status !=''">
+   		 	<choose>
+   		 		<when test="status == 'success'"> and status = 0</when>
+   		 		<when test="status == 'fail'"> and status = -1</when>
+   		 		<when test="status == 'wavestatus'"> and status = 2</when>
+   		 		<when test="status == 'process'"> and status = 3</when>
+   		 		<when test="status == 'notstart'"> and status = 4</when>
+   		 		<when test="status == 'timeout'"> and status = 99</when>
+   		 	</choose>
+         </if> -->
+ 	</select>
+ 	
+ 	<select id="queryAllInterFaceNum" resultType="Map">
+ 	  select
+ 		 sum(case when STATUS =4 then 1 else 0 end) as notstart,
+		 sum(case when STATUS =3 then 1 else 0 end) as process,
+		 sum(case when STATUS =0 then 1 else 0 end) as success,
+		 sum(case when STATUS =-1 then 1 else 0 end) as fail,
+		 sum(case when STATUS =2 then 1 else 0 end) as wavestatus,
+		 sum(case when STATUS =99 then 1 else 0 end) as timeout,
+		 sum(1) totalnum
+ 	    from interface_info
+ 	</select>
+</mapper>
