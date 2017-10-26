@@ -88,51 +88,18 @@ $(document).ready(function () {
         refresh(dataCycle, 1, status);
     });
 
-    //查询数量
-    var notstart = 0;//未开始条数
-    var process = 0;//进行中条数
-    var success = 0;//成功条数
-    var fail = 0;//失败条数
-    var wavestatus = 0;//波动条数
-    var timeout = 0;//超时条数
-    var totalnum = 0;//总条数
-    var count = 0;//分页总条数
-    var queryLabelNum = function (dataCycle, labelName, status) {
-        //interName = $("#interName").val();
-        $.ajax({
-            type: "GET",
-            url: "/AlarmController/queryLabelNum",//查询总条数
-            dataType: "json",
-            data: {"dataCycle": dataCycle, "labelName": labelName, "status": status},
-            async: false,
-            success: function (data) {
-                if (typeof(data) != 'undefined' && data != null) {
-                    count = data.count;
-                    if (count == 0) {
-                        count = count + 1;
-                    }
-                } else {
-                    count = 1;//分页总数
-                }
-            }
-        });
-    }
-
     //分页查询
-    var refresh = function (dataCycle, page, status) {
-        // interType = $("#select_button1 option:checked").val();
-        // isImport = $("#select_button2 option:checked").val();
+    var refresh = function (dataCycle, currentPage, pageSize) {
         labelName = $("#labelName").val();
-        queryLabelNum(dataCycle, labelName, status);
         $.ajax({
             type: "GET",
-            url: "/AlarmController/queryLabelInfo",
+            url: "/alarm/queryLabelInfo",
             dataType: "json",
             data: {
-                "page": page,
+                "currentPage": currentPage,
                 "labelName": labelName,
                 "dataCycle": dataCycle,
-                "status": status
+                "pageSize": pageSize
             },
             success: function (data) {
                 var $tr = $("<tr></tr>");

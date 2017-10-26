@@ -5,7 +5,6 @@ import com.asiainfo.alarm.model.Page;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ICocAlarmDao {
     /**
@@ -28,13 +27,21 @@ public interface ICocAlarmDao {
     List<CocSourceTable> getSourceTableInfo(@Param("dataCycle") int dataCycle, @Param("sourceTableName") String sourceTableName, @Param("page") Page page);
 
     /**
-     * @param sourceTMap 根据周期从指标层配置表中直接取出源表名
+     * 获取标签信息总记录数
+     *
+     * @param labelName     标签名
+     * @param dataCycle     数据周期：0，全部；1，日；2，月
+     * @return
      */
-    List querySourceTabNameByDataCyle(Map<String, Object> sourceTMap);
+    int queryLabelNum(@Param("labelName") String labelName,@Param("dataCycle") int dataCycle);
 
-    int querySourceTabNum(Map<String, Object> sourceTMap);
-
-    int queryLabelNum(Map<String, Object> labelMap);
-
-    List queryLabelInfo(Map<String, Object> labelMap);
+    /**
+     * 获取标签信息
+     *
+     * @param labelName     标签名
+     * @param dataCycle     数据周期：0，全部；1，日；2，月
+     * @param page          分页信息
+     * @return
+     */
+    List queryLabelInfo(int dataCycle, String labelName, Page page);
 }

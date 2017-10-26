@@ -135,13 +135,13 @@
                 <thead>
                 <tr>
                     <th width="5%">状态</th>
-                    <th width="15%">接口名称</th>
-                    <th width="15%">表名</th>
-                    <th width="15%">开始时间</th>
-                    <th width="15%">实际完成时间</th>
-                    <th width="10%">到达时间</th>
-                    <th width="5%">条数</th>
-                    <th width="5%">波动性</th>
+                    <th width="15%">标签名</th>
+                    <th width="15%">数据日期</th>
+                    <th width="15%">数据量</th>
+                    <th width="15%">数据量波动</th>
+                    <th width="10%">环比</th>
+                    <th width="5%">对应源表</th>
+                    <th width="5%">对应源表字段</th>
                     <th width="10%">更新时间</th>
                     <th class="last-th" width="5%">详情</th>
                 </tr>
@@ -164,7 +164,7 @@
 
         <div class="found_top">
             <div class="jishd" style="background-color:#fff; margin-left: 20px; "></div>
-            接口加载详情
+            标签加载详情
             <button type="button" class="close" id="ods-close" style="margin:10px">
                 <img src="./static/images/close.png" alt="">
             </button>
@@ -172,37 +172,41 @@
         <div class="dska">
             <div class="load">
                 <div class="load-img interStatus"></div>
-                <div class="load-name interName">m030001</div>
+                <div class="load-name interName">掌上冲浪客户（日）</div>
                 <div class="load-state result"></div>
             </div>
             <div class="cause">原因：<span class="odsWarningReason detail" title=""></span></div>
             <div class="conduct-ods">
-                <div class="conduct-ods1">表名</div>
+                <div class="conduct-ods1">依赖源表名</div>
                 <div class="conduct-ods2 tableName"></div>
             </div>
             <div class="conduct-ods">
-                <div class="conduct-ods1">开始时间</div>
+                <div class="conduct-ods1">数据周期</div>
                 <div class="conduct-ods2 beginDate"></div>
             </div>
             <div class="conduct-ods">
-                <div class="conduct-ods1">实际完成时间</div>
+                <div class="conduct-ods1">数据日期</div>
                 <div class="conduct-ods2 actualFinDate"></div>
             </div>
             <div class="conduct-ods">
-                <div class="conduct-ods1">要求完成时间</div>
+                <div class="conduct-ods1">数据量</div>
                 <div class="conduct-ods2 demainDate"></div>
             </div>
             <div class="conduct-ods">
-                <div class="conduct-ods1">到达时间</div>
+                <div class="conduct-ods1">更新时间</div>
                 <div class="conduct-ods2 arriveDate"></div>
             </div>
             <div class="conduct-ods">
-                <div class="conduct-ods1">条数</div>
+                <div class="conduct-ods1">要求更新时间</div>
                 <div class="conduct-ods2 sumMum"></div>
             </div>
             <div class="conduct-ods">
-                <div class="conduct-ods1">与上月波动性</div>
+                <div class="conduct-ods1">完成时间</div>
                 <div class="conduct-ods2 waveNum"></div>
+            </div>
+            <div class="conduct-ods">
+                <div class="conduct-ods1">依赖表联系人</div>
+                <div class="conduct-ods2" contactP></div>
             </div>
         </div>
     </div>

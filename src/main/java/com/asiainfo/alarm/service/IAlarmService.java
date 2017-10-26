@@ -5,7 +5,6 @@ import com.asiainfo.alarm.model.CocSourceTableExt;
 import com.asiainfo.alarm.model.Page;
 
 import java.util.List;
-import java.util.Map;
 
 public interface IAlarmService {
     /**
@@ -35,11 +34,22 @@ public interface IAlarmService {
      */
     CocSourceTableExt getSourceTableExtInfo(String sourceTableCode);
 
-    List querySourceTabNameByDataCyle(Map<String, Object> sourceTMap);
+    /**
+     * 获取标签信息总记录数
+     *
+     * @param labelName     标签名
+     * @param dataCycle     数据周期：0，全部；1，日；2，月
+     * @return
+     */
+    int queryLabelNum(String labelName, int dataCycle);
 
-    int querySourceTabNum(Map<String, Object> sourceTMap);
-
-    int queryLabelNum(Map<String, Object> labelMap);
-
-    List queryLabelInfo(Map<String, Object> labelMap);
+    /**
+     * 获取标签信息
+     *
+     * @param labelName     标签名
+     * @param dataCycle     数据周期：0，全部；1，日；2，月
+     * @param page          分页信息
+     * @return
+     */
+    List queryLabelInfo(int dataCycle, String labelName, Page page);
 }

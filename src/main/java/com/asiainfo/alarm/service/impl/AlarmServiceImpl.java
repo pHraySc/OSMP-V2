@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class AlarmServiceImpl implements IAlarmService {
@@ -55,23 +54,28 @@ public class AlarmServiceImpl implements IAlarmService {
         return alarmDao.getSourceTableExtInfo(sourceTableCode);
     }
 
+    /**
+     * 获取标签信息总记录数
+     *
+     * @param labelName     标签名
+     * @param dataCycle     数据周期：0，全部；1，日；2，月
+     * @return
+     */
     @Override
-    public List querySourceTabNameByDataCyle(Map<String, Object> sourceTMap) {
-        return cocAlarmDao.querySourceTabNameByDataCyle(sourceTMap);
+    public int queryLabelNum(String labelName, int dataCycle) {
+        return cocAlarmDao.queryLabelNum(labelName, dataCycle);
     }
 
+    /**
+     * 获取标签信息
+     *
+     * @param labelName     标签名
+     * @param dataCycle     数据周期：0，全部；1，日；2，月
+     * @param page          分页信息
+     * @return
+     */
     @Override
-    public int querySourceTabNum(Map<String, Object> sourceTMap) {
-        return cocAlarmDao.querySourceTabNum(sourceTMap);
-    }
-
-    @Override
-    public int queryLabelNum(Map<String, Object> labelMap) {
-        return cocAlarmDao.queryLabelNum(labelMap);
-    }
-
-    @Override
-    public List queryLabelInfo(Map<String, Object> labelMap) {
-        return cocAlarmDao.queryLabelInfo(labelMap);
+    public List queryLabelInfo(int dataCycle, String labelName, Page page) {
+        return cocAlarmDao.queryLabelInfo(dataCycle, labelName, page);
     }
 }
