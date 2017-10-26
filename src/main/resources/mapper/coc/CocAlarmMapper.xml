@@ -81,4 +81,71 @@
 			)
 		) where row_number between #{page.startPosition} and #{page.endPosition}
     </select>
+
+	<select id="querySourceTabNameByDataCyle" parameterType="map" resultType="map">
+		SELECT data_src_tab_name
+		FROM dim_coc_index_table_info
+		WHERE 1=1
+		<if test="dataCycle != null and dataCycle != ''">
+			and table_data_cycle = #{dataCycle}
+		</if>
+	</select>
+
+	<select id="doesTableExist" resultType="boolean" parameterType="map">
+		SELECT
+		count(1)
+		FROM
+		syscatTables
+		-- syscat.tables
+		WHERE 1=1
+		<if test="">
+			and tabschema=#{tabschema}
+		</if>
+		<if test="">
+			and tabname=#{tabname}
+		</if>
+	</select>
+
+	<select id="isNotEmptyTable" resultType="boolean" parameterType="String">
+		SELECT
+		count(*)
+		FROM (SELECT 1
+		FROM ${tabname}
+		FETCH FIRST 1 ROWS ONLY)
+	</select>
+
+	<select id="querySourceTabNum" resultType="integer" parameterType="map">
+		SELECT
+		count(*)
+		FROM
+		dim_coc_index_table_info
+		WHERE 1=1
+		<if test="dataCycle != null and dataCycle != ''">
+			and table_data_cycle = #{dataCycle}
+		</if>
+	</select>
+
+	<select id="queryLabelNum" resultType="integer" parameterType="map">
+		SELECT
+		count(*)
+		FROM
+		ci_label_info
+		WHERE 1=1
+		<if test="dataCycle != null and dataCycle != ''">
+			and update_cycle = #{dataCycle}
+		</if>
+		and data_status_id = 2
+	</select>
+
+	<select id="queryLabelInfo" parameterType="map" resultType="map">
+		select a.label_name,a.data_date,b.custom_num,e.data_src_tab_name,d.data_src_col_name,f.use_times from
+		sccoc.ci_label_info a left join
+		sccoc.ci_label_ext_info b on a.label_id=b.label_id left join
+		sccoc.dim_coc_label_count_rules c on b.count_rules_code=c.count_rules_code left join
+		sccoc.dim_coc_index_info d on c.depend_index=d.index_code left join
+		sccoc.dim_coc_index_table_info e on d.data_src_code=e.data_src_code left join
+		(select label_id,count(*) as use_times from sccoc.ci_user_use_label group by label_id) f on a.label_id=f.label_id
+		where a.data_status_id = 2
+		order by f.use_times desc
+	</select>
 </mapper>
