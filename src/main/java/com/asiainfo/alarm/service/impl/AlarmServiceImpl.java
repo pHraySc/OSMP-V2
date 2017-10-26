@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AlarmServiceImpl implements IAlarmService {
@@ -52,5 +53,25 @@ public class AlarmServiceImpl implements IAlarmService {
     @Override
     public CocSourceTableExt getSourceTableExtInfo(String sourceTableCode) {
         return alarmDao.getSourceTableExtInfo(sourceTableCode);
+    }
+
+    @Override
+    public List querySourceTabNameByDataCyle(Map<String, Object> sourceTMap) {
+        return cocAlarmDao.querySourceTabNameByDataCyle(sourceTMap);
+    }
+
+    @Override
+    public int querySourceTabNum(Map<String, Object> sourceTMap) {
+        return cocAlarmDao.querySourceTabNum(sourceTMap);
+    }
+
+    @Override
+    public int queryLabelNum(Map<String, Object> labelMap) {
+        return cocAlarmDao.queryLabelNum(labelMap);
+    }
+
+    @Override
+    public List queryLabelInfo(Map<String, Object> labelMap) {
+        return cocAlarmDao.queryLabelInfo(labelMap);
     }
 }
