@@ -26,14 +26,45 @@ public class CocLabel {
     private String dataDate;
 
     /**
+     * 标签使用次数统计
+     */
+    private long useTimes;
+
+    /**
      * 标签用户数
      */
     private long customNum;
 
     /**
+     * 对应源表名
+     */
+    private String srcTabName;
+
+    /**
+     * 对应源表字段
+     */
+    private String srcTabColName;
+
+    /**
      * 标签扩展信息
      */
     private CocLabelExt cocLabelExt;
+
+    public long getLabelId() {
+        return labelId;
+    }
+
+    public void setLabelId(long labelId) {
+        this.labelId = labelId;
+    }
+
+    public String getLabelName() {
+        return labelName;
+    }
+
+    public void setLabelName(String labelName) {
+        this.labelName = labelName;
+    }
 
     public int getDataCycle() {
         return dataCycle;
@@ -51,6 +82,14 @@ public class CocLabel {
         this.dataDate = dataDate;
     }
 
+    public long getUseTimes() {
+        return useTimes;
+    }
+
+    public void setUseTimes(long useTimes) {
+        this.useTimes = useTimes;
+    }
+
     public long getCustomNum() {
         return customNum;
     }
@@ -59,20 +98,27 @@ public class CocLabel {
         this.customNum = customNum;
     }
 
+    public String getSrcTabName() {
+        return srcTabName;
+    }
+
+    public void setSrcTabName(String srcTabName) {
+        this.srcTabName = srcTabName;
+    }
+
+    public String getSrcTabColName() {
+        return srcTabColName;
+    }
+
+    public void setSrcTabColName(String srcTabColName) {
+        this.srcTabColName = srcTabColName;
+    }
+
     public CocLabelExt getCocLabelExt() {
         return cocLabelExt;
     }
 
     public void setCocLabelExt(CocLabelExt cocLabelExt) {
         this.cocLabelExt = cocLabelExt;
-    }
-
-    public String getLabelName() {
-
-        return labelName;
-    }
-
-    public void setLabelName(String labelName) {
-        this.labelName = labelName;
     }
 }

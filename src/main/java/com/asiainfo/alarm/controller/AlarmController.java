@@ -1,10 +1,8 @@
 package com.asiainfo.alarm.controller;
 
-import com.asiainfo.alarm.model.CocSourceTable;
-import com.asiainfo.alarm.model.CocSourceTableExt;
-import com.asiainfo.alarm.model.Page;
-import com.asiainfo.alarm.model.Result;
+import com.asiainfo.alarm.model.*;
 import com.asiainfo.alarm.service.IAlarmService;
+import com.asiainfo.alarm.util.DateUtil;
 import com.asiainfo.alarm.util.ResultUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +22,10 @@ import java.util.List;
 public class AlarmController {
 
     private static final Logger logger = LoggerFactory.getLogger(AlarmController.class);
+    private String twoDaysAgo = DateUtil.getDayDataDate(2);     //两天前
+    private String threeDaysAgo = DateUtil.getDayDataDate(3);   //三天前
+    private String oneMonthAgo = DateUtil.getMonthDataDate(1);  //一个月前
+    private String twoMonthAgo = DateUtil.getMonthDataDate(2);  //两个月前
 
     @Autowired
     private IAlarmService alarmService;
@@ -80,6 +82,7 @@ public class AlarmController {
                                @RequestParam(value = "labelName", defaultValue = "") String labelName,
                                @RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
                                @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+
         if (Integer.toString(dataCycle).substring(1) == "1") {
             dataCycle = 1;
         } else {
@@ -87,7 +90,13 @@ public class AlarmController {
         }
         int count = alarmService.queryLabelNum(labelName, dataCycle);
         Page page = new Page(currentPage, pageSize, count);
-        List labelList = alarmService.queryLabelInfo(dataCycle, labelName, page);
+        List<CocLabel> labelList = alarmService.queryLabelInfo(dataCycle, labelName, page, twoDaysAgo, twoDaysAgo);
+        for(CocLabel cocLabel: labelList){
 
+        }
+        /*Iterator<CocLabel> iterator = labelList.iterator();
+        while (iterator.hasNext()){
+            System.out.println(iterator.next().getClass());
+        }*/
     }
 }

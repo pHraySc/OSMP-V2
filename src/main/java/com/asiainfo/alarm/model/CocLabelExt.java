@@ -11,6 +11,12 @@ public class CocLabelExt {
     private long labelId;
 
     /**
+     *
+     * 数据时效性：1，t-1；2，t-2
+     */
+    private String delayValue;
+
+    /**
      * 数据量波动情况：此属性以整型数量波动说明情况
      */
     private long wavedCustomNum;
@@ -20,21 +26,6 @@ public class CocLabelExt {
      * 日：(t-2标签用户数 - t-3标签用户数)/t-3标签用户数 * 100%
      */
     private float MoM;
-
-    /**
-     * 对应源表名
-     */
-    private String srcTabName;
-
-    /**
-     * 对应源表字段
-     */
-    private String srcTabColName;
-
-    /**
-     * 标签使用次数统计
-     */
-    private long useTimes;
 
     /**
      * 标签更新时间
@@ -74,6 +65,14 @@ public class CocLabelExt {
         this.labelId = labelId;
     }
 
+    public String getDelayValue() {
+        return delayValue;
+    }
+
+    public void setDelayValue(String delayValue) {
+        this.delayValue = delayValue;
+    }
+
     public long getWavedCustomNum() {
         return wavedCustomNum;
     }
@@ -88,30 +87,6 @@ public class CocLabelExt {
 
     public void setMoM(float moM) {
         MoM = moM;
-    }
-
-    public String getSrcTabName() {
-        return srcTabName;
-    }
-
-    public void setSrcTabName(String srcTabName) {
-        this.srcTabName = srcTabName;
-    }
-
-    public String getSrcTabColName() {
-        return srcTabColName;
-    }
-
-    public void setSrcTabColName(String srcTabColName) {
-        this.srcTabColName = srcTabColName;
-    }
-
-    public long getUseTimes() {
-        return useTimes;
-    }
-
-    public void setUseTimes(long useTimes) {
-        this.useTimes = useTimes;
     }
 
     public String getUpdateTime() {

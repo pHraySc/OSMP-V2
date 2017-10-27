@@ -1,5 +1,6 @@
 package com.asiainfo.alarm.service;
 
+import com.asiainfo.alarm.model.CocLabel;
 import com.asiainfo.alarm.model.CocSourceTable;
 import com.asiainfo.alarm.model.CocSourceTableExt;
 import com.asiainfo.alarm.model.Page;
@@ -51,5 +52,5 @@ public interface IAlarmService {
      * @param page          分页信息
      * @return
      */
-    List queryLabelInfo(int dataCycle, String labelName, Page page);
+    List<CocLabel> queryLabelInfo(int dataCycle, String labelName, Page page, String opTime, String dataDate);
 }

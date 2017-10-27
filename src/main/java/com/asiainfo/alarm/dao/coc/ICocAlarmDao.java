@@ -1,5 +1,6 @@
 package com.asiainfo.alarm.dao.coc;
 
+import com.asiainfo.alarm.model.CocLabel;
 import com.asiainfo.alarm.model.CocSourceTable;
 import com.asiainfo.alarm.model.Page;
 import org.apache.ibatis.annotations.Param;
@@ -41,7 +42,10 @@ public interface ICocAlarmDao {
      * @param labelName     标签名
      * @param dataCycle     数据周期：0，全部；1，日；2，月
      * @param page          分页信息
+     * @param opTime        数据表账期
+     * @param dataDate      数据日期
      * @return
      */
-    List queryLabelInfo(int dataCycle, String labelName, Page page);
+    List<CocLabel> queryLabelInfo(@Param("dataCycle") int dataCycle,@Param("labelName") String labelName,
+                                  @Param("page") Page page,@Param("opTime") String opTime, @Param("dataDate") String dataDate);
 }

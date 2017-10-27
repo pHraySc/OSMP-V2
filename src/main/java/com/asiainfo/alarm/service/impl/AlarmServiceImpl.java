@@ -2,6 +2,7 @@ package com.asiainfo.alarm.service.impl;
 
 import com.asiainfo.alarm.dao.bass.IAlarmDao;
 import com.asiainfo.alarm.dao.coc.ICocAlarmDao;
+import com.asiainfo.alarm.model.CocLabel;
 import com.asiainfo.alarm.model.CocSourceTable;
 import com.asiainfo.alarm.model.CocSourceTableExt;
 import com.asiainfo.alarm.model.Page;
@@ -75,7 +76,7 @@ public class AlarmServiceImpl implements IAlarmService {
      * @return
      */
     @Override
-    public List queryLabelInfo(int dataCycle, String labelName, Page page) {
-        return cocAlarmDao.queryLabelInfo(dataCycle, labelName, page);
+    public List<CocLabel> queryLabelInfo(int dataCycle, String labelName, Page page, String opTime, String dataDate) {
+        return cocAlarmDao.queryLabelInfo(dataCycle, labelName, page, opTime, dataDate);
     }
 }
