@@ -92,7 +92,7 @@ public class AlarmController {
         Page page = new Page(currentPage, pageSize, count);
         List<CocLabel> labelList = alarmService.queryLabelInfo(dataCycle, labelName, page, twoDaysAgo, twoDaysAgo);
         for(CocLabel cocLabel: labelList){
-
+            long wavedCustomNum = alarmService.cusNumWaved(cocLabel.getLabelId());
         }
         /*Iterator<CocLabel> iterator = labelList.iterator();
         while (iterator.hasNext()){
