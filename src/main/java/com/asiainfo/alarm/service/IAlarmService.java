@@ -57,8 +57,16 @@ public interface IAlarmService {
     /**
      * 查询标签波动情况-计算具体数量
      *
-     * @param labelId
+     * @param cocLabel
      * @return 波动具体数量
      */
-    long cusNumWaved(long labelId);
+    long cusNumWaved(CocLabel cocLabel);
+
+    /**
+     *  查询标签波动-计算环比值
+     *
+     * @param cocLabel
+     * @return 波动百分比
+     */
+    float calculateMoM(CocLabel cocLabel);
 }

@@ -79,4 +79,26 @@ public class AlarmServiceImpl implements IAlarmService {
     public List<CocLabel> queryLabelInfo(int dataCycle, String labelName, Page page, String opTime, String dataDate) {
         return cocAlarmDao.queryLabelInfo(dataCycle, labelName, page, opTime, dataDate);
     }
+
+    /**
+     * 查询标签波动情况-计算具体数量
+     *
+     * @param cocLabel
+     * @return 波动具体数量
+     */
+    @Override
+    public long cusNumWaved(CocLabel cocLabel) {
+        return 0;
+    }
+
+    /**
+     *  查询标签波动-计算环比值
+     *
+     * @param cocLabel
+     * @return 波动百分比
+     */
+    @Override
+    public float calculateMoM(CocLabel cocLabel) {
+        return 0;
+    }
 }

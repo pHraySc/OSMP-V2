@@ -4,9 +4,11 @@ import com.asiainfo.alarm.model.CocLabel;
 import com.asiainfo.alarm.model.CocSourceTable;
 import com.asiainfo.alarm.model.Page;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface ICocAlarmDao {
     /**
      * 获取源表信息总记录数
