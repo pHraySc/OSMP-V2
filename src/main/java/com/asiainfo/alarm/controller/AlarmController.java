@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -22,10 +23,6 @@ import java.util.List;
 public class AlarmController {
 
     private static final Logger logger = LoggerFactory.getLogger(AlarmController.class);
-    private String twoDaysAgo = DateUtil.getDayDataDate(2);     //两天前
-    private String threeDaysAgo = DateUtil.getDayDataDate(3);   //三天前
-    private String oneMonthAgo = DateUtil.getMonthDataDate(1);  //一个月前
-    private String twoMonthAgo = DateUtil.getMonthDataDate(2);  //两个月前
 
     @Autowired
     private IAlarmService alarmService;
@@ -90,9 +87,20 @@ public class AlarmController {
         }
         int count = alarmService.queryLabelNum(labelName, dataCycle);
         Page page = new Page(currentPage, pageSize, count);
-        List<CocLabel> labelList = alarmService.queryLabelInfo(dataCycle, labelName, page, twoDaysAgo, twoDaysAgo);
-        for(CocLabel cocLabel: labelList){
+        List<CocLabel> labelList = alarmService.queryLabelInfo(dataCycle, labelName, page, DateUtil.twoDaysAgo, DateUtil.twoDaysAgo);
+
+        for (CocLabel cocLabel : labelList) {
             CocLabelExt cocLabelExt = cocLabel.getCocLabelExt();
+            if (cocLabel.getDataCycle() == 1) {
+                cocLabelExt.setDelayValue(DateUtil.delayValDay);
+                LocalDate localDate = LocalDate.now();
+                if(Long.valueOf(localDate.format(DateUtil.dayFormatter)).longValue() - Long.valueOf(cocLabel.getDataDate()).longValue() <= cocLabelExt.getDelayValue() + 1){
+
+                }
+            }else {
+                cocLabelExt.setDelayValue(DateUtil.delayValMonth);
+            }
+            cocLabelExt.setLabelId(cocLabel.getLabelId());
             cocLabelExt.setWavedCustomNum(alarmService.cusNumWaved(cocLabel));
             cocLabelExt.setMoM(alarmService.calculateMoM(cocLabel));
         }
