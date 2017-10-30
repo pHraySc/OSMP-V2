@@ -24,7 +24,7 @@ $(document).ready(function () {
             var str = url.substr(1);
             strs = str.split("&");
             for (var i = 0; i < strs.length; i++) {
-                theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+                theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);//键值对
             }
         }
         return theRequest.chartStatus;
@@ -86,7 +86,7 @@ $(document).ready(function () {
     });
 
     //分页查询
-    var refresh = function (dataCycle, currentPage, status, pageSize) {
+    var refresh = function (dataCycle, currentPage, status) {
         labelName = $("#labelName").val();
         $.ajax({
             type: "GET",
@@ -96,8 +96,7 @@ $(document).ready(function () {
                 "currentPage": currentPage,
                 "labelName": labelName,
                 "dataCycle": dataCycle,
-                "status": status,
-                "pageSize": pageSize
+                "status": status
             },
             success: function (data) {
                 var $tr = $("<tr></tr>");
@@ -133,7 +132,7 @@ $(document).ready(function () {
                         $trTmp.append($td.clone().text(v.dataDate == undefined || v.dataDate == "" ? "" : v.dataDate));
                         $trTmp.append($td.clone().text(v.customNum));
                         $trTmp.append($td.clone().text(v.cocLabelExt.wavedCustomNum));
-                        $trTmp.append($td.clone().text(v.cocLabelExt.MoM));
+                        $trTmp.append($td.clone().text(v.cocLabelExt.MoM + "%"));
                         $trTmp.append($td.clone().text(v.srcTabName));
                         $trTmp.append($td.clone().text(v.srcTabColName));
                         /*var waveNum = "";
@@ -148,29 +147,23 @@ $(document).ready(function () {
                         var $tdLast = $td.clone();
                         $($tdLast).bind("click", function () {
                             $(".foundaods").show();
-                            $(".interStatus").html(Header.setOdsStatus(v.status, v.timeOut));
-                            if (v.status == 0) {
-                                $(".result").html("加载成功");
-                            } else if (v.status == -1) {
-                                $(".result").html("调度失败");
+                            $(".labelStatus").html(Header.setLabelStatus(v.status));
+                            if (v.status == 1) {
+                                $(".result").html("正常");
                             } else if (v.status == 2) {
-                                $(".result").html("波动异常");
+                                $(".result").html("延迟异常");
                             } else if (v.status == 3) {
-                                $(".result").html("进行中");
-                            } else if (v.status == 4) {
-                                $(".result").html("未开始");
-                            } else if (v.status == 99) {
-                                $(".result").html("超时");
+                                $(".result").html("波动异常");
                             }
-                            $(".interName").html(v.interName);
-                            $(".detail").html(v.errorDec);
-                            $(".beginDate").html(v.beginDate);
-                            $(".tableName").html(v.tableName);
-                            $(".actualFinDate").html(v.actualFinDate);
-                            $(".arriveDate").html(v.arriveDate);
-                            $(".demainDate").html(v.demainDate);
-                            $(".sumMum").html(v.sumMum);
-                            $(".waveNum").html(v.waveNum + "%");
+                            $(".labelName").html(v.labelName);
+                            $(".reason").html("暂无");
+                            // $(".beginDate").html(v.beginDate);
+                            // $(".tableName").html(v.tableName);
+                            // $(".actualFinDate").html(v.actualFinDate);
+                            // $(".arriveDate").html(v.arriveDate);
+                            // $(".demainDate").html(v.demainDate);
+                            // $(".sumMum").html(v.sumMum);
+                            // $(".waveNum").html(v.waveNum + "%");
                         });
                         $trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='../images/icon_detials.png'>"));
                     }
@@ -186,8 +179,8 @@ $(document).ready(function () {
                 //分页初始化
                 $("#pageTool").html("");
                 $("#pageTool").Paging({
-                    pagesize: 8, count: count, current: page, callback: function (page, size, count) {
-                        refresh(dataCycle, page, status);
+                    pagesize: 8, count: count, current: currentPage, callback: function (currentPage, size, count) {
+                        refresh(dataCycle, currentPage, status);
                     }
                 });
 
