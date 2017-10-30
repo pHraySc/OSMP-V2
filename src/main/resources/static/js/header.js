@@ -107,10 +107,11 @@ Header = function () {
         },
         setLabelStatus: function (status) {
             var index = status;
-            var images = [];
+            var images = {};
             images[1] = "../images/icon_h.png";
             images[2] = "../images/ods_n.png";
             images[3] = "../images/icon_j.png";
+            return "<img src= " + images[index] + " >";
         },
         dataformat: function (s, n) {
             if (s == "" || s == null) {

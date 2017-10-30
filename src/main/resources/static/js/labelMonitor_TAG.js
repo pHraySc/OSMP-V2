@@ -113,9 +113,9 @@ $(document).ready(function () {
                     if (totalRecord == 0) {
                         $trTmp.append($td.clone().attr("colspan", "10").text("暂无数据"));
                     } else {
-                        $trTmp.append($td.clone().append(Header.setOdsStatus(v.status, v.timeOut)));
-                        $trTmp.append($td.clone().text(v.interName).attr("title", v.errorDec));
-                        /**预警原因**/
+                        $trTmp.append($td.clone().append(Header.setLabelStatus(v.status)));
+                        $trTmp.append($td.clone().text(v.labelName).attr("title", v.cocLabelExt.delayValue));
+                        /**预警原因
                         var msg = "";
                         if (v.status == "1" || v.status == "2") {
                         } else if (v.status == "-2") {
@@ -128,21 +128,22 @@ $(document).ready(function () {
                             } else {
                                 msg = $("<div class= 'warning-reason' style='background-color:#ffb430;' title='" + v.errorMsg + "'>" + v.errorMsg + "</div>");
                             }
-                        }
+                        }**/
                         //$trTmp.append($td.clone().append(msg));
-                        $trTmp.append($td.clone().text(v.tableName == undefined || v.tableName == "" ? "" : v.tableName));
-                        $trTmp.append($td.clone().text(v.beginDate));
-                        $trTmp.append($td.clone().text(v.actualFinDate));
-                        $trTmp.append($td.clone().text(v.arriveDate));
-                        $trTmp.append($td.clone().text(v.sumMum));
-                        var waveNum = "";
+                        $trTmp.append($td.clone().text(v.dataDate == undefined || v.dataDate == "" ? "" : v.dataDate));
+                        $trTmp.append($td.clone().text(v.customNum));
+                        $trTmp.append($td.clone().text(v.cocLabelExt.wavedCustomNum));
+                        $trTmp.append($td.clone().text(v.cocLabelExt.MoM));
+                        $trTmp.append($td.clone().text(v.srcTabName));
+                        $trTmp.append($td.clone().text(v.srcTabColName));
+                        /*var waveNum = "";
                         if (v.waveNum >= 0) {
                             waveNum = "<img src='../images/icon_up.png'/>" + Header.dataformat(v.waveNum, 2) + "%";
                         } else {
                             waveNum = "<img src='../images/icon_down.png'/>" + Header.dataformat(-v.waveNum, 2) + "%";
                         }
                         $trTmp.append($td.clone().append(waveNum));
-                        $trTmp.append($td.clone().text(v.updateTime));
+                        $trTmp.append($td.clone().text(v.updateTime));*/
 
                         var $tdLast = $td.clone();
                         $($tdLast).bind("click", function () {
