@@ -14,9 +14,6 @@ $(document).ready(function () {
         $(this).addClass("base-opt-btn-active");
     });
     var dataCycle = "";
-    var interType = "";
-    var isImport = "";
-    var interName = "";
 
     //获取首页跳转Url的参数
     var getParm = function GetRequest() {
@@ -82,14 +79,14 @@ $(document).ready(function () {
     //     refresh(dataCycle,1,"");
     // });
 
-    //数量点击查询
+    //数量点击查询（设置点击样式）
     $(".base-label-right li").click(function () {
         var status = $(this).find(".spanclass").attr("id");
         refresh(dataCycle, 1, status);
     });
 
     //分页查询
-    var refresh = function (dataCycle, currentPage, pageSize) {
+    var refresh = function (dataCycle, currentPage, status, pageSize) {
         labelName = $("#labelName").val();
         $.ajax({
             type: "GET",
@@ -99,19 +96,21 @@ $(document).ready(function () {
                 "currentPage": currentPage,
                 "labelName": labelName,
                 "dataCycle": dataCycle,
+                "status": status,
                 "pageSize": pageSize
             },
             success: function (data) {
                 var $tr = $("<tr></tr>");
                 var $td = $("<td></td>");
+                totalRecord = data.data.count;
+                normal = data.data.labelStatus.normal;
+                delay = data.data.labelStatus.delay;
+                waved = data.data.labelStatus.waved;
                 //var totalnum=0,notstart=0,success=0,fail=0,process=0,wavestatus=0,timeout=0;
                 $("#tbody").empty();
-                $.each(data, function (k, v) {
-                    if (k == 0) {
-                    }
+                $.each(data.data.labelList, function (k, v) {
                     var $trTmp = $tr.clone();
-                    if (totalnum == 0) {
-                        //totalnum=totalnum+1;
+                    if (totalRecord == 0) {
                         $trTmp.append($td.clone().attr("colspan", "10").text("暂无数据"));
                     } else {
                         $trTmp.append($td.clone().append(Header.setOdsStatus(v.status, v.timeOut)));
@@ -177,13 +176,10 @@ $(document).ready(function () {
                     $("#tbody").append($trTmp);
                 });
                 //if (status == null || status == "") {
-                $("#totalnum").text(totalnum);
-                $("#notstart").text(notstart);
-                $("#success").text(success);
-                $("#fail").text(fail);
-                $("#process").text(process);
-                $("#wavestatus").text(wavestatus);
-                $("#timeout").text(timeout);
+                $("#totalRecord").text(totalRecord);
+                $("#normal").text(normal);
+                $("#delay").text(delay);
+                $("#waved").text(waved);
                 //}
 
                 //分页初始化

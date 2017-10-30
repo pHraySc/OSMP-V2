@@ -258,4 +258,15 @@
             )
         WHERE row_number BETWEEN #{page.startPosition} AND #{page.endPosition}
     </select>
+
+    <select id="queryPreCusNum" resultType="long">
+        select sum(custom_num) AS custom_num from ci_label_stat_dm_${opTime}
+        where city_id=-1 and vip_level_id=-1 and brand_id=-1
+        <if test="null != dataDate and '' != dataDate">
+            and data_date=#{dataDate}
+        </if>
+        <if test="null != labelId and labelId != 0">
+            and label_id=#{labelId}
+        </if>
+    </select>
 </mapper>

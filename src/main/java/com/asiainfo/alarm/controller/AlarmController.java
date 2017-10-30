@@ -4,6 +4,7 @@ import com.asiainfo.alarm.model.*;
 import com.asiainfo.alarm.service.IAlarmService;
 import com.asiainfo.alarm.util.DateUtil;
 import com.asiainfo.alarm.util.ResultUtil;
+import com.asiainfo.alarm.util.labelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/alarm")
@@ -75,11 +78,15 @@ public class AlarmController {
 
     @ResponseBody
     @GetMapping("/queryLabelInfo")
-    public void queryLabelInfo(@RequestParam(value = "dataCycle", defaultValue = "0") int dataCycle,
-                               @RequestParam(value = "labelName", defaultValue = "") String labelName,
-                               @RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
-                               @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-
+    public Result queryLabelInfo(@RequestParam(value = "dataCycle", defaultValue = "0") int dataCycle,
+                                 @RequestParam(value = "labelName", defaultValue = "") String labelName,
+                                 @RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
+                                 @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                                 @RequestParam(value = "status", defaultValue = "") String status) {
+        Map<String, Integer> labelStatus = new HashMap<String, Integer>();
+        int normal = 0;
+        int delay = 0;
+        int waved = 0;
         if (Integer.toString(dataCycle).substring(1) == "1") {
             dataCycle = 1;
         } else {
@@ -91,19 +98,40 @@ public class AlarmController {
 
         for (CocLabel cocLabel : labelList) {
             CocLabelExt cocLabelExt = cocLabel.getCocLabelExt();
+            cocLabelExt.setLabelId(cocLabel.getLabelId());
+            cocLabelExt.setWavedCustomNum(alarmService.cusNumWaved(cocLabel, DateUtil.twoDaysAgo, DateUtil.threeDaysAgo));
+            cocLabelExt.setMoM(alarmService.calculateMoM(cocLabel, DateUtil.twoDaysAgo, DateUtil.threeDaysAgo));
             if (cocLabel.getDataCycle() == 1) {
                 cocLabelExt.setDelayValue(DateUtil.delayValDay);
                 LocalDate localDate = LocalDate.now();
-                if(Long.valueOf(localDate.format(DateUtil.dayFormatter)).longValue() - Long.valueOf(cocLabel.getDataDate()).longValue() <= cocLabelExt.getDelayValue() + 1){
-
+                if (Long.parseLong(localDate.format(DateUtil.dayFormatter)) - Long.parseLong(cocLabel.getDataDate()) <= cocLabelExt.getDelayValue() + 1) {
+                    if (cocLabelExt.getMoM() > labelUtil.wavedPercent) {
+                        waved++;
+                        cocLabel.setStatus(3);
+                    } else {
+                        normal++;
+                        cocLabel.setStatus(1);
+                    }
+                } else {
+                    delay++;
+                    cocLabel.setStatus(2);
                 }
-            }else {
+            } else {
                 cocLabelExt.setDelayValue(DateUtil.delayValMonth);
             }
-            cocLabelExt.setLabelId(cocLabel.getLabelId());
-            cocLabelExt.setWavedCustomNum(alarmService.cusNumWaved(cocLabel));
-            cocLabelExt.setMoM(alarmService.calculateMoM(cocLabel));
         }
+
+        labelStatus.put("normal", normal);
+        labelStatus.put("delay", delay);
+        labelStatus.put("waved", waved);
+
+        Map labelMap = new HashMap();
+
+        labelMap.put("labelList", labelList);
+        labelMap.put("labelStatus", labelStatus);
+        labelMap.put("count", count);
+
+        return ResultUtil.success(labelMap);
         /*Iterator<CocLabel> iterator = labelList.iterator();
         while (iterator.hasNext()){
             System.out.println(iterator.next().getClass());

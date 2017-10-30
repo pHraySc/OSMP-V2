@@ -50,4 +50,12 @@ public interface ICocAlarmDao {
      */
     List<CocLabel> queryLabelInfo(@Param("dataCycle") int dataCycle,@Param("labelName") String labelName,
                                   @Param("page") Page page,@Param("opTime") String opTime, @Param("dataDate") String dataDate);
+
+    /**
+     * 获取前一天的用户数与当天的做比较-具体数量的比较
+     *
+     * @param labelId
+     * @return 前一天的该标签Id的用户数
+     */
+    long queryPreCusNum(@Param("labelId") long labelId, @Param("opTime") String opTime,@Param("dataDate") String dataDate);
 }

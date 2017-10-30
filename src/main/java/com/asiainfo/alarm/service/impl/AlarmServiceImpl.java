@@ -87,8 +87,10 @@ public class AlarmServiceImpl implements IAlarmService {
      * @return 波动具体数量
      */
     @Override
-    public long cusNumWaved(CocLabel cocLabel) {
-        return 0;
+    public long cusNumWaved(CocLabel cocLabel, String opTime, String dataDate) {
+        long nowNum = cocLabel.getCustomNum();
+        long previousNum = cocAlarmDao.queryPreCusNum(cocLabel.getLabelId(), opTime, dataDate);
+        return (nowNum - previousNum);
     }
 
     /**
@@ -98,7 +100,9 @@ public class AlarmServiceImpl implements IAlarmService {
      * @return 波动百分比
      */
     @Override
-    public float calculateMoM(CocLabel cocLabel) {
-        return 0;
+    public float calculateMoM(CocLabel cocLabel, String opTime, String dataDate) {
+        long nowNum = cocLabel.getCustomNum();
+        long previousNum = cocAlarmDao.queryPreCusNum(cocLabel.getLabelId(), opTime, dataDate);
+        return Math.abs(nowNum - previousNum)/previousNum * 100;
     }
 }

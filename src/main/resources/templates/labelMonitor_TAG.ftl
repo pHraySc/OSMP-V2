@@ -98,29 +98,20 @@
         <div class="col-md-3">
             <div class="base-label-left">
                 <img src="../images/icon_line.png"/>
-                <span><span id="navBtn"></span>标签列表(<span id="totalnum">0</span>)</span>
+                <span><span id="navBtn"></span>标签列表(<span id="totalRecord">0</span>)</span>
             </div>
         </div>
         <div class="col-md-9">
             <div class="base-label-right">
                 <ul>
-                    <li><img src="../images/icon_h.png"/><span>加载成功</span>(<span id="success"
+                    <li><img src="../images/icon_h.png"/><span>正常</span>(<span id="normal"
                                                                                  class="spanclass">0</span>条)
                     </li>
-                    <li><img src="../images/icon_i.png"/><span>加载失败</span>(<span id="fail"
+                    <li><img src="../images/icon_i.png"/><span>延迟异常</span>(<span id="delay"
                                                                                  class="spanclass">0</span>条)
                     </li>
-                    <li><img src="../images/icon_j.png"/><span>波动异常</span>(<span id="wavestatus"
+                    <li><img src="../images/icon_j.png"/><span>波动异常</span>(<span id="waved"
                                                                                  class="spanclass">0</span>条)
-                    </li>
-                    <li><img src="../images/icon_k.png"/><span>进行中</span>(<span id="process"
-                                                                                class="spanclass">0</span>条)
-                    </li>
-                    <li><img src="../images/icon_l.png"/><span>未开始</span>(<span id="notstart"
-                                                                                class="spanclass">0</span>条)
-                    </li>
-                    <li><img src="../images/icon_g.png"/><span>延迟</span>(<span id="timeout"
-                                                                               class="spanclass">0</span>条)
                     </li>
                 </ul>
             </div>

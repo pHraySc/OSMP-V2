@@ -14,7 +14,7 @@ public class CocLabelExt {
      *
      * 数据时效性：1，t-1；2，t-2
      */
-    private String delayValue;
+    private int delayValue;
 
     /**
      * 数据量波动情况：此属性以整型数量波动说明情况
@@ -65,11 +65,11 @@ public class CocLabelExt {
         this.labelId = labelId;
     }
 
-    public String getDelayValue() {
+    public int getDelayValue() {
         return delayValue;
     }
 
-    public void setDelayValue(String delayValue) {
+    public void setDelayValue(int delayValue) {
         this.delayValue = delayValue;
     }
 

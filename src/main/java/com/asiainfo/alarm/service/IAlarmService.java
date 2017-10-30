@@ -60,7 +60,7 @@ public interface IAlarmService {
      * @param cocLabel
      * @return 波动具体数量
      */
-    long cusNumWaved(CocLabel cocLabel);
+    long cusNumWaved(CocLabel cocLabel, String opTime, String dataDate);
 
     /**
      *  查询标签波动-计算环比值
@@ -68,5 +68,5 @@ public interface IAlarmService {
      * @param cocLabel
      * @return 波动百分比
      */
-    float calculateMoM(CocLabel cocLabel);
+    float calculateMoM(CocLabel cocLabel, String opTime, String dataDate);
 }

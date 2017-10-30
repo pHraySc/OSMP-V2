@@ -46,9 +46,22 @@ public class CocLabel {
     private String srcTabColName;
 
     /**
+     * 标签状态：1.正常 2.延迟异常 3.波动异常
+     */
+    private int status;
+
+    /**
      * 标签扩展信息
      */
     private CocLabelExt cocLabelExt;
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     public long getLabelId() {
         return labelId;

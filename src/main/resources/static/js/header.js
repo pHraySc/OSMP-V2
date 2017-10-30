@@ -105,6 +105,13 @@ Header = function () {
             images[98] = "../images/icon_l.png";
             return "<img src=" + images[floor] + ">";
         },
+        setLabelStatus: function (status) {
+            var index = status;
+            var images = [];
+            images[1] = "../images/icon_h.png";
+            images[2] = "../images/ods_n.png";
+            images[3] = "../images/icon_j.png";
+        },
         dataformat: function (s, n) {
             if (s == "" || s == null) {
                 return "0";
