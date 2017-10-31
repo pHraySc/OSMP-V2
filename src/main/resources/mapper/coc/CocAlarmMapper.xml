@@ -169,8 +169,8 @@
         in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from
         ci_label_info where data_status_id=2 and parent_id=-1))))
         )a left join
-        ci_label_info f on a.label_id=f.labbel_id LEFT JOIN
-        ci_label_ext_info b on f.label_id=b.label_id left join
+        ci_label_info f on a.label_id=f.label_id LEFT JOIN
+        ci_label_ext_info b on a.label_id=b.label_id left join
         dim_coc_label_count_rules c on b.count_rules_code=c.count_rules_code left join
         dim_coc_index_info d on c.depend_index=d.index_code left join
         dim_coc_index_table_info e on d.data_src_code=e.data_src_code left join
@@ -204,7 +204,7 @@
             srcTabName,
             srcTabColName,
             customNum,
-            row_number() over(order by useTimes DESC , dataCycle ASC ) AS row_number
+            row_number() over(order by dataCycle ASC ,useTimes ASC ) AS row_number
             FROM
                 (
                 select
@@ -236,8 +236,8 @@
                     in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from
                     ci_label_info where data_status_id=2 and parent_id=-1))))
                     )a left join
-                ci_label_info f on a.label_id=f.labbel_id LEFT JOIN
-                ci_label_ext_info b on f.label_id=b.label_id left join
+                ci_label_info f on a.label_id=f.label_id LEFT JOIN
+                ci_label_ext_info b on a.label_id=b.label_id left join
                 dim_coc_label_count_rules c on b.count_rules_code=c.count_rules_code left join
                 dim_coc_index_info d on c.depend_index=d.index_code left join
                 dim_coc_index_table_info e on d.data_src_code=e.data_src_code left join
@@ -253,6 +253,7 @@
                 <if test="dataCycle != 0">
                     and f.update_cycle=#{dataCycle}
                 </if>
+                and b.IS_STAT_USER_NUM = 1
                 GROUP BY a.label_id,f.label_name,f.update_cycle,h.use_times,e.data_src_tab_name,d.data_src_col_name,j.custom_num
                 )
             )
