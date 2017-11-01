@@ -38,8 +38,8 @@ $(document).ready(function () {
         $(".base-opt-btn-active").removeClass("base-opt-btn-active");
         $(this).addClass("base-opt-btn-active");
         //清空选择框和搜索框的内容
-        $(".base-opt-qry-sel").val("all");
-        $(".base-opt-qry-txt").val("");
+        // $(".base-opt-qry-sel").val("all");
+        // $(".base-opt-qry-txt").val("");
         refresh(dataCycle, 1, "");
     })
 
@@ -189,37 +189,11 @@ $(document).ready(function () {
     };
 
     //查询数据源
-    var queryDataSource = function (moduleId) {
-        $.ajax({
-            type: "GET",
-            url: "/commonUtilController/queryTypeByModuleId",
-            dataType: "json",
-            data: {"moduleId": moduleId},
-            success: function (data) {
-                var $baseButton = $("#baseoptbtn");
-                if (data != null) {
-                    $.each(data, function (k, v) {
-                        if (k == 0) {
-                            var $Label = $("<label class=" + '"btn base-opt-btn-item base-opt-btn-active"' + "></label>");
-                            var $Input = $("<input type=" + '"radio"' + " data-id=" + '"' + v.type_id + '"' + ">" + v.type_name + "</input>");
-                            $Label.append($Input);
-                            $baseButton.append($Label);
-                            dataCycle = v.type_id;
-                        } else {
-                            var $Label = $("<label class=" + '"btn base-opt-btn-item"' + "></label>");
-                            var $Input = $("<input type=" + '"radio"' + " data-id=" + '"' + v.type_id + '"' + ">" + v.type_name + "</input>");
-                            $Label.append($Input);
-                            $baseButton.append($Label);
-                        }
-                    });
-                } else {
-                    alert("请配置数据库信息!");
-                }
-                refresh(dataCycle, 1, chartStatus);//页面初始化加载列表数据
-            }
-        });
+    var initPage = function () {
+        dataCycle = $(".base-opt-btn-active").find("input").attr("dataCycle");
+        refresh(dataCycle, 1, chartStatus);//页面初始化加载列表数据
     }
 
-    queryDataSource(5);//页面初始化加载数据源
+    initPage();//页面初始化加载数据源
 
 });

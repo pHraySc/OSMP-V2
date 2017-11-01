@@ -9,14 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,31 +27,6 @@ public class AlarmController {
 
     @Autowired
     private IAlarmService alarmService;
-
-    //跳转标签库监控界面-默认汇总页面
-    @RequestMapping("/labelMonitor")
-    public String labelMonitor(ModelMap model) {
-        model.put("time", new Date());
-        model.put("message", "freemarker test!");
-        return "labelMonitor";
-    }
-
-    //跳转标签库监控界面-源表
-    @RequestMapping("/labelMonitor_SOURCE")
-    public String labelMonitor_SOURCE(ModelMap model) {
-        model.put("time", new Date());
-        model.put("message", "freemarker test!");
-        return "labelMonitor_SOURCE";
-    }
-
-    //跳转标签库监控界面-标签
-    @RequestMapping("/labelMonitor_TAG")
-    public String labelMonitor_TAG(ModelMap model) {
-        model.put("time", new Date());
-        model.put("message", "freemarker test!");
-        return "labelMonitor_TAG";
-    }
-
 
     @ResponseBody
     @GetMapping("/getSourceTableInfo")
@@ -81,23 +54,18 @@ public class AlarmController {
     public Result queryLabelInfo(@RequestParam(value = "dataCycle", defaultValue = "0") int dataCycle,
                                  @RequestParam(value = "labelName", defaultValue = "") String labelName,
                                  @RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
-                                 @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                                 @RequestParam(value = "pageSize", defaultValue = "8") int pageSize,
                                  @RequestParam(value = "status", defaultValue = "") String status) {
         Map<String, Integer> labelStatus = new HashMap<String, Integer>();
         int normal = 0;
         int delay = 0;
         int waved = 0;
-        if (Integer.toString(dataCycle).substring(1) == "1") {
-            dataCycle = 1;
-        } else {
-            dataCycle = 2;
-        }
         int count = alarmService.queryLabelNum(labelName, dataCycle);
         Page page = new Page(currentPage, pageSize, count);
         List<CocLabel> labelList = alarmService.queryLabelInfo(dataCycle, labelName, page, DateUtil.twoDaysAgo, DateUtil.twoDaysAgo);
 
         for (CocLabel cocLabel : labelList) {
-            CocLabelExt cocLabelExt = cocLabel.getCocLabelExt();
+            CocLabelExt cocLabelExt = new CocLabelExt();
             cocLabelExt.setLabelId(cocLabel.getLabelId());
             cocLabelExt.setWavedCustomNum(alarmService.cusNumWaved(cocLabel, DateUtil.twoDaysAgo, DateUtil.threeDaysAgo));
             cocLabelExt.setMoM(alarmService.calculateMoM(cocLabel, DateUtil.twoDaysAgo, DateUtil.threeDaysAgo));
@@ -119,6 +87,7 @@ public class AlarmController {
             } else {
                 cocLabelExt.setDelayValue(DateUtil.delayValMonth);
             }
+            cocLabel.setCocLabelExt(cocLabelExt);
         }
 
         labelStatus.put("normal", normal);
