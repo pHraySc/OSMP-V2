@@ -11,7 +11,6 @@ public class CocLabelExt {
     private long labelId;
 
     /**
-     *
      * 数据时效性：1，t-1；2，t-2
      */
     private int delayValue;
@@ -25,7 +24,7 @@ public class CocLabelExt {
      * 环比：按周期进行环比
      * 日：(t-2标签用户数 - t-3标签用户数)/t-3标签用户数 * 100%
      */
-    private float MoM;
+    private float moM;
 
     /**
      * 标签更新时间
@@ -82,11 +81,11 @@ public class CocLabelExt {
     }
 
     public float getMoM() {
-        return MoM;
+        return moM;
     }
 
     public void setMoM(float moM) {
-        MoM = moM;
+        this.moM = moM;
     }
 
     public String getUpdateTime() {
