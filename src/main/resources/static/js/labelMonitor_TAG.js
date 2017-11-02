@@ -137,7 +137,6 @@ $(document).ready(function () {
                         $trTmp.append($td.clone().text(v.cocLabelExt.moM + "%"));
                         $trTmp.append($td.clone().text(v.srcTabName));
                         $trTmp.append($td.clone().text(v.srcTabColName));
-                        $trTmp.append($td.clone().text(v.cocLabelExt.delayValue));
 
                         var $tdLast = $td.clone();
                         $($tdLast).bind("click", function () {
@@ -153,12 +152,13 @@ $(document).ready(function () {
                             $(".labelName").html(v.labelName);
                             $(".reason").html("暂无");
                             $(".tableName").html(v.srcTabName);
-                            $(".dataCycle").html(v.tableName);
-                            $(".actualFinDate").html(v.actualFinDate);
-                            $(".arriveDate").html(v.arriveDate);
-                            $(".demainDate").html(v.demainDate);
-                            $(".sumMum").html(v.sumMum);
-                            $(".waveNum").html(v.waveNum + "%");
+                            $(".dataCycle").html(v.dataCycle);
+                            $(".dataDate").html(v.dataDate);
+                            $(".custom_num").html(v.customNum);
+                            $(".updateTime").html(v.cocLabelExt.updateTime);
+                            $(".shouldUpdateTime").html(v.cocLabelExt.scheduleTime);
+                            $(".finishTime").html(v.cocLabelExt.finishTime);
+                            $(".contactP").html(v.cocLabelExt.official);
                         });
                         $trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='../images/icon_detials.png'>"));
                     }
