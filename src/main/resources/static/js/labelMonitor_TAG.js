@@ -9,10 +9,6 @@ $(document).ready(function () {
         $(".base-header-item-active").removeClass("base-header-item-active");
         $(this).addClass("base-header-item-active");
     });
-    $(".base-opt-btn-item").click(function () {
-        $(".base-opt-btn-active").removeClass("base-opt-btn-active");
-        $(this).addClass("base-opt-btn-active");
-    });
     var dataCycle = "";
 
     //获取首页跳转Url的参数
@@ -34,7 +30,7 @@ $(document).ready(function () {
 
     //按钮组点击事件
     $(".base-opt-btn").on("click", ".base-opt-btn-item", function () {
-        dataCycle = $("input", this).attr("data-id");
+        dataCycle = $("input", this).attr("dataCycle");
         $(".base-opt-btn-active").removeClass("base-opt-btn-active");
         $(this).addClass("base-opt-btn-active");
         //清空选择框和搜索框的内容
@@ -131,18 +127,17 @@ $(document).ready(function () {
                         //$trTmp.append($td.clone().append(msg));
                         $trTmp.append($td.clone().text(v.dataDate == undefined || v.dataDate == "" ? "" : v.dataDate));
                         $trTmp.append($td.clone().text(v.customNum));
-                        $trTmp.append($td.clone().text(v.cocLabelExt.wavedCustomNum));
-                        $trTmp.append($td.clone().text(v.cocLabelExt.MoM + "%"));
+                        var wavedCustomNum="";
+                        if(v.cocLabelExt.wavedCustomNum>=0){
+                            wavedCustomNum="<img src='../images/icon_up.png'/>"+ Header.dataformat(v.cocLabelExt.wavedCustomNum,2);
+                        }else{
+                            wavedCustomNum="<img src='../images/icon_down.png'/>"+Header.dataformat(-v.cocLabelExt.wavedCustomNum,2);
+                        }
+                        $trTmp.append($td.clone().append(wavedCustomNum));
+                        $trTmp.append($td.clone().text(v.cocLabelExt.moM + "%"));
                         $trTmp.append($td.clone().text(v.srcTabName));
                         $trTmp.append($td.clone().text(v.srcTabColName));
-                        /*var waveNum = "";
-                        if (v.waveNum >= 0) {
-                            waveNum = "<img src='../images/icon_up.png'/>" + Header.dataformat(v.waveNum, 2) + "%";
-                        } else {
-                            waveNum = "<img src='../images/icon_down.png'/>" + Header.dataformat(-v.waveNum, 2) + "%";
-                        }
-                        $trTmp.append($td.clone().append(waveNum));
-                        $trTmp.append($td.clone().text(v.updateTime));*/
+                        $trTmp.append($td.clone().text(v.cocLabelExt.delayValue));
 
                         var $tdLast = $td.clone();
                         $($tdLast).bind("click", function () {
@@ -157,13 +152,13 @@ $(document).ready(function () {
                             }
                             $(".labelName").html(v.labelName);
                             $(".reason").html("暂无");
-                            // $(".beginDate").html(v.beginDate);
-                            // $(".tableName").html(v.tableName);
-                            // $(".actualFinDate").html(v.actualFinDate);
-                            // $(".arriveDate").html(v.arriveDate);
-                            // $(".demainDate").html(v.demainDate);
-                            // $(".sumMum").html(v.sumMum);
-                            // $(".waveNum").html(v.waveNum + "%");
+                            $(".tableName").html(v.srcTabName);
+                            $(".dataCycle").html(v.tableName);
+                            $(".actualFinDate").html(v.actualFinDate);
+                            $(".arriveDate").html(v.arriveDate);
+                            $(".demainDate").html(v.demainDate);
+                            $(".sumMum").html(v.sumMum);
+                            $(".waveNum").html(v.waveNum + "%");
                         });
                         $trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='../images/icon_detials.png'>"));
                     }
@@ -179,7 +174,7 @@ $(document).ready(function () {
                 //分页初始化
                 $("#pageTool").html("");
                 $("#pageTool").Paging({
-                    pagesize: 8, count: count, current: currentPage, callback: function (currentPage, size, count) {
+                    pagesize: 8, count: totalRecord, current: currentPage, callback: function (currentPage,size,count) {
                         refresh(dataCycle, currentPage, status);
                     }
                 });
