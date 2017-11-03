@@ -32,24 +32,24 @@ public interface ICocAlarmDao {
     /**
      * 获取标签信息总记录数
      *
-     * @param labelName     标签名
-     * @param dataCycle     数据周期：0，全部；1，日；2，月
+     * @param labelName 标签名
+     * @param dataCycle 数据周期：0，全部；1，日；2，月
      * @return
      */
-    int queryLabelNum(@Param("labelName") String labelName,@Param("dataCycle") int dataCycle);
+    int queryLabelNum(@Param("labelName") String labelName, @Param("dataCycle") int dataCycle);
 
     /**
      * 获取标签信息
      *
-     * @param labelName     标签名
-     * @param dataCycle     数据周期：0，全部；1，日；2，月
-     * @param page          分页信息
-     * @param opTime        数据表账期
-     * @param dataDate      数据日期
+     * @param labelName 标签名
+     * @param dataCycle 数据周期：0，全部；1，日；2，月
+     * @param page      分页信息
+     * @param opTime    数据表账期
+     * @param dataDate  数据日期
      * @return
      */
-    List<CocLabel> queryLabelInfo(@Param("dataCycle") int dataCycle,@Param("labelName") String labelName,
-                                  @Param("page") Page page,@Param("opTime") String opTime, @Param("dataDate") String dataDate);
+    List<CocLabel> queryLabelInfo(@Param("dataCycle") int dataCycle, @Param("labelName") String labelName,
+                                  @Param("page") Page page, @Param("opTime") String opTime, @Param("dataDate") String dataDate);
 
     /**
      * 获取前一天的用户数与当天的做比较-具体数量的比较
@@ -57,5 +57,20 @@ public interface ICocAlarmDao {
      * @param labelId
      * @return 前一天的该标签Id的用户数
      */
-    long queryPreCusNum(@Param("labelId") long labelId, @Param("opTime") String opTime,@Param("dataDate") String dataDate);
+    long queryPreCusNum(@Param("labelId") long labelId, @Param("opTime") String opTime, @Param("dataDate") String dataDate);
+
+    /**
+     * 判断前一天用户数是否存在
+     *
+     * @return
+     */
+    boolean doPreCusNumExist(@Param("labelId") long labelId, @Param("opTime") String opTime, @Param("dataDate") String dataDate);
+
+    /**
+     * 获取前一天的用户数与当天的做比较-具体数量的比较
+     *
+     * @param labelId
+     * @return opTime相对于dataDate的环比值-具体数值
+     */
+    long queryRingNum(@Param("labelId") long labelId, @Param("opTime") String opTime, @Param("dataDate") String dataDate);
 }

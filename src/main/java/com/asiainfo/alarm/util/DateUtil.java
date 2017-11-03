@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -22,6 +24,10 @@ public class DateUtil {
     public static final String twoDaysAgo = DateUtil.getDayDataDate(2);     //两天前
 
     public static final String threeDaysAgo = DateUtil.getDayDataDate(3);   //三天前
+
+
+    public static final String fourDaysAgo = DateUtil.getDayDataDate(4);   //三天前
+
 
     public static final String oneMonthAgo = DateUtil.getMonthDataDate(1);  //一个月前
 
@@ -47,9 +53,18 @@ public class DateUtil {
         return dateTime.format(dayFormatter);
     }
 
+    public static boolean isDelay(String dataDate, int delayValDay) {
+        LocalDate localDate = LocalDate.parse(LocalDate.now().minusDays(delayValDay + 1).format(dayFormatter), dayFormatter);
+        LocalDate labelDataDate = LocalDate.parse(dataDate, dayFormatter);
+        if (localDate.isAfter(labelDataDate)) {
+            return Boolean.TRUE;
+        } else return Boolean.FALSE;
+    }
+
     public static void main(String[] args) {
         System.out.println(DateUtil.getMonthDataDate(1));
         System.out.println(DateUtil.getDayDataDate(1));
         System.out.println(DateUtil.twoDaysAgo + DateUtil.threeDaysAgo);
+        System.out.println(isDelay("20171029", 2));
     }
 }

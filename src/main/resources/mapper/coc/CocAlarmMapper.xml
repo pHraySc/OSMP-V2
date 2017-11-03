@@ -98,7 +98,7 @@
         ) where row_number between #{page.startPosition} and #{page.endPosition}
     </select>
 
-    <select id="querySourceTabNameByDataCyle" parameterType="map" resultType="map">
+    <select id="querySourceTabNameByDataCyle" parameterType="map" resultType="Map">
         SELECT data_src_tab_name
         FROM dim_coc_index_table_info
         WHERE 1=1
@@ -107,7 +107,7 @@
         </if>
     </select>
 
-    <select id="doesTableExist" resultType="boolean" parameterType="map">
+    <select id="doesTableExist" resultType="Boolean" parameterType="Map">
         SELECT
         count(1)
         FROM
@@ -121,7 +121,7 @@
         </if>
     </select>
 
-    <select id="isNotEmptyTable" resultType="boolean" parameterType="String">
+    <select id="isNotEmptyTable" resultType="Boolean" parameterType="String">
 		SELECT
 		count(*)
 		FROM (SELECT 1
@@ -129,7 +129,7 @@
 		FETCH FIRST 1 ROWS ONLY)
 	</select>
 
-    <select id="querySourceTabNum" resultType="integer" parameterType="map">
+    <select id="querySourceTabNum" resultType="Integer" parameterType="Map">
         SELECT
         count(*)
         FROM
@@ -140,7 +140,7 @@
         </if>
     </select>
 
-    <select id="queryLabelNum" resultType="integer">
+    <select id="queryLabelNum" resultType="Integer">
         SELECT
         count(*)
         FROM
@@ -194,79 +194,105 @@
         srcTabColName,
         customNum
         FROM
-            (
-            SELECT
-            labelId,
-            labelName,
-            dataCycle,
-            dataDate,
-            useTimes,
-            srcTabName,
-            srcTabColName,
-            customNum,
-            row_number() over(order by dataCycle ASC ,useTimes ASC ) AS row_number
-            FROM
-                (
-                select
-                a.label_id AS labelId,
-                f.label_name AS labelName,
-                f.update_cycle AS dataCycle,
-                h.use_times AS useTimes,
-                e.data_src_tab_name AS srcTabName,
-                d.data_src_col_name AS srcTabColName,
-                j.custom_num AS customNum,
-                max(g.data_source_time) AS dataDate
-                from
-                    (
-                    select label_id from ci_label_info where data_status_id=2 and parent_id=-1
-                    union all
-                    select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
-                    where data_status_id=2 and parent_id=-1)
-                    union all
-                    select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
-                    where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and
-                    parent_id=-1))
-                    union all
-                    select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
-                    where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id
-                    in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1)))
-                    union all
-                    select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
-                    where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id
-                    in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from
-                    ci_label_info where data_status_id=2 and parent_id=-1))))
-                    )a left join
-                ci_label_info f on a.label_id=f.label_id LEFT JOIN
-                ci_label_ext_info b on a.label_id=b.label_id left join
-                dim_coc_label_count_rules c on b.count_rules_code=c.count_rules_code left join
-                dim_coc_index_info d on c.depend_index=d.index_code left join
-                dim_coc_index_table_info e on d.data_src_code=e.data_src_code left join
-                dim_coc_data_source_status g on e.data_src_code=g.data_source_id left join
-                (select label_id,count(*) as use_times from ci_user_use_label group by label_id) h on a.label_id=h.label_id left join
-                (select label_id,sum(custom_num) AS custom_num from ci_label_stat_dm_${opTime}
-                where city_id=-1 and vip_level_id=-1 and brand_id=-1
-                <if test="null != dataDate and '' != dataDate">
-                    and data_date=#{dataDate}
-                </if>
-                group by label_id) j on a.label_id=j.label_id
-                WHERE f.label_name like '%'||#{labelName}||'%'
-                <if test="dataCycle != 0">
-                    and f.update_cycle=#{dataCycle}
-                </if>
-                and b.IS_STAT_USER_NUM = 1
-                GROUP BY a.label_id,f.label_name,f.update_cycle,h.use_times,e.data_src_tab_name,d.data_src_col_name,j.custom_num
-                )
-            )
+        (
+        SELECT
+        labelId,
+        labelName,
+        dataCycle,
+        dataDate,
+        useTimes,
+        srcTabName,
+        srcTabColName,
+        customNum,
+        row_number() over(order by labelId ASC ,dataCycle ASC ) AS row_number
+        FROM
+        (
+        select
+        a.label_id AS labelId,
+        f.label_name AS labelName,
+        f.update_cycle AS dataCycle,
+        h.use_times AS useTimes,
+        e.data_src_tab_name AS srcTabName,
+        d.data_src_col_name AS srcTabColName,
+        j.custom_num AS customNum,
+        f.data_date AS dataDate
+        from
+        (
+        select label_id from ci_label_info where data_status_id=2 and parent_id=-1
+        union all
+        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
+        where data_status_id=2 and parent_id=-1)
+        union all
+        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
+        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and
+        parent_id=-1))
+        union all
+        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
+        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id
+        in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1)))
+        union all
+        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
+        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id
+        in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from
+        ci_label_info where data_status_id=2 and parent_id=-1))))
+        )a left join
+        ci_label_info f on a.label_id=f.label_id LEFT JOIN
+        ci_label_ext_info b on a.label_id=b.label_id left join
+        dim_coc_label_count_rules c on b.count_rules_code=c.count_rules_code left join
+        dim_coc_index_info d on c.depend_index=d.index_code left join
+        dim_coc_index_table_info e on d.data_src_code=e.data_src_code left join
+        (select label_id,count(*) as use_times from ci_user_use_label group by label_id) h on a.label_id=h.label_id left
+        join
+        (select label_id,sum(custom_num) AS custom_num from ci_label_stat_dm_${opTime}
+        where city_id=-1 and vip_level_id=-1 and brand_id=-1
+        <if test="null != dataDate and '' != dataDate">
+            and data_date=#{dataDate}
+        </if>
+        group by label_id) j on a.label_id=j.label_id
+        WHERE f.label_name like '%'||#{labelName}||'%'
+        <if test="dataCycle != 0">
+            and f.update_cycle=#{dataCycle}
+        </if>
+        and b.IS_STAT_USER_NUM = 1
+        )
+        )
         WHERE row_number BETWEEN #{page.startPosition} AND #{page.endPosition}
     </select>
 
-    <select id="queryPreCusNum" resultType="long">
+    <select id="queryPreCusNum" resultType="java.lang.Long">
         select sum(custom_num) AS custom_num from ci_label_stat_dm_${opTime}
         where city_id=-1 and vip_level_id=-1 and brand_id=-1
         <if test="null != dataDate and '' != dataDate">
             and data_date=#{dataDate}
         </if>
-        <if test="null != labelId and labelId != 0">
+        <if test="labelId != 0">
+            and label_id=#{labelId}
+        </if>
+    </select>
+
+    <select id="doPreCusNumExist" resultType="Boolean">
+        SELECT
+        count(1)
+        FROM
+        (SELECT
+        1 FROM ci_label_stat_dm_${opTime}
+        WHERE 1=1
+        <if test="null != dataDate and '' != dataDate">
+            AND data_date=#{dataDate}
+        </if>
+        <if test="labelId != 0">
+            AND label_id=#{labelId}
+        </if>
+        FETCH FIRST 1 ROWS ONLY )
+    </select>
+
+    <select id="queryRingNum" resultType="java.lang.Long">
+        select ring_num AS ringNum from ci_label_stat_dm_${opTime}
+        where city_id=-1 and vip_level_id=-1 and brand_id=-1
+        <if test="null != dataDate and '' != dataDate">
+            and data_date=#{dataDate}
+        </if>
+        <if test="labelId != 0">
             and label_id=#{labelId}
         </if>
     </select>

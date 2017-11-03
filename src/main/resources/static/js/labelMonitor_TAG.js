@@ -111,8 +111,8 @@ $(document).ready(function () {
                         $trTmp.append($td.clone().append(Header.setLabelStatus(v.status)));
                         $trTmp.append($td.clone().text(v.labelName).attr("title", v.cocLabelExt.delayValue));
                         /**预警原因
-                        var msg = "";
-                        if (v.status == "1" || v.status == "2") {
+                         var msg = "";
+                         if (v.status == "1" || v.status == "2") {
                         } else if (v.status == "-2") {
                             if (v.errorMsg == "" || v.errorMsg == "文件未到") {
                             } else {
@@ -127,14 +127,14 @@ $(document).ready(function () {
                         //$trTmp.append($td.clone().append(msg));
                         $trTmp.append($td.clone().text(v.dataDate == undefined || v.dataDate == "" ? "" : v.dataDate));
                         $trTmp.append($td.clone().text(v.customNum));
-                        var wavedCustomNum="";
-                        if(v.cocLabelExt.wavedCustomNum>=0){
-                            wavedCustomNum="<img src='../images/icon_up.png'/>"+ Header.dataformat(v.cocLabelExt.wavedCustomNum,2);
-                        }else{
-                            wavedCustomNum="<img src='../images/icon_down.png'/>"+Header.dataformat(-v.cocLabelExt.wavedCustomNum,2);
+                        var wavedCustomNum = "";
+                        if (v.cocLabelExt.wavedCustomNum >= 0) {
+                            wavedCustomNum = "<img src='../images/icon_up.png'/>" + Header.dataformat(v.cocLabelExt.wavedCustomNum, 1);
+                        } else {
+                            wavedCustomNum = "<img src='../images/icon_down.png'/>" + Header.dataformat(-v.cocLabelExt.wavedCustomNum, 1);
                         }
                         $trTmp.append($td.clone().append(wavedCustomNum));
-                        $trTmp.append($td.clone().text(v.cocLabelExt.moM + "%"));
+                        $trTmp.append($td.clone().text(Header.dataformat(v.cocLabelExt.moM, 2) + "%"));
                         $trTmp.append($td.clone().text(v.srcTabName));
                         $trTmp.append($td.clone().text(v.srcTabColName));
 
@@ -174,7 +174,10 @@ $(document).ready(function () {
                 //分页初始化
                 $("#pageTool").html("");
                 $("#pageTool").Paging({
-                    pagesize: 8, count: totalRecord, current: currentPage, callback: function (currentPage,size,count) {
+                    pagesize: 8,
+                    count: totalRecord,
+                    current: currentPage,
+                    callback: function (currentPage, size, count) {
                         refresh(dataCycle, currentPage, status);
                     }
                 });

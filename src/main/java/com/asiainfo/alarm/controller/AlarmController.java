@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,13 +68,17 @@ public class AlarmController {
         for (CocLabel cocLabel : labelList) {
             CocLabelExt cocLabelExt = new CocLabelExt();
             cocLabelExt.setLabelId(cocLabel.getLabelId());
-            cocLabelExt.setWavedCustomNum(alarmService.cusNumWaved(cocLabel, DateUtil.twoDaysAgo, DateUtil.threeDaysAgo));
-            cocLabelExt.setMoM(alarmService.calculateMoM(cocLabel, DateUtil.twoDaysAgo, DateUtil.threeDaysAgo));
+            if (alarmService.cusNumWaved(cocLabel, DateUtil.twoDaysAgo, DateUtil.twoDaysAgo) != -1) {
+                cocLabelExt.setWavedCustomNum(alarmService.cusNumWaved(cocLabel, DateUtil.twoDaysAgo, DateUtil.twoDaysAgo));
+                cocLabelExt.setMoM(alarmService.calculateMoM(cocLabel, cocLabelExt, DateUtil.twoDaysAgo, DateUtil.threeDaysAgo));
+            } else {
+                cocLabel.setStatus(-1);
+            }
+            System.out.println(cocLabel.getLabelId() + "----" + cocLabel.getLabelName() + "====" + cocLabel.getDataDate());
             if (cocLabel.getDataCycle() == 1) {
                 cocLabelExt.setDelayValue(DateUtil.delayValDay);
-                LocalDate localDate = LocalDate.now();
-                if (Long.parseLong(localDate.format(DateUtil.dayFormatter)) - Long.parseLong(cocLabel.getDataDate()) <= cocLabelExt.getDelayValue() + 1) {
-                    if (cocLabelExt.getMoM() > labelUtil.wavedPercent) {
+                if (!DateUtil.isDelay(cocLabel.getDataDate(), cocLabelExt.getDelayValue())) {
+                    if (cocLabelExt.getMoM() > labelUtil.wavedPercent || cocLabelExt.getMoM() == -1.00f || cocLabelExt.getMoM() == 0) {
                         waved++;
                         cocLabel.setStatus(3);
                     } else {

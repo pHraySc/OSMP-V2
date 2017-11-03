@@ -109,7 +109,7 @@ Header = function () {
             var index = status;
             var images = {};
             images[1] = "../images/icon_h.png";
-            images[2] = "../images/ods_n.png";
+            images[2] = "../images/icon_i.png";
             images[3] = "../images/icon_j.png";
             return "<img src= " + images[index] + " >";
         },
