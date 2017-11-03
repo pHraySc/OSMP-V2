@@ -1,0 +1,1289 @@
+Index: src/main/java/com/asiainfo/alarm/dao/coc/ICocAlarmDao.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/asiainfo/alarm/dao/coc/ICocAlarmDao.java	(revision 9888)
++++ src/main/java/com/asiainfo/alarm/dao/coc/ICocAlarmDao.java	(revision )
+@@ -1,11 +1,14 @@
+ package com.asiainfo.alarm.dao.coc;
+ 
++import com.asiainfo.alarm.model.CocLabel;
+ import com.asiainfo.alarm.model.CocSourceTable;
+ import com.asiainfo.alarm.model.Page;
+ import org.apache.ibatis.annotations.Param;
++import org.springframework.stereotype.Repository;
+ 
+ import java.util.List;
+ 
++@Repository
+ public interface ICocAlarmDao {
+     /**
+      * 获取源表信息总记录数
+@@ -25,4 +28,49 @@
+      * @return 源表信息列表
+      */
+     List<CocSourceTable> getSourceTableInfo(@Param("dataCycle") int dataCycle, @Param("sourceTableName") String sourceTableName, @Param("page") Page page);
++
++    /**
++     * 获取标签信息总记录数
++     *
++     * @param labelName 标签名
++     * @param dataCycle 数据周期：0，全部；1，日；2，月
++     * @return
++     */
++    int queryLabelNum(@Param("labelName") String labelName, @Param("dataCycle") int dataCycle);
++
++    /**
++     * 获取标签信息
++     *
++     * @param labelName 标签名
++     * @param dataCycle 数据周期：0，全部；1，日；2，月
++     * @param page      分页信息
++     * @param opTime    数据表账期
++     * @param dataDate  数据日期
++     * @return
++     */
++    List<CocLabel> queryLabelInfo(@Param("dataCycle") int dataCycle, @Param("labelName") String labelName,
++                                  @Param("page") Page page, @Param("opTime") String opTime, @Param("dataDate") String dataDate);
++
++    /**
++     * 获取前一天的用户数与当天的做比较-具体数量的比较
++     *
++     * @param labelId
++     * @return 前一天的该标签Id的用户数
++     */
++    long queryPreCusNum(@Param("labelId") long labelId, @Param("opTime") String opTime, @Param("dataDate") String dataDate);
++
++    /**
++     * 判断前一天用户数是否存在
++     *
++     * @return
++     */
++    boolean doPreCusNumExist(@Param("labelId") long labelId, @Param("opTime") String opTime, @Param("dataDate") String dataDate);
++
++    /**
++     * 获取前一天的用户数与当天的做比较-具体数量的比较
++     *
++     * @param labelId
++     * @return opTime相对于dataDate的环比值-具体数值
++     */
++    long queryRingNum(@Param("labelId") long labelId, @Param("opTime") String opTime, @Param("dataDate") String dataDate);
+ }
+Index: src/main/java/com/asiainfo/alarm/controller/AlarmController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/asiainfo/alarm/controller/AlarmController.java	(revision 9888)
++++ src/main/java/com/asiainfo/alarm/controller/AlarmController.java	(revision )
+@@ -1,11 +1,10 @@
+ package com.asiainfo.alarm.controller;
+ 
+-import com.asiainfo.alarm.model.CocSourceTable;
+-import com.asiainfo.alarm.model.CocSourceTableExt;
+-import com.asiainfo.alarm.model.Page;
+-import com.asiainfo.alarm.model.Result;
++import com.asiainfo.alarm.model.*;
+ import com.asiainfo.alarm.service.IAlarmService;
++import com.asiainfo.alarm.util.DateUtil;
+ import com.asiainfo.alarm.util.ResultUtil;
++import com.asiainfo.alarm.util.labelUtil;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ import org.springframework.beans.factory.annotation.Autowired;
+@@ -15,7 +14,11 @@
+ import org.springframework.web.bind.annotation.RequestParam;
+ import org.springframework.web.bind.annotation.ResponseBody;
+ 
++import java.time.LocalDate;
++import java.util.Date;
++import java.util.HashMap;
+ import java.util.List;
++import java.util.Map;
+ 
+ @Controller
+ @RequestMapping("/alarm")
+@@ -28,7 +31,10 @@
+ 
+     @ResponseBody
+     @GetMapping("/getSourceTableInfo")
+-    public Result getSourceTableInfo(@RequestParam(value = "dataCycle", defaultValue = "0") int dataCycle, @RequestParam(value = "sourceTableName", defaultValue = "") String sourceTableName, @RequestParam(value = "currentPage", defaultValue = "1") int currentPage, @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
++    public Result getSourceTableInfo(@RequestParam(value = "dataCycle", defaultValue = "0") int dataCycle,
++                                     @RequestParam(value = "sourceTableName", defaultValue = "") String sourceTableName,
++                                     @RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
++                                     @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+ 
+         int count = alarmService.getSourceTableInfoCount(dataCycle, sourceTableName);
+ 
+@@ -39,9 +45,70 @@
+         for (CocSourceTable cocSourceTable : sourceTableList) {
+             CocSourceTableExt cocSourceTableExt = alarmService.getSourceTableExtInfo(cocSourceTable.getSourceTableCode());
+             int delayValue = cocSourceTableExt.getDelayValue();
+-
+         }
+ 
+         return ResultUtil.success(sourceTableList);
+     }
++
++    @ResponseBody
++    @GetMapping("/queryLabelInfo")
++    public Result queryLabelInfo(@RequestParam(value = "dataCycle", defaultValue = "0") int dataCycle,
++                                 @RequestParam(value = "labelName", defaultValue = "") String labelName,
++                                 @RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
++                                 @RequestParam(value = "pageSize", defaultValue = "8") int pageSize,
++                                 @RequestParam(value = "status", defaultValue = "") String status) {
++        Map<String, Integer> labelStatus = new HashMap<String, Integer>();
++        int normal = 0;
++        int delay = 0;
++        int waved = 0;
++        int count = alarmService.queryLabelNum(labelName, dataCycle);
++        Page page = new Page(currentPage, pageSize, count);
++        List<CocLabel> labelList = alarmService.queryLabelInfo(dataCycle, labelName, page, DateUtil.twoDaysAgo, DateUtil.twoDaysAgo);
++
++        for (CocLabel cocLabel : labelList) {
++            CocLabelExt cocLabelExt = new CocLabelExt();
++            cocLabelExt.setLabelId(cocLabel.getLabelId());
++            if (alarmService.cusNumWaved(cocLabel, DateUtil.twoDaysAgo, DateUtil.twoDaysAgo) != -1) {
++                cocLabelExt.setWavedCustomNum(alarmService.cusNumWaved(cocLabel, DateUtil.twoDaysAgo, DateUtil.twoDaysAgo));
++                cocLabelExt.setMoM(alarmService.calculateMoM(cocLabel, cocLabelExt, DateUtil.twoDaysAgo, DateUtil.threeDaysAgo));
++            } else {
++                cocLabel.setStatus(-1);
++            }
++            System.out.println(cocLabel.getLabelId() + "----" + cocLabel.getLabelName() + "====" + cocLabel.getDataDate());
++            if (cocLabel.getDataCycle() == 1) {
++                cocLabelExt.setDelayValue(DateUtil.delayValDay);
++                if (!DateUtil.isDelay(cocLabel.getDataDate(), cocLabelExt.getDelayValue())) {
++                    if (cocLabelExt.getMoM() > labelUtil.wavedPercent || cocLabelExt.getMoM() == -1.00f || cocLabelExt.getMoM() == 0) {
++                        waved++;
++                        cocLabel.setStatus(3);
++                    } else {
++                        normal++;
++                        cocLabel.setStatus(1);
++                    }
++                } else {
++                    delay++;
++                    cocLabel.setStatus(2);
++                }
++            } else {
++                cocLabelExt.setDelayValue(DateUtil.delayValMonth);
++            }
++            cocLabel.setCocLabelExt(cocLabelExt);
++        }
++
++        labelStatus.put("normal", normal);
++        labelStatus.put("delay", delay);
++        labelStatus.put("waved", waved);
++
++        Map labelMap = new HashMap();
++
++        labelMap.put("labelList", labelList);
++        labelMap.put("labelStatus", labelStatus);
++        labelMap.put("count", count);
++
++        return ResultUtil.success(labelMap);
++        /*Iterator<CocLabel> iterator = labelList.iterator();
++        while (iterator.hasNext()){
++            System.out.println(iterator.next().getClass());
++        }*/
++    }
+ }
+Index: src/main/resources/static/js/header.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/resources/static/js/header.js	(revision 9888)
++++ src/main/resources/static/js/header.js	(revision )
+@@ -1,127 +1,138 @@
+ $.ajax({
+-	cache: false
++    cache: false
+ });
+-Header=function(){
+-	return {
+-	def:{
+-		author:"zhanggm2",
+-		date:"2017-4-27",
+-		name:"script of OMP page header model"
+-	},
+-	 element:"#nav",
+-	 nav:{
+-			/*MMSsecurity:{
+-				icon:"../images/icon_e.png",
+-				text:"彩信保障",
+-				dataId:"MMSsecurity"
+-			},*/
+-		    
+-		    baseMonitor_CHARTS:{
+-		    	icon:"../images/icon_f.png",
+-				text:"首页",
+-				dataId:"baseMonitor_CHARTS"
+-		    },
+-		    	
+-			baseMonitor:{
+-				icon:"../images/icon_f.png",
+-				text:"基础监控",
+-				dataId:"baseMonitor"
+-			},
+-			/*appMonitor:{
+-				icon:"../images/ods_m.png",
+-				text:"应用监控",
+-				dataId:"appMonitor"
+-			},
+-			speMonitor:{
+-				icon:"../images/icon_0.png",
+-				text:"专题监控",
+-				dataId:"speMonitor"
+-			},
+-			confModel:{
+-				icon:"../images/icon_q.png",
+-				text:"配置模块",
+-				dataId:"confModel"
+-			},*/
+-			knowledge:{
+-				icon:"../images/icon_right2.png",
+-				text:"知识库",
+-				dataId:"knowledge"
+-			},
+-			confModel:{
+-				icon:"../images/icon_right2.png",
+-				text:"配置管理",
+-				dataId:"confModel"
+-			}
+-			/*Beonduty:{
+-				icon:"../images/icon_right1.png",
+-				text:"值班流程",
+-				dataId:"Beonduty"
+-			}*/
+-	    },
+-   buildNavigation:function(){
+-	   var _this=this;
+-	   var isfirst=true;
+-       $(_this.element).empty();
+-       $(".page-left").css("height",document.documentElement.clientHeight+"px");
+-       $(".page-right").css("width",document.documentElement.offsetWidth-$(".page-left").width()-10+"px");
+-       $.each(this.nav,function(k,v){
+-       	var $li=$("<li class='nav-item' data-id='"+k+"'></li>");
+-       	var $divImg=$("<div class='nav-item-icon'><img src='"+v.icon+"'></div>");
+-       	var $divText=$("<div class='nav-item-text'>"+v.text+"</div>");
+-       	var $divTmp=$("<div style='clear:both;'><div>");
+-       	$li.append($divImg);
+-       	$li.append($divText);
+-       	if(isfirst){
+-       	   $li.addClass("nav-item-active");
+-       	   isfirst=false;
+-       	}
+-       	$li.click(function(){
+-	        	$(".nav-item-active").removeClass("nav-item-active");
+-	        	$(this).addClass("nav-item-active");
+-	        	window.location.href=$(this).attr("data-id");
+-            });
+-       $(_this.element).append($li);
+-      });
+-    },
+-    setOdsStatus:function(status,timeout) {
+-	 var floor=status;
+-	 if(timeout=="1")
+-	 {     
+-		 floor=99;
+-	 }
+-	 var images = {};
+-	 images[0]="../images/icon_h.png";
+-	 images[1]="../images/icon_i.png";
+-	 images[2]="../images/icon_j.png";
+-	 images[3]="../images/icon_k.png";
+-	 images[-2]="../images/icon_r.png";
+-	 images[4]="../images/icon_l.png";
+-	 images[99]="../images/ods_n.png";
+-	 images[-1]="../images/icon_i.png";
+-	 images[98]="../images/icon_l.png";
+-	 return "<img src="+ images[floor]+">";
+-  },
+-  dataformat:function(s, n)   
+-  {   
+-	 	 if (s=="" || s==null)
+-	 	 {return "0";}
+-	    n = n > 0 && n <= 20 ? n : 2;   
+-	    s = parseFloat((s + "").replace(/[^\d\.-]/g, "")).toFixed(n) + "";   
+-	    var l = s.split(".")[0].split("").reverse(),   
+-	    r = s.split(".")[1];   
+-	    t = "";   
+-	    for(i = 0; i < l.length; i ++ )   
+-	    {   
+-	       t += l[i] + ((i + 1) % 3 == 0 && (i + 1) != l.length ? "," : "");   
+-	    }   
+-	    return t.split("").reverse().join("") + "." + r;   
+-	 },
+-    show:function(menu){
+-    	$(".nav-item-active").removeClass("nav-item-active");
+-        $(".nav-item[data-id='"+menu+"']").addClass("nav-item-active");
+-    },
+-	init:function(){
+-		this.buildNavigation();
+-	}
+-	};
++Header = function () {
++    return {
++        def: {
++            author: "zhanggm2",
++            date: "2017-4-27",
++            name: "script of OMP page header model"
++        },
++        element: "#nav",
++        nav: {
++            /*MMSsecurity:{
++             icon:"../images/icon_e.png",
++             text:"彩信保障",
++             dataId:"MMSsecurity"
++             },*/
++
++            baseMonitor_CHARTS: {
++                icon: "../images/icon_f.png",
++                text: "首页",
++                dataId: "baseMonitor_CHARTS"
++            },
++
++            baseMonitor: {
++                icon: "../images/icon_f.png",
++                text: "基础监控",
++                dataId: "baseMonitor"
++            },
++            /*appMonitor:{
++             icon:"../images/ods_m.png",
++             text:"应用监控",
++             dataId:"appMonitor"
++             },
++             speMonitor:{
++             icon:"../images/icon_0.png",
++             text:"专题监控",
++             dataId:"speMonitor"
++             },
++             confModel:{
++             icon:"../images/icon_q.png",
++             text:"配置模块",
++             dataId:"confModel"
++             },*/
++            knowledge: {
++                icon: "../images/icon_right1.png",
++                text: "知识库",
++                dataId: "knowledge"
++            },
++            confModel: {
++                icon: "../images/icon_right2.png",
++                text: "配置管理",
++                dataId: "confModel"
++            },
++            labelMonitor: {
++                icon: "../images/icon_note.png",
++                text: "标签库",
++                dataId: "labelMonitor"
++            }
++            /*Beonduty:{
++             icon:"../images/icon_right1.png",
++             text:"值班流程",
++             dataId:"Beonduty"
++             }*/
++        },
++        buildNavigation: function () {
++            var _this = this;
++            var isfirst = true;
++            $(_this.element).empty();
++            $(".page-left").css("height", document.documentElement.clientHeight + "px");
++            $(".page-right").css("width", document.documentElement.offsetWidth - $(".page-left").width() - 10 + "px");
++            $.each(this.nav, function (k, v) {
++                var $li = $("<li class='nav-item' data-id='" + k + "'></li>");
++                var $divImg = $("<div class='nav-item-icon'><img src='" + v.icon + "'></div>");
++                var $divText = $("<div class='nav-item-text'>" + v.text + "</div>");
++                var $divTmp = $("<div style='clear:both;'><div>");
++                $li.append($divImg);
++                $li.append($divText);
++                if (isfirst) {
++                    $li.addClass("nav-item-active");
++                    isfirst = false;
++                }
++                $li.click(function () {
++                    $(".nav-item-active").removeClass("nav-item-active");
++                    $(this).addClass("nav-item-active");
++                    window.location.href = $(this).attr("data-id");
++                });
++                $(_this.element).append($li);
++            });
++        },
++        setOdsStatus: function (status, timeout) {
++            var floor = status;
++            if (timeout == "1") {
++                floor = 99;
++            }
++            var images = {};
++            images[0] = "../images/icon_h.png";
++            images[1] = "../images/icon_i.png";
++            images[2] = "../images/icon_j.png";
++            images[3] = "../images/icon_k.png";
++            images[-2] = "../images/icon_r.png";
++            images[4] = "../images/icon_l.png";
++            images[99] = "../images/ods_n.png";
++            images[-1] = "../images/icon_i.png";
++            images[98] = "../images/icon_l.png";
++            return "<img src=" + images[floor] + ">";
++        },
++        setLabelStatus: function (status) {
++            var index = status;
++            var images = {};
++            images[1] = "../images/icon_h.png";
++            images[2] = "../images/icon_i.png";
++            images[3] = "../images/icon_j.png";
++            return "<img src= " + images[index] + " >";
++        },
++        dataformat: function (s, n) {
++            if (s == "" || s == null) {
++                return "0";
++            }
++            n = n > 0 && n <= 20 ? n : 2;
++            s = parseFloat((s + "").replace(/[^\d\.-]/g, "")).toFixed(n) + "";
++            var l = s.split(".")[0].split("").reverse(),
++                r = s.split(".")[1];
++            t = "";
++            for (i = 0; i < l.length; i++) {
++                t += l[i] + ((i + 1) % 3 == 0 && (i + 1) != l.length ? "," : "");
++            }
++            return t.split("").reverse().join("") + "." + r;
++        },
++        show: function (menu) {
++            $(".nav-item-active").removeClass("nav-item-active");
++            $(".nav-item[data-id='" + menu + "']").addClass("nav-item-active");
++        },
++        init: function () {
++            this.buildNavigation();
++        }
++    };
+ };
+\ No newline at end of file
+Index: src/main/java/com/asiainfo/alarm/service/impl/AlarmServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/asiainfo/alarm/service/impl/AlarmServiceImpl.java	(revision 9888)
++++ src/main/java/com/asiainfo/alarm/service/impl/AlarmServiceImpl.java	(revision )
+@@ -2,9 +2,7 @@
+ 
+ import com.asiainfo.alarm.dao.bass.IAlarmDao;
+ import com.asiainfo.alarm.dao.coc.ICocAlarmDao;
+-import com.asiainfo.alarm.model.CocSourceTable;
+-import com.asiainfo.alarm.model.CocSourceTableExt;
+-import com.asiainfo.alarm.model.Page;
++import com.asiainfo.alarm.model.*;
+ import com.asiainfo.alarm.service.IAlarmService;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
+@@ -53,4 +51,67 @@
+     public CocSourceTableExt getSourceTableExtInfo(String sourceTableCode) {
+         return alarmDao.getSourceTableExtInfo(sourceTableCode);
+     }
++
++    /**
++     * 获取标签信息总记录数
++     *
++     * @param labelName 标签名
++     * @param dataCycle 数据周期：0，全部；1，日；2，月
++     * @return
++     */
++    @Override
++    public int queryLabelNum(String labelName, int dataCycle) {
++        return cocAlarmDao.queryLabelNum(labelName, dataCycle);
++    }
++
++    /**
++     * 获取标签信息
++     *
++     * @param labelName 标签名
++     * @param dataCycle 数据周期：0，全部；1，日；2，月
++     * @param page      分页信息
++     * @return
++     */
++    @Override
++    public List<CocLabel> queryLabelInfo(int dataCycle, String labelName, Page page, String opTime, String dataDate) {
++        return cocAlarmDao.queryLabelInfo(dataCycle, labelName, page, opTime, dataDate);
++    }
++
++    /**
++     * 查询标签波动情况-计算具体数量
++     * 有以下几种情况：
++     * 1、2天和3天前的数据都不存在，无法计算环比，返回-1，数据延迟，外层方法可以判断
++     * 2、2天前数据不存在，3天前存在，该情况下，有可能是2天前数据还未跑出，有可能是数据出现问题。==>可以直接计算，会归到波动异常中
++     * 3、2天前数据存在，3天前数据不存在，3天前数据出现问题，无法计算环比
++     *
++     * @param cocLabel
++     * @return 波动具体数量
++     */
++    @Override
++    public long cusNumWaved(CocLabel cocLabel, String opTime, String dataDate) {
++        if (cocAlarmDao.doPreCusNumExist(cocLabel.getLabelId(), opTime, dataDate)) {
++            return cocAlarmDao.queryRingNum(cocLabel.getLabelId(), opTime, dataDate);
++        } else {
++            return -1;
++        }
++    }
++
++    /**
++     * 查询标签波动-计算环比值
++     *
++     * @param cocLabel
++     * @return 波动百分比
++     */
++    @Override
++    public float calculateMoM(CocLabel cocLabel, CocLabelExt cocLabelExt, String opTime, String dataDate) {
++        long previousNum = 0;
++        if (cocAlarmDao.doPreCusNumExist(cocLabel.getLabelId(), opTime, dataDate)) {
++            previousNum = cocAlarmDao.queryPreCusNum(cocLabel.getLabelId(), opTime, dataDate);
++            long ringNum = Math.abs(cocLabelExt.getWavedCustomNum());
++            float moM = (ringNum * 1.0f) / previousNum *100;
++            return moM;
++        } else {
++            return -1.00f;
++        }
++    }
+ }
+Index: src/main/java/com/asiainfo/omp/controller/OsmpController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/asiainfo/omp/controller/OsmpController.java	(revision 9888)
++++ src/main/java/com/asiainfo/omp/controller/OsmpController.java	(revision )
+@@ -1,21 +1,12 @@
+ package com.asiainfo.omp.controller;
+ 
+ 
+-import java.util.ArrayList;
+-import java.util.Date;
+-import java.util.HashMap;
+-import java.util.List;
+-import java.util.Map;
+-
+ import org.apache.log4j.Logger;
+ import org.springframework.stereotype.Controller;
+ import org.springframework.ui.ModelMap;
+ import org.springframework.web.bind.annotation.RequestMapping;
+-import org.springframework.web.bind.annotation.RequestMethod;
+-import org.springframework.web.bind.annotation.RequestParam;
+-import org.springframework.web.bind.annotation.ResponseBody;
+ 
+-import com.asiainfo.omp.model.City;
++import java.util.*;
+ @Controller
+ public class OsmpController extends BaseController{
+ 	private static Logger logger = Logger.getLogger(OsmpController.class);
+@@ -139,6 +130,29 @@
+         model.put("message","freemarker test!");
+     	return "config_InterFace";
+     }
+-    
+-    
++
++    //跳转标签库监控界面-默认汇总页面
++    @RequestMapping("/labelMonitor")
++    public String labelMonitor(ModelMap model) {
++        model.put("time", new Date());
++        model.put("message", "freemarker test!");
++        return "labelMonitor";
++    }
++
++    //跳转标签库监控界面-源表
++    @RequestMapping("/labelMonitor_SOURCE")
++    public String labelMonitor_SOURCE(ModelMap model) {
++        model.put("time", new Date());
++        model.put("message", "freemarker test!");
++        return "labelMonitor_SOURCE";
++    }
++
++    //跳转标签库监控界面-标签
++    @RequestMapping("/labelMonitor_TAG")
++    public String labelMonitor_TAG(ModelMap model) {
++        model.put("time", new Date());
++        model.put("message", "freemarker test!");
++        return "labelMonitor_TAG";
++    }
++
+ }
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- pom.xml	(revision 9888)
++++ pom.xml	(revision )
+@@ -5,7 +5,7 @@
+ 
+     <groupId>springboot</groupId>
+     <artifactId>OSMP-Version</artifactId>
+-    <version>0.0.1-SNAPSHOT</version>
++    <version>v2.0</version>
+     <name>springboot-mybatis Mybatis Demo</name>
+ 
+     <!-- Spring Boot 启动父依赖 -->
+Index: OSMP-Version.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- OSMP-Version.iml	(revision )
++++ OSMP-Version.iml	(revision )
+@@ -0,0 +1,90 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
++  <component name="FacetManager">
++    <facet type="Spring" name="Spring">
++      <configuration />
++    </facet>
++  </component>
++  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
++    <output url="file://$MODULE_DIR$/target/classes" />
++    <output-test url="file://$MODULE_DIR$/target/test-classes" />
++    <content url="file://$MODULE_DIR$">
++      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
++      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
++      <sourceFolder url="file://$MODULE_DIR$/src/main/webapp" type="java-resource" />
++      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
++      <excludeFolder url="file://$MODULE_DIR$/target" />
++    </content>
++    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
++    <orderEntry type="sourceFolder" forTests="false" />
++    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-web:1.5.1.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter:1.5.1.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:1.5.1.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-autoconfigure:1.5.1.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-logging:1.5.1.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.1.9" level="project" />
++    <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.1.9" level="project" />
++    <orderEntry type="library" name="Maven: org.slf4j:jcl-over-slf4j:1.7.22" level="project" />
++    <orderEntry type="library" name="Maven: org.slf4j:jul-to-slf4j:1.7.22" level="project" />
++    <orderEntry type="library" name="Maven: org.slf4j:log4j-over-slf4j:1.7.22" level="project" />
++    <orderEntry type="library" scope="RUNTIME" name="Maven: org.yaml:snakeyaml:1.17" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-tomcat:1.5.1.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-websocket:8.5.11" level="project" />
++    <orderEntry type="library" name="Maven: org.hibernate:hibernate-validator:5.3.4.Final" level="project" />
++    <orderEntry type="library" name="Maven: javax.validation:validation-api:1.1.0.Final" level="project" />
++    <orderEntry type="library" name="Maven: org.jboss.logging:jboss-logging:3.3.0.Final" level="project" />
++    <orderEntry type="library" name="Maven: com.fasterxml:classmate:1.3.3" level="project" />
++    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.8.6" level="project" />
++    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.8.0" level="project" />
++    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.6" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework:spring-web:4.3.6.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework:spring-aop:4.3.6.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework:spring-beans:4.3.6.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework:spring-context:4.3.6.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:4.3.6.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework:spring-expression:4.3.6.RELEASE" level="project" />
++    <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-starter-test:1.5.1.RELEASE" level="project" />
++    <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-test:1.5.1.RELEASE" level="project" />
++    <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-test-autoconfigure:1.5.1.RELEASE" level="project" />
++    <orderEntry type="library" scope="TEST" name="Maven: com.jayway.jsonpath:json-path:2.2.0" level="project" />
++    <orderEntry type="library" scope="TEST" name="Maven: net.minidev:json-smart:2.2.1" level="project" />
++    <orderEntry type="library" scope="TEST" name="Maven: net.minidev:accessors-smart:1.1" level="project" />
++    <orderEntry type="library" scope="TEST" name="Maven: org.ow2.asm:asm:5.0.3" level="project" />
++    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.22" level="project" />
++    <orderEntry type="library" scope="TEST" name="Maven: org.assertj:assertj-core:2.6.0" level="project" />
++    <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-core:1.10.19" level="project" />
++    <orderEntry type="library" scope="TEST" name="Maven: org.objenesis:objenesis:2.1" level="project" />
++    <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
++    <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-library:1.3" level="project" />
++    <orderEntry type="library" scope="TEST" name="Maven: org.skyscreamer:jsonassert:1.4.0" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework:spring-core:4.3.6.RELEASE" level="project" />
++    <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-test:4.3.6.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: org.mybatis.spring.boot:mybatis-spring-boot-starter:1.2.0" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-jdbc:1.5.1.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: org.apache.tomcat:tomcat-jdbc:8.5.11" level="project" />
++    <orderEntry type="library" name="Maven: org.apache.tomcat:tomcat-juli:8.5.11" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:4.3.6.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework:spring-tx:4.3.6.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: org.mybatis.spring.boot:mybatis-spring-boot-autoconfigure:1.2.0" level="project" />
++    <orderEntry type="library" name="Maven: org.mybatis:mybatis:3.4.2" level="project" />
++    <orderEntry type="library" name="Maven: org.mybatis:mybatis-spring:1.3.1" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-configuration-processor:1.5.1.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: com.vaadin.external.google:android-json:0.0.20131108.vaadin1" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-freemarker:1.5.2.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: org.freemarker:freemarker:2.3.25-incubating" level="project" />
++    <orderEntry type="library" name="Maven: org.springframework:spring-context-support:4.3.6.RELEASE" level="project" />
++    <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.39" level="project" />
++    <orderEntry type="library" name="Maven: junit:junit:4.12" level="project" />
++    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.tomcat.embed:tomcat-embed-jasper:8.5.11" level="project" />
++    <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-core:8.5.11" level="project" />
++    <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-el:8.5.11" level="project" />
++    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jdt.core.compiler:ecj:4.5.1" level="project" />
++    <orderEntry type="library" name="Maven: javax.servlet:jstl:1.2" level="project" />
++    <orderEntry type="library" name="Maven: net.sf.json-lib:json-lib:jdk15:2.4" level="project" />
++    <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils:1.9.3" level="project" />
++    <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.2.2" level="project" />
++    <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.5" level="project" />
++    <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
++    <orderEntry type="library" name="Maven: net.sf.ezmorph:ezmorph:1.0.6" level="project" />
++  </component>
++</module>
+\ No newline at end of file
+Index: src/main/java/com/asiainfo/alarm/service/IAlarmService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/asiainfo/alarm/service/IAlarmService.java	(revision 9888)
++++ src/main/java/com/asiainfo/alarm/service/IAlarmService.java	(revision )
+@@ -1,8 +1,6 @@
+ package com.asiainfo.alarm.service;
+ 
+-import com.asiainfo.alarm.model.CocSourceTable;
+-import com.asiainfo.alarm.model.CocSourceTableExt;
+-import com.asiainfo.alarm.model.Page;
++import com.asiainfo.alarm.model.*;
+ 
+ import java.util.List;
+ 
+@@ -33,4 +31,39 @@
+      * @return 源表扩展信息
+      */
+     CocSourceTableExt getSourceTableExtInfo(String sourceTableCode);
++
++    /**
++     * 获取标签信息总记录数
++     *
++     * @param labelName 标签名
++     * @param dataCycle 数据周期：0，全部；1，日；2，月
++     * @return
++     */
++    int queryLabelNum(String labelName, int dataCycle);
++
++    /**
++     * 获取标签信息
++     *
++     * @param labelName 标签名
++     * @param dataCycle 数据周期：0，全部；1，日；2，月
++     * @param page      分页信息
++     * @return
++     */
++    List<CocLabel> queryLabelInfo(int dataCycle, String labelName, Page page, String opTime, String dataDate);
++
++    /**
++     * 查询标签波动情况-计算具体数量
++     *
++     * @param cocLabel
++     * @return 波动具体数量
++     */
++    long cusNumWaved(CocLabel cocLabel, String opTime, String dataDate);
++
++    /**
++     * 查询标签波动-计算环比值
++     *
++     * @param cocLabel
++     * @return 波动百分比
++     */
++    float calculateMoM(CocLabel cocLabel, CocLabelExt cocLabelExt, String opTime, String dataDate);
+ }
+Index: src/main/resources/application-dev.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/resources/application-dev.properties	(revision 9888)
++++ src/main/resources/application-dev.properties	(revision )
+@@ -10,7 +10,7 @@
+ spring.http.multipart.maxRequestSize=1000Mb
+ 
+ spring.datasource.secondary.driver-class-name=com.mysql.jdbc.Driver
+-spring.datasource.secondary.url=jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
++spring.datasource.secondary.url=jdbc:mysql://localhost:3306/dwpcfg?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+ spring.datasource.secondary.username=root
+ spring.datasource.secondary.password=root
+ spring.datasource.secondary.max-idle=10 
+@@ -23,9 +23,9 @@
+ spring.datasource.secondary.time-between-eviction-runs-millis=18800
+ 
+ spring.datasource.bass.driver-class-name=com.mysql.jdbc.Driver
+-spring.datasource.bass.url=jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
++spring.datasource.bass.url=jdbc:mysql://localhost:3306/label?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+ spring.datasource.bass.username=root
+-spring.datasource.bass.password=root
++spring.datasource.bass.password=722799
+ spring.datasource.bass.max-idle=10 
+ spring.datasource.bass.max-wait=10000 
+ spring.datasource.bass.min-idle=5 
+@@ -36,7 +36,7 @@
+ spring.datasource.bass.time-between-eviction-runs-millis=18800
+ 
+ spring.datasource.coc.driver-class-name=com.ibm.db2.jcc.DB2Driver
+-spring.datasource.coc.url=jdbc:db2://192.168.76.128:50000/gis:currentSchema=SCCOC;
++spring.datasource.coc.url=jdbc:db2://192.168.191.1:50000/gis:currentSchema=SCCOC;
+ spring.datasource.coc.username=db2inst1
+ spring.datasource.coc.password=qwerasdf
+ spring.datasource.coc.initial-size=5
+Index: src/main/java/com/asiainfo/alarm/util/DateUtil.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/asiainfo/alarm/util/DateUtil.java	(revision 9888)
++++ src/main/java/com/asiainfo/alarm/util/DateUtil.java	(revision )
+@@ -4,6 +4,8 @@
+ import org.slf4j.LoggerFactory;
+ 
+ import java.time.LocalDate;
++import java.time.LocalDateTime;
++import java.time.LocalTime;
+ import java.time.format.DateTimeFormatter;
+ 
+ /**
+@@ -13,11 +15,31 @@
+ 
+     private static final Logger logger = LoggerFactory.getLogger(DateUtil.class);
+ 
+-    private static final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("yyyyMM");
++    public static final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("yyyyMM");
+ 
+-    private static final DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
++    public static final DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+ 
+-    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
++    public static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
++
++    public static final String twoDaysAgo = DateUtil.getDayDataDate(2);     //两天前
++
++    public static final String threeDaysAgo = DateUtil.getDayDataDate(3);   //三天前
++
++
++    public static final String fourDaysAgo = DateUtil.getDayDataDate(4);   //三天前
++
++
++    public static final String oneMonthAgo = DateUtil.getMonthDataDate(1);  //一个月前
++
++    public static final String twoMonthAgo = DateUtil.getMonthDataDate(2);  //两个月前
++
++    /**
++     * delayValue 时效性参数：1、两天    2、一个月
++     */
++
++    public static final int delayValDay = 2;
++
++    public static final int delayValMonth = 1;
+ 
+     public static String getMonthDataDate(int delayValue) {
+         LocalDate dateTime = LocalDate.now();
+@@ -31,8 +53,18 @@
+         return dateTime.format(dayFormatter);
+     }
+ 
++    public static boolean isDelay(String dataDate, int delayValDay) {
++        LocalDate localDate = LocalDate.parse(LocalDate.now().minusDays(delayValDay + 1).format(dayFormatter), dayFormatter);
++        LocalDate labelDataDate = LocalDate.parse(dataDate, dayFormatter);
++        if (localDate.isAfter(labelDataDate)) {
++            return Boolean.TRUE;
++        } else return Boolean.FALSE;
++    }
++
+     public static void main(String[] args) {
+         System.out.println(DateUtil.getMonthDataDate(1));
+         System.out.println(DateUtil.getDayDataDate(1));
++        System.out.println(DateUtil.twoDaysAgo + DateUtil.threeDaysAgo);
++        System.out.println(isDelay("20171029", 2));
+     }
+ }
+Index: src/main/resources/mapper/coc/CocAlarmMapper.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/resources/mapper/coc/CocAlarmMapper.xml	(revision 9888)
++++ src/main/resources/mapper/coc/CocAlarmMapper.xml	(revision )
+@@ -2,83 +2,298 @@
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+ <mapper namespace="com.asiainfo.alarm.dao.coc.ICocAlarmDao">
+     <select id="getSourceTableInfoCount" resultType="int">
+-		select
+-			count(*)
+-		from
+-		(
+-			select
+-				e.data_src_code sourceTableCode,
+-				e.data_src_tab_name sourceTableName,
+-				e.table_data_cycle dataCycle,
+-				max(data_source_time) dataDate
+-			from
+-			(
+-				select label_id from ci_label_info where data_status_id=2 and parent_id=-1
+-				union all
+-				select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1)
+-				union all
+-				select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1))
+-				union all
+-				select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1)))
+-				union all
+-				select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1))))
+-			) a
+-			left join ci_label_ext_info b on a.label_id=b.label_id
+-			left join dim_coc_label_count_rules c on b.count_rules_code=c.count_rules_code
+-			left join dim_coc_index_info d on c.depend_index=d.index_code
+-			left join dim_coc_index_table_info e on d.data_src_code=e.data_src_code
+-			left join dim_coc_data_source_status f on e.data_src_code=f.data_source_id
+-            where e.data_src_tab_name like '%'||#{sourceTableName}||'%'
+-            <if test="dataCycle!=0">
+-                and e.table_data_cycle=#{dataCycle}
+-            </if>
+-			group by e.data_src_code,e.data_src_tab_name,e.table_data_cycle
+-		)
+-	</select>
++        select
++        count(*)
++        from
++        (
++        select
++        e.data_src_code sourceTableCode,
++        e.data_src_tab_name sourceTableName,
++        e.table_data_cycle dataCycle,
++        max(data_source_time) dataDate
++        from
++        (
++        select label_id from ci_label_info where data_status_id=2 and parent_id=-1
++        union all
++        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
++        where data_status_id=2 and parent_id=-1)
++        union all
++        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
++        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and
++        parent_id=-1))
++        union all
++        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
++        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id
++        in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1)))
++        union all
++        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
++        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id
++        in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from
++        ci_label_info where data_status_id=2 and parent_id=-1))))
++        ) a
++        left join ci_label_ext_info b on a.label_id=b.label_id
++        left join dim_coc_label_count_rules c on b.count_rules_code=c.count_rules_code
++        left join dim_coc_index_info d on c.depend_index=d.index_code
++        left join dim_coc_index_table_info e on d.data_src_code=e.data_src_code
++        left join dim_coc_data_source_status f on e.data_src_code=f.data_source_id
++        where e.data_src_tab_name like '%'||#{sourceTableName}||'%'
++        <if test="dataCycle!=0">
++            and e.table_data_cycle=#{dataCycle}
++        </if>
++        group by e.data_src_code,e.data_src_tab_name,e.table_data_cycle
++        )
++    </select>
+     <select id="getSourceTableInfo" resultType="com.asiainfo.alarm.model.CocSourceTable">
+-		select
+-			sourceTableCode,
+-			sourceTableName,
+-			dataCycle,
+-			dataDate
+-		from
+-		(
+-			select
+-				sourceTableCode,
+-				sourceTableName,
+-				dataCycle,
+-				dataDate,
+-				row_number() over(order by dataCycle,sourceTableCode desc) row_number
+-			from
+-			(
+-				select
+-					e.data_src_code sourceTableCode,
+-					e.data_src_tab_name sourceTableName,
+-					e.table_data_cycle dataCycle,
+-					max(data_source_time) dataDate
+-				from
+-				(
+-					select label_id from ci_label_info where data_status_id=2 and parent_id=-1
+-					union all
+-					select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1)
+-					union all
+-					select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1))
+-					union all
+-					select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1)))
+-					union all
+-					select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1))))
+-				) a
+-				left join ci_label_ext_info b on a.label_id=b.label_id
+-				left join dim_coc_label_count_rules c on b.count_rules_code=c.count_rules_code
+-				left join dim_coc_index_info d on c.depend_index=d.index_code
+-				left join dim_coc_index_table_info e on d.data_src_code=e.data_src_code
+-				left join dim_coc_data_source_status f on e.data_src_code=f.data_source_id
+-				where e.data_src_tab_name like '%'||#{sourceTableName}||'%'
+-			    <if test="dataCycle!=0">
+-			        and e.table_data_cycle=#{dataCycle}
+-			    </if>
+-				group by e.data_src_code,e.data_src_tab_name,e.table_data_cycle
+-			)
+-		) where row_number between #{page.startPosition} and #{page.endPosition}
++        select
++        sourceTableCode,
++        sourceTableName,
++        dataCycle,
++        dataDate
++        from
++        (
++        select
++        sourceTableCode,
++        sourceTableName,
++        dataCycle,
++        dataDate,
++        row_number() over(order by dataCycle,sourceTableCode desc) row_number
++        from
++        (
++        select
++        e.data_src_code sourceTableCode,
++        e.data_src_tab_name sourceTableName,
++        e.table_data_cycle dataCycle,
++        max(data_source_time) dataDate
++        from
++        (
++        select label_id from ci_label_info where data_status_id=2 and parent_id=-1
++        union all
++        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
++        where data_status_id=2 and parent_id=-1)
++        union all
++        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
++        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and
++        parent_id=-1))
++        union all
++        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
++        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id
++        in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1)))
++        union all
++        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
++        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id
++        in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from
++        ci_label_info where data_status_id=2 and parent_id=-1))))
++        ) a
++        left join ci_label_ext_info b on a.label_id=b.label_id
++        left join dim_coc_label_count_rules c on b.count_rules_code=c.count_rules_code
++        left join dim_coc_index_info d on c.depend_index=d.index_code
++        left join dim_coc_index_table_info e on d.data_src_code=e.data_src_code
++        left join dim_coc_data_source_status f on e.data_src_code=f.data_source_id
++        where e.data_src_tab_name like '%'||#{sourceTableName}||'%'
++        <if test="dataCycle!=0">
++            and e.table_data_cycle=#{dataCycle}
++        </if>
++        group by e.data_src_code,e.data_src_tab_name,e.table_data_cycle
++        )
++        ) where row_number between #{page.startPosition} and #{page.endPosition}
+     </select>
++
++    <select id="querySourceTabNameByDataCyle" parameterType="map" resultType="Map">
++        SELECT data_src_tab_name
++        FROM dim_coc_index_table_info
++        WHERE 1=1
++        <if test="dataCycle != null and dataCycle != ''">
++            and table_data_cycle = #{dataCycle}
++        </if>
++    </select>
++
++    <select id="doesTableExist" resultType="Boolean" parameterType="Map">
++        SELECT
++        count(1)
++        FROM
++        syscat.tables
++        WHERE 1=1
++        <if test="">
++            and tabschema=#{tabschema}
++        </if>
++        <if test="">
++            and tabname=#{tabname}
++        </if>
++    </select>
++
++    <select id="isNotEmptyTable" resultType="Boolean" parameterType="String">
++		SELECT
++		count(*)
++		FROM (SELECT 1
++		FROM ${tabname}
++		FETCH FIRST 1 ROWS ONLY)
++	</select>
++
++    <select id="querySourceTabNum" resultType="Integer" parameterType="Map">
++        SELECT
++        count(*)
++        FROM
++        dim_coc_index_table_info
++        WHERE 1=1
++        <if test="dataCycle != null and dataCycle != ''">
++            and table_data_cycle = #{dataCycle}
++        </if>
++    </select>
++
++    <select id="queryLabelNum" resultType="Integer">
++        SELECT
++        count(*)
++        FROM
++        (select
++        a.label_id AS labelId,
++        f.label_name AS labelName,
++        f.update_cycle AS dataCycle,
++        max(g.data_source_time) AS dataDate
++        from
++        (
++        select label_id from ci_label_info where data_status_id=2 and parent_id=-1
++        union all
++        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
++        where data_status_id=2 and parent_id=-1)
++        union all
++        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
++        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and
++        parent_id=-1))
++        union all
++        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
++        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id
++        in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1)))
++        union all
++        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
++        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id
++        in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from
++        ci_label_info where data_status_id=2 and parent_id=-1))))
++        )a left join
++        ci_label_info f on a.label_id=f.label_id LEFT JOIN
++        ci_label_ext_info b on a.label_id=b.label_id left join
++        dim_coc_label_count_rules c on b.count_rules_code=c.count_rules_code left join
++        dim_coc_index_info d on c.depend_index=d.index_code left join
++        dim_coc_index_table_info e on d.data_src_code=e.data_src_code left join
++        dim_coc_data_source_status g on e.data_src_code=g.data_source_id
++        WHERE 1=1 and f.label_name like '%'||#{labelName}||'%'
++        <if test="dataCycle != 0">
++            and f.update_cycle=#{dataCycle}
++        </if>
++        GROUP BY a.label_id,f.label_name,f.update_cycle
++        )
++    </select>
++
++    <select id="queryLabelInfo" resultType="com.asiainfo.alarm.model.CocLabel">
++        SELECT
++        labelId,
++        labelName,
++        dataCycle,
++        dataDate,
++        useTimes,
++        srcTabName,
++        srcTabColName,
++        customNum
++        FROM
++        (
++        SELECT
++        labelId,
++        labelName,
++        dataCycle,
++        dataDate,
++        useTimes,
++        srcTabName,
++        srcTabColName,
++        customNum,
++        row_number() over(order by labelId ASC ,dataCycle ASC ) AS row_number
++        FROM
++        (
++        select
++        a.label_id AS labelId,
++        f.label_name AS labelName,
++        f.update_cycle AS dataCycle,
++        h.use_times AS useTimes,
++        e.data_src_tab_name AS srcTabName,
++        d.data_src_col_name AS srcTabColName,
++        j.custom_num AS customNum,
++        f.data_date AS dataDate
++        from
++        (
++        select label_id from ci_label_info where data_status_id=2 and parent_id=-1
++        union all
++        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
++        where data_status_id=2 and parent_id=-1)
++        union all
++        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
++        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and
++        parent_id=-1))
++        union all
++        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
++        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id
++        in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1)))
++        union all
++        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
++        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id
++        in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from
++        ci_label_info where data_status_id=2 and parent_id=-1))))
++        )a left join
++        ci_label_info f on a.label_id=f.label_id LEFT JOIN
++        ci_label_ext_info b on a.label_id=b.label_id left join
++        dim_coc_label_count_rules c on b.count_rules_code=c.count_rules_code left join
++        dim_coc_index_info d on c.depend_index=d.index_code left join
++        dim_coc_index_table_info e on d.data_src_code=e.data_src_code left join
++        (select label_id,count(*) as use_times from ci_user_use_label group by label_id) h on a.label_id=h.label_id left
++        join
++        (select label_id,sum(custom_num) AS custom_num from ci_label_stat_dm_${opTime}
++        where city_id=-1 and vip_level_id=-1 and brand_id=-1
++        <if test="null != dataDate and '' != dataDate">
++            and data_date=#{dataDate}
++        </if>
++        group by label_id) j on a.label_id=j.label_id
++        WHERE f.label_name like '%'||#{labelName}||'%'
++        <if test="dataCycle != 0">
++            and f.update_cycle=#{dataCycle}
++        </if>
++        and b.IS_STAT_USER_NUM = 1
++        )
++        )
++        WHERE row_number BETWEEN #{page.startPosition} AND #{page.endPosition}
++    </select>
++
++    <select id="queryPreCusNum" resultType="java.lang.Long">
++        select sum(custom_num) AS custom_num from ci_label_stat_dm_${opTime}
++        where city_id=-1 and vip_level_id=-1 and brand_id=-1
++        <if test="null != dataDate and '' != dataDate">
++            and data_date=#{dataDate}
++        </if>
++        <if test="labelId != 0">
++            and label_id=#{labelId}
++        </if>
++    </select>
++
++    <select id="doPreCusNumExist" resultType="Boolean">
++        SELECT
++        count(1)
++        FROM
++        (SELECT
++        1 FROM ci_label_stat_dm_${opTime}
++        WHERE 1=1
++        <if test="null != dataDate and '' != dataDate">
++            AND data_date=#{dataDate}
++        </if>
++        <if test="labelId != 0">
++            AND label_id=#{labelId}
++        </if>
++        FETCH FIRST 1 ROWS ONLY )
++    </select>
++
++    <select id="queryRingNum" resultType="java.lang.Long">
++        select ring_num AS ringNum from ci_label_stat_dm_${opTime}
++        where city_id=-1 and vip_level_id=-1 and brand_id=-1
++        <if test="null != dataDate and '' != dataDate">
++            and data_date=#{dataDate}
++        </if>
++        <if test="labelId != 0">
++            and label_id=#{labelId}
++        </if>
++    </select>
+ </mapper>
+\ No newline at end of file
+Index: src/main/java/com/asiainfo/alarm/dao/bass/IAlarmDao.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/asiainfo/alarm/dao/bass/IAlarmDao.java	(revision 9888)
++++ src/main/java/com/asiainfo/alarm/dao/bass/IAlarmDao.java	(revision )
+@@ -1,7 +1,9 @@
+ package com.asiainfo.alarm.dao.bass;
+ 
+ import com.asiainfo.alarm.model.CocSourceTableExt;
++import org.springframework.stereotype.Repository;
+ 
++@Repository
+ public interface IAlarmDao {
+     /**
+      * 获取源表扩展信息

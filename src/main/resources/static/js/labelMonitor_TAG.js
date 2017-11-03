@@ -2,7 +2,7 @@ $(document).ready(function () {
     //初始化网页导航模块
     Header = new Header();
     Header.init();
-    Header.show("labelMonitor");
+    Header.show("cocAlarm");
     $(".base-table").css("height", (document.documentElement.clientHeight - 150) + "px");
     //页面顶部菜单模块样式控制
     $(".base-header-item").click(function () {

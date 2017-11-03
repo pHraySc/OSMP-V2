@@ -131,6 +131,16 @@ public class OsmpController extends BaseController{
     	return "config_InterFace";
     }
 
+    //跳转标签库监控页面
+    @RequestMapping("/cocAlarm")
+    public String cocAlarm(ModelMap model){
+        model.put("time",new Date());
+        model.put("message","freemarker test!");
+        return "cocAlarm";
+    }
+
+    
+
     //跳转标签库监控界面-默认汇总页面
     @RequestMapping("/labelMonitor")
     public String labelMonitor(ModelMap model) {

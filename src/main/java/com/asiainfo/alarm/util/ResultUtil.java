@@ -25,4 +25,11 @@ public class ResultUtil {
         result.setMsg(resultEnum.getMsg());
         return result;
     }
+
+    public static Result error(String msg) {
+        Result result = new Result();
+        result.setCode(ResultEnum.UNKNOWN_ERROR.getCode());
+        result.setMsg(msg);
+        return result;
+    }
 }

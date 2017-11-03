@@ -1,5 +1,11 @@
 package com.asiainfo.alarm.model;
 
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Range;
+
+import javax.validation.constraints.Size;
+
 /**
  * 标签库源表扩展信息
  */
@@ -7,22 +13,27 @@ public class CocSourceTableExt {
     /**
      * 源表编码
      */
+    @NotBlank(message = "源表编码不能为空！")
     private String sourceTableCode;
     /**
      * 源表生成时间
      */
+    @NotBlank(message = "源表生成时间不能为空！")
     private String updateTime;
     /**
      * 数据提供方：厂商或数据部等
      */
+    @NotBlank(message = "数据提供方不能为空！")
     private String producer;
     /**
      * 数据时效性：1，t-1；2，t-2'
      */
+    @Range(min = 1, max = 2, message = "数据时效性为非法值！")
     private int delayValue;
     /**
      * 1：调度平台；2：外部接口；3：独立程序（jar、shell等）
      */
+    @Range(min = 1, max = 3, message = "数据生成方式为非法值！")
     private int produceType;
     /**
      * 调度号
@@ -51,14 +62,17 @@ public class CocSourceTableExt {
     /**
      * 联系人姓名
      */
+    @NotBlank(message = "联系人姓名不能为空！")
     private String contactName;
     /**
      * 联系人电话
      */
+    @Size(min = 11, max = 11, message = "联系人电话格式不正确！")
     private String contactTel;
     /**
      * 联系人电子邮箱
      */
+    @Email(message = "联系人电子邮箱格式错误！")
     private String contactEmail;
     /**
      * 备注

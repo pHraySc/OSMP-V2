@@ -21,9 +21,17 @@ public class CocSourceTable {
      */
     private String dataDate;
     /**
+     * 扩展信息是否录入
+     */
+//    private boolean hasExtInfo;
+    /**
      * 标签库源表扩展信息
      */
     private CocSourceTableExt cocSourceTableExt;
+    /**
+     * 数据状态：0，未录入；1，正常；2，延迟
+     */
+    private int dataStatus;
 
     public String getSourceTableCode() {
         return sourceTableCode;
@@ -57,11 +65,27 @@ public class CocSourceTable {
         this.dataDate = dataDate;
     }
 
+//    public boolean isHasExtInfo() {
+//        return hasExtInfo;
+//    }
+//
+//    public void setHasExtInfo(boolean hasExtInfo) {
+//        this.hasExtInfo = hasExtInfo;
+//    }
+
     public CocSourceTableExt getCocSourceTableExt() {
         return cocSourceTableExt;
     }
 
     public void setCocSourceTableExt(CocSourceTableExt cocSourceTableExt) {
         this.cocSourceTableExt = cocSourceTableExt;
+    }
+
+    public int getDataStatus() {
+        return dataStatus;
+    }
+
+    public void setDataStatus(int dataStatus) {
+        this.dataStatus = dataStatus;
     }
 }

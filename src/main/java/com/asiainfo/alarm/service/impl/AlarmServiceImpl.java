@@ -42,6 +42,17 @@ public class AlarmServiceImpl implements IAlarmService {
     }
 
     /**
+     * 根据源表编码获取源表信息
+     *
+     * @param sourceTableCode 源表编码
+     * @return 源表信息
+     */
+    @Override
+    public CocSourceTable getSourceTableInfoByCode(String sourceTableCode) {
+        return cocAlarmDao.getSourceTableInfoByCode(sourceTableCode);
+    }
+
+    /**
      * 获取源表扩展信息
      *
      * @param sourceTableCode 源表编码
@@ -50,6 +61,16 @@ public class AlarmServiceImpl implements IAlarmService {
     @Override
     public CocSourceTableExt getSourceTableExtInfo(String sourceTableCode) {
         return alarmDao.getSourceTableExtInfo(sourceTableCode);
+    }
+
+    /**
+     * 更新源表扩展信息
+     *
+     * @param cocSourceTableExt 源表扩展信息
+     */
+    @Override
+    public void updateSourceTableExtInfo(CocSourceTableExt cocSourceTableExt) {
+        alarmDao.updateSourceTableExtInfo(cocSourceTableExt);
     }
 
     /**

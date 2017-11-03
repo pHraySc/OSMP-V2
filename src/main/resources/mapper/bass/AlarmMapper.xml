@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.asiainfo.alarm.dao.bass.IAlarmDao">
-    <select id="getSourceTableInfo" parameterType="string" resultType="com.asiainfo.alarm.model.CocSourceTableExt">
+    <select id="getSourceTableExtInfo" parameterType="string" resultType="com.asiainfo.alarm.model.CocSourceTableExt">
         select
             source_table_code,
             update_time,
@@ -21,4 +21,39 @@
         from coc_source_table_info
         where source_table_code=#{sourceTableCode}
     </select>
+    <update id="updateSourceTableExtInfo" parameterType="com.asiainfo.alarm.model.CocSourceTableExt">
+        replace into coc_source_table_info (
+            source_table_code,
+            update_time,
+            producer,
+            delay_value,
+            produce_type,
+            task_code,
+            interface_code,
+            interface_server_ip,
+            interface_file_path,
+            executor_server_ip,
+            executor_file_path,
+            contact_name,
+            contact_tel,
+            contact_email,
+            comment
+        ) values (
+            #{sourceTableCode},
+            #{updateTime},
+            #{producer},
+            #{delayValue},
+            #{produceType},
+            #{taskCode},
+            #{interfaceCode},
+            #{interfaceServerIp},
+            #{interfaceFilePath},
+            #{executorServerIp},
+            #{executorFilePath},
+            #{contactName},
+            #{contactTel},
+            #{contactEmail},
+            #{comment}
+        )
+    </update>
 </mapper>

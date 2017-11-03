@@ -15,9 +15,11 @@ public class DateUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(DateUtil.class);
 
-    public static final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("yyyyMM");
+    private static final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("yyyyMM");
 
-    public static final DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+    private static final DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     public static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -42,15 +44,33 @@ public class DateUtil {
     public static final int delayValMonth = 1;
 
     public static String getMonthDataDate(int delayValue) {
-        LocalDate dateTime = LocalDate.now();
-        dateTime = dateTime.minusMonths(delayValue);
-        return dateTime.format(monthFormatter);
+        LocalDate localDate = LocalDate.now();
+        localDate = localDate.minusMonths(delayValue);
+        return localDate.format(monthFormatter);
     }
 
     public static String getDayDataDate(int delayValue) {
-        LocalDate dateTime = LocalDate.now();
-        dateTime = dateTime.minusDays(delayValue);
-        return dateTime.format(dayFormatter);
+        LocalDate localDate = LocalDate.now();
+        localDate = localDate.minusDays(delayValue);
+        return localDate.format(dayFormatter);
+    }
+
+    public static boolean isAfterUpdateTime(int dataCycle, String updateTime) {
+        boolean isAfter = Boolean.FALSE;
+        if (dataCycle == 1) {
+            LocalTime localTime = LocalTime.parse(updateTime, timeFormatter);
+            LocalDateTime localDateTime = LocalDateTime.of(LocalDate.now(), localTime);
+            if (localDateTime.isAfter(LocalDateTime.now())) {
+                isAfter = Boolean.TRUE;
+            }
+        } else {
+            LocalDate now = LocalDate.now();
+            LocalDate localDate = LocalDate.of(now.getYear(), now.getMonth(), Integer.valueOf(updateTime));
+            if (localDate.isAfter(now)) {
+                isAfter = Boolean.TRUE;
+            }
+        }
+        return isAfter;
     }
 
     public static boolean isDelay(String dataDate, int delayValDay) {
@@ -58,7 +78,9 @@ public class DateUtil {
         LocalDate labelDataDate = LocalDate.parse(dataDate, dayFormatter);
         if (localDate.isAfter(labelDataDate)) {
             return Boolean.TRUE;
-        } else return Boolean.FALSE;
+        } else {
+            return Boolean.FALSE;
+        }
     }
 
     public static void main(String[] args) {

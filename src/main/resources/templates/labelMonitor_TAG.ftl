@@ -33,13 +33,13 @@
             <div class="col-md-4"></div>
             <div class="col-md-7">
             <#--<div style="display: inline-block;align-items: center;">-->
-                <div class="base-header-item" onclick="location.href='labelMonitor'">
+               <#-- <div class="base-header-item" onclick="location.href='labelMonitor'">
                     <img src="../images/icon_pool01.png">
                     <span>汇总</span>
-                </div>
-                <div class="base-header-item" onclick="location.href='labelMonitor_SOURCE'">
+                </div>-->
+                <div class="base-header-item" onclick="location.href='cocAlarm'">
                     <img src="../images/icon_lib01.png">
-                    <span>源表</span>
+                    <span>源表监控</span>
                 </div>
                 <!--<div class="base-header-item">
                   <img src="../images/icon_a.png">
@@ -47,7 +47,7 @@
                </div>-->
                 <div class="base-header-item base-header-item-active">
                     <img src="../images/icon_tag01.png">
-                    <span>标签</span>
+                    <span>标签监控</span>
                 </div>
             <#--<div class="base-header-item"  onclick="location.href='baseMonitor_FILE'">-->
             <#--<img src="../images/icon_a.png">-->

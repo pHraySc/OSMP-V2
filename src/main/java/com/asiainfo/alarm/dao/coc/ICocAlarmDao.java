@@ -4,11 +4,9 @@ import com.asiainfo.alarm.model.CocLabel;
 import com.asiainfo.alarm.model.CocSourceTable;
 import com.asiainfo.alarm.model.Page;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
 public interface ICocAlarmDao {
     /**
      * 获取源表信息总记录数
@@ -28,6 +26,14 @@ public interface ICocAlarmDao {
      * @return 源表信息列表
      */
     List<CocSourceTable> getSourceTableInfo(@Param("dataCycle") int dataCycle, @Param("sourceTableName") String sourceTableName, @Param("page") Page page);
+
+    /**
+     * 根据源表编码获取源表信息
+     *
+     * @param sourceTableCode 源表编码
+     * @return 源表信息
+     */
+    CocSourceTable getSourceTableInfoByCode(String sourceTableCode);
 
     /**
      * 获取标签信息总记录数

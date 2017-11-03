@@ -12,4 +12,11 @@ public interface IAlarmDao {
      * @return 源表扩展信息
      */
     CocSourceTableExt getSourceTableExtInfo(String sourceTableCode);
+
+    /**
+     * 更新源表扩展信息
+     *
+     * @param cocSourceTableExt 源表扩展信息
+     */
+    void updateSourceTableExtInfo(CocSourceTableExt cocSourceTableExt);
 }

@@ -5,17 +5,15 @@ import com.asiainfo.alarm.service.IAlarmService;
 import com.asiainfo.alarm.util.DateUtil;
 import com.asiainfo.alarm.util.ResultUtil;
 import com.asiainfo.alarm.util.labelUtil;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.Date;
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +29,7 @@ public class AlarmController {
 
     @ResponseBody
     @GetMapping("/getSourceTableInfo")
-    public Result getSourceTableInfo(@RequestParam(value = "dataCycle", defaultValue = "0") int dataCycle,
-                                     @RequestParam(value = "sourceTableName", defaultValue = "") String sourceTableName,
-                                     @RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
-                                     @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+    public Result getSourceTableInfo(@RequestParam(value = "dataCycle", defaultValue = "0") int dataCycle, @RequestParam(value = "sourceTableName", defaultValue = "") String sourceTableName, @RequestParam(value = "currentPage", defaultValue = "1") int currentPage, @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
         int count = alarmService.getSourceTableInfoCount(dataCycle, sourceTableName);
 
@@ -44,10 +39,110 @@ public class AlarmController {
 
         for (CocSourceTable cocSourceTable : sourceTableList) {
             CocSourceTableExt cocSourceTableExt = alarmService.getSourceTableExtInfo(cocSourceTable.getSourceTableCode());
-            int delayValue = cocSourceTableExt.getDelayValue();
+
+            if (cocSourceTableExt != null) {
+                cocSourceTable.setCocSourceTableExt(cocSourceTableExt);
+                int dataStatus = getTableDataStatus(cocSourceTable);
+                cocSourceTable.setDataStatus(dataStatus);
+            }
+
         }
 
-        return ResultUtil.success(sourceTableList);
+        page.setDataList(sourceTableList);
+        return ResultUtil.success(page);
+    }
+
+    @ResponseBody
+    @GetMapping("/getSourceTableInfoByCode")
+    public Result getSourceTableInfoByCode(@RequestParam("sourceTableCode") String sourceTableCode) {
+
+        CocSourceTable cocSourceTable = alarmService.getSourceTableInfoByCode(sourceTableCode);
+
+        CocSourceTableExt cocSourceTableExt = alarmService.getSourceTableExtInfo(sourceTableCode);
+
+        if (cocSourceTableExt != null) {
+            cocSourceTable.setCocSourceTableExt(cocSourceTableExt);
+            int dataStatus = getTableDataStatus(cocSourceTable);
+            cocSourceTable.setDataStatus(dataStatus);
+        }
+
+        return ResultUtil.success(cocSourceTable);
+    }
+
+    @ResponseBody
+    @PostMapping("/updateSourceTableExtInfo")
+    public Result updateSourceTableExtInfo(@RequestBody @Valid CocSourceTableExt cocSourceTableExt, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResultUtil.error(bindingResult.getFieldError().getDefaultMessage());
+        }
+
+        if (cocSourceTableExt.getProduceType() == 1) {
+            String taskCode = cocSourceTableExt.getTaskCode();
+            if (StringUtils.isBlank(taskCode)) {
+                return ResultUtil.error("调度号不能为空！");
+            }
+        } else if (cocSourceTableExt.getProduceType() == 2) {
+            String interfaceCode = cocSourceTableExt.getInterfaceCode();
+            if (StringUtils.isBlank(interfaceCode)) {
+                return ResultUtil.error("接口号不能为空！");
+            }
+            String interfaceServerIp = cocSourceTableExt.getInterfaceServerIp();
+            if (StringUtils.isBlank(interfaceServerIp)) {
+                return ResultUtil.error("接口机IP不能为空！");
+            }
+            String interfaceFilePath = cocSourceTableExt.getInterfaceFilePath();
+            if (StringUtils.isBlank(interfaceFilePath)) {
+                return ResultUtil.error("接口文件路径不能为空！");
+            }
+        } else {
+            String executorServerIp = cocSourceTableExt.getExecutorServerIp();
+            if (StringUtils.isBlank(executorServerIp)) {
+                return ResultUtil.error("独立程序部署主机IP不能为空！");
+            }
+            String executorFilePath = cocSourceTableExt.getExecutorFilePath();
+            if (StringUtils.isBlank(executorFilePath)) {
+                return ResultUtil.error("独立程序部署路径不能为空！");
+            }
+        }
+
+        alarmService.updateSourceTableExtInfo(cocSourceTableExt);
+
+        return ResultUtil.success();
+    }
+
+    public static int getTableDataStatus(CocSourceTable cocSourceTable) {
+
+        int tableDataCycle = cocSourceTable.getDataCycle();
+        String dataDate = cocSourceTable.getDataDate();
+        int delayValue = cocSourceTable.getCocSourceTableExt().getDelayValue();
+
+        String rightDataDate;
+
+        if (tableDataCycle == 1) {
+            rightDataDate = DateUtil.getDayDataDate(delayValue);
+        } else {
+            rightDataDate = DateUtil.getMonthDataDate(delayValue);
+        }
+
+        if (dataDate.equals(rightDataDate)) {
+            return TableDataStatus.NORMAL;
+        } else {
+            String preRightDataDate;
+
+            if (tableDataCycle == 1) {
+                preRightDataDate = DateUtil.getDayDataDate(delayValue + 1);
+            } else {
+                preRightDataDate = DateUtil.getMonthDataDate(delayValue + 1);
+            }
+
+            boolean isAfter = DateUtil.isAfterUpdateTime(cocSourceTable.getDataCycle(), cocSourceTable.getCocSourceTableExt().getUpdateTime());
+
+            if (!dataDate.equals(preRightDataDate)) {
+                return TableDataStatus.DELAY;
+            } else {
+                return isAfter ? TableDataStatus.DELAY : TableDataStatus.NORMAL;
+            }
+        }
     }
 
     @ResponseBody

@@ -25,12 +25,27 @@ public interface IAlarmService {
     List<CocSourceTable> getSourceTableInfo(int dataCycle, String sourceTableName, Page page);
 
     /**
+     * 根据源表编码获取源表信息
+     *
+     * @param sourceTableCode 源表编码
+     * @return 源表信息
+     */
+    CocSourceTable getSourceTableInfoByCode(String sourceTableCode);
+
+    /**
      * 获取源表扩展信息
      *
      * @param sourceTableCode 源表编码
      * @return 源表扩展信息
      */
     CocSourceTableExt getSourceTableExtInfo(String sourceTableCode);
+
+    /**
+     * 更新源表扩展信息
+     *
+     * @param cocSourceTableExt 源表扩展信息
+     */
+    void updateSourceTableExtInfo(CocSourceTableExt cocSourceTableExt);
 
     /**
      * 获取标签信息总记录数
