@@ -86,7 +86,7 @@ $(document).ready(function () {
         labelName = $("#labelName").val();
         $.ajax({
             type: "GET",
-            url: "/alarm/queryLabelInfo",
+            url: "./alarm/queryLabelInfo",
             dataType: "json",
             data: {
                 "currentPage": currentPage,
@@ -129,9 +129,9 @@ $(document).ready(function () {
                         $trTmp.append($td.clone().text(v.customNum));
                         var wavedCustomNum = "";
                         if (v.cocLabelExt.wavedCustomNum >= 0) {
-                            wavedCustomNum = "<img src='../images/icon_up.png'/>" + Header.dataformat(v.cocLabelExt.wavedCustomNum, 1);
+                            wavedCustomNum = "<img src='./images/icon_up.png'/>" + Header.dataformat(v.cocLabelExt.wavedCustomNum, 1);
                         } else {
-                            wavedCustomNum = "<img src='../images/icon_down.png'/>" + Header.dataformat(-v.cocLabelExt.wavedCustomNum, 1);
+                            wavedCustomNum = "<img src='./images/icon_down.png'/>" + Header.dataformat(-v.cocLabelExt.wavedCustomNum, 1);
                         }
                         $trTmp.append($td.clone().append(wavedCustomNum));
                         $trTmp.append($td.clone().text(Header.dataformat(v.cocLabelExt.moM, 2) + "%"));
@@ -160,7 +160,7 @@ $(document).ready(function () {
                             $(".finishTime").html(v.cocLabelExt.finishTime);
                             $(".contactP").html(v.cocLabelExt.official);
                         });
-                        $trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='../images/icon_detials.png'>"));
+                        $trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='./images/icon_detials.png'>"));
                     }
                     $("#tbody").append($trTmp);
                 });

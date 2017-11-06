@@ -11,54 +11,54 @@ Header = function () {
         element: "#nav",
         nav: {
             /*MMSsecurity:{
-             icon:"../images/icon_e.png",
+             icon:"./images/icon_e.png",
              text:"彩信保障",
              dataId:"MMSsecurity"
              },*/
 
             baseMonitor_CHARTS: {
-                icon: "../images/icon_f.png",
+                icon: "./images/icon_f.png",
                 text: "首页",
                 dataId: "baseMonitor_CHARTS"
             },
 
             baseMonitor: {
-                icon: "../images/icon_f.png",
+                icon: "./images/icon_f.png",
                 text: "基础监控",
                 dataId: "baseMonitor"
             },
             /*appMonitor:{
-             icon:"../images/ods_m.png",
+             icon:"./images/ods_m.png",
              text:"应用监控",
              dataId:"appMonitor"
              },
              speMonitor:{
-             icon:"../images/icon_0.png",
+             icon:"./images/icon_0.png",
              text:"专题监控",
              dataId:"speMonitor"
              },
              confModel:{
-             icon:"../images/icon_q.png",
+             icon:"./images/icon_q.png",
              text:"配置模块",
              dataId:"confModel"
              },*/
             knowledge: {
-                icon: "../images/icon_right2.png",
+                icon: "./images/icon_right2.png",
                 text: "知识库",
                 dataId: "knowledge"
             },
             confModel: {
-                icon: "../images/icon_right2.png",
+                icon: "./images/icon_right2.png",
                 text: "配置管理",
                 dataId: "confModel"
             }
             /*Beonduty:{
-             icon:"../images/icon_right1.png",
+             icon:"./images/icon_right1.png",
              text:"值班流程",
              dataId:"Beonduty"
              }*/,
             cocAlarm: {
-                icon: "../images/icon_note.png",
+                icon: "./images/icon_note.png",
                 text: "标签库",
                 dataId: "cocAlarm"
             }
@@ -94,22 +94,23 @@ Header = function () {
                 floor = 99;
             }
             var images = {};
-            images[0] = "../images/icon_h.png";
-            images[1] = "../images/icon_i.png";
-            images[2] = "../images/icon_j.png";
-            images[3] = "../images/icon_k.png";
-            images[-2] = "../images/icon_r.png";
-            images[4] = "../images/icon_l.png";
-            images[99] = "../images/ods_n.png";
-            images[-1] = "../images/icon_i.png";
-            images[98] = "../images/icon_l.png";
+            images[0] = "./images/icon_h.png";
+            images[1] = "./images/icon_i.png";
+            images[2] = "./images/icon_j.png";
+            images[3] = "./images/icon_k.png";
+            images[-2] = "./images/icon_r.png";
+            images[4] = "./images/icon_l.png";
+            images[99] = "./images/ods_n.png";
+            images[-1] = "./images/icon_i.png";
+            images[98] = "./images/icon_l.png";
             return "<img src=" + images[floor] + ">";
-        }, setLabelStatus: function (status) {
+        },
+        setLabelStatus: function (status) {
             var index = status;
             var images = {};
-            images[1] = "../images/icon_h.png";
-            images[2] = "../images/icon_i.png";
-            images[3] = "../images/icon_j.png";
+            images[1] = "./images/icon_h.png";
+            images[2] = "./images/icon_i.png";
+            images[3] = "./images/icon_j.png";
             return "<img src= " + images[index] + " >";
         },
         dataformat: function (s, n) {

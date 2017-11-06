@@ -10,9 +10,9 @@ $(document).ready(function () {
     _status[2] = "延迟";
 
     var _images = {};
-    _images[0] = "../images/icon_j.png";
-    _images[1] = "../images/icon_h.png";
-    _images[2] = "../images/icon_i.png";
+    _images[0] = "./images/icon_j.png";
+    _images[1] = "./images/icon_h.png";
+    _images[2] = "./images/icon_i.png";
 
     var _produceTypeName = {};
     _produceTypeName[1] = "调度平台";
@@ -113,7 +113,7 @@ $(document).ready(function () {
 
         $.ajax({
             type: "POST",
-            url: "/alarm/updateSourceTableExtInfo",
+            url: "./alarm/updateSourceTableExtInfo",
             contentType: 'application/json',
             data: JSON.stringify(cocSourceTableExt),
             dataType: "json",
@@ -155,7 +155,7 @@ $(document).ready(function () {
         $("#detail").empty();
         $.ajax({
             type: "GET",
-            url: "/alarm/getSourceTableInfoByCode",
+            url: "./alarm/getSourceTableInfoByCode",
             dataType: "json",
             data: {"sourceTableCode": sourceTableCode},
             success: function (data) {
@@ -283,16 +283,18 @@ $(document).ready(function () {
         document.getElementById("edit-form").reset();
         $.ajax({
             type: "GET",
-            url: "/alarm/getSourceTableInfoByCode",
+            url: "./alarm/getSourceTableInfoByCode",
             dataType: "json",
             data: {"sourceTableCode": sourceTableCode},
             success: function (data) {
                 if (data.code == 0) {
                     var cocSourceTable = data.data;
 
+                    $("#sourceTableCode").val(sourceTableCode);
+                    $("#sourceTableCodeP").html(sourceTableCode);
+                    $("#sourceTableNameP").html(cocSourceTable.sourceTableName);
+
                     if (cocSourceTable.cocSourceTableExt != null) {
-                        $("#sourceTableCode").val(sourceTableCode);
-                        $("#sourceTableName").text(cocSourceTable.sourceTableName);
                         $("#updateTime").val(cocSourceTable.cocSourceTableExt.updateTime);
                         $("#producer").val(cocSourceTable.cocSourceTableExt.producer);
                         $("#delayValue").val(cocSourceTable.cocSourceTableExt.delayValue);
@@ -355,7 +357,7 @@ $(document).ready(function () {
         _sourceTableName = $.trim($("#sourceTableName").val());
         $.ajax({
             type: "GET",
-            url: "/alarm/getSourceTableInfo",
+            url: "./alarm/getSourceTableInfo",
             dataType: "json",
             data: {
                 "dataCycle": dataCycle,
@@ -387,10 +389,10 @@ $(document).ready(function () {
                         $trTmp.append($td.clone().append(getTableDataStatusImg(v.dataStatus)));
 
                         var $tdLast = $td.clone();
-                        $tdLast.append($img.clone().addClass("detailImg").attr("src", "../images/icon_detials.png").bind("click", function () {
+                        $tdLast.append($img.clone().addClass("detailImg").attr("src", "./images/icon_detials.png").bind("click", function () {
                             showTableInfo(v.sourceTableCode);
                         }));
-                        $tdLast.append($img.clone().addClass("editImg").attr("src", "../images/icon_revise1.png").bind("click", function () {
+                        $tdLast.append($img.clone().addClass("editImg").attr("src", "./images/icon_revise1.png").bind("click", function () {
                             updateTableInfo(v.sourceTableCode);
                         }));
 
