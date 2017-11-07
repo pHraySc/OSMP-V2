@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,7 +159,7 @@ public class AlarmController {
         int waved = 0;
         int count = alarmService.queryLabelNum(labelName, dataCycle);
         Page page = new Page(currentPage, pageSize, count);
-        List<CocLabel> labelList = alarmService.queryLabelInfo(dataCycle, labelName, page, DateUtil.twoDaysAgo, DateUtil.twoDaysAgo);
+        List<CocLabel> labelList = alarmService.queryLabelInfo(dataCycle, labelName, page, DateUtil.twoDaysAgo, DateUtil.twoDaysAgo, DateUtil.oneMonthAgo, DateUtil.twoMonthAgo);
 
         for (CocLabel cocLabel : labelList) {
             CocLabelExt cocLabelExt = new CocLabelExt();
@@ -168,15 +169,23 @@ public class AlarmController {
                 cocLabelExt.setWavedCustomNum(alarmService.cusNumWaved(cocLabel, DateUtil.twoDaysAgo, DateUtil.twoDaysAgo));
 
                 if (alarmService.doPreCusNumExist(cocLabel.getLabelId(), DateUtil.twoDaysAgo, DateUtil.threeDaysAgo)) {
-                    cocLabelExt.setMoM(alarmService.calculateMoM(cocLabel, cocLabelExt, DateUtil.twoDaysAgo, DateUtil.threeDaysAgo));
 
+                    if (alarmService.calculateMoM(cocLabel, cocLabelExt, DateUtil.twoDaysAgo, DateUtil.threeDaysAgo) != -1.00f) {
+                        cocLabelExt.setMoM(alarmService.calculateMoM(cocLabel, cocLabelExt, DateUtil.twoDaysAgo, DateUtil.threeDaysAgo));
+                    } else {
+                        cocLabel.setStatus(-3);
+                        cocLabel.setErrMsg("3天前数据为0，无法进行环比计算，请检查!!!");
+
+                    }
                 } else {
                     cocLabel.setStatus(-2);     //3天前数据不存在，无法计算环比，状态为3天前数据异常
                     cocLabel.setErrMsg("3天前数据异常，无法计算环比，请检查!!!");
+
                 }
             } else {
                 cocLabel.setStatus(-1);     //两天前数据不存在：1.可能源表还没到（进行中）；2.源表已经到了还是没有数据（数据延迟异常）。
                 cocLabel.setErrMsg("2天前数据异常，无法计算数据波动量，请检查!!!");
+
             }
 
             System.out.println(cocLabel.getLabelId() + "----" + cocLabel.getLabelName() + "====" + cocLabel.getDataDate());
@@ -184,40 +193,51 @@ public class AlarmController {
             if (cocLabel.getDataCycle() == 1) {
                 cocLabelExt.setDelayValue(DateUtil.delayValDay);
 
-                if (!DateUtil.isDelay(cocLabel.getDataDate(), cocLabelExt.getDelayValue())) {
+                if (cocLabel.getStatus() == -1 || cocLabel.getStatus() == -2 || cocLabel.getStatus() == -3) {
 
-                    if (cocLabelExt.getMoM() > labelUtil.wavedPercent || cocLabelExt.getMoM() == -1.00f || cocLabelExt.getMoM() == 0) {
-                        waved++;
-                        cocLabel.setStatus(3);
-                        cocLabel.setErrMsg("数据波动异常，请检查源表数据!!!");
+                } else {
+                    if (!DateUtil.isDelay(cocLabel.getDataDate(), cocLabelExt.getDelayValue())) {
 
+                        if (cocLabelExt.getMoM() > labelUtil.wavedPercent || cocLabelExt.getMoM() == 0) {
+//                            waved++;
+                            cocLabel.setStatus(3);
+                            cocLabel.setErrMsg("数据波动异常，请检查源表数据!!!");
+
+                        } else {
+//                            normal++;
+                            cocLabel.setStatus(1);
+
+                        }
                     } else {
-                        normal++;
-                        cocLabel.setStatus(1);
+//                        delay++;
+                        cocLabel.setStatus(2);
+                        cocLabel.setErrMsg("数据延迟异常，请检查源表到达时间!!!");
 
                     }
-                } else {
-                    delay++;
-                    cocLabel.setStatus(2);
-                    cocLabel.setErrMsg("数据延迟异常，请检查源表到达时间!!!");
-
                 }
+
             } else {
                 cocLabelExt.setDelayValue(DateUtil.delayValMonth);
+                if (cocLabel.getStatus() != 0) {
+
+                } else {
+
+                }
 
             }
+
             cocLabel.setCocLabelExt(cocLabelExt);
 
         }
 
-        labelStatus.put("normal", normal);
-        labelStatus.put("delay", delay);
-        labelStatus.put("waved", waved);
+//        labelStatus.put("normal", normal);
+//        labelStatus.put("delay", delay);
+//        labelStatus.put("waved", waved);
 
         Map labelMap = new HashMap();
 
         labelMap.put("labelList", labelList);
-        labelMap.put("labelStatus", labelStatus);
+//        labelMap.put("labelStatus", labelStatus);
         labelMap.put("count", count);
 
         return ResultUtil.success(labelMap);
@@ -225,5 +245,9 @@ public class AlarmController {
         while (iterator.hasNext()){
             System.out.println(iterator.next().getClass());
         }*/
+    }
+
+    public boolean getSrcTabArrivalStatus(String srcTabCode) {
+        return Boolean.FALSE;
     }
 }

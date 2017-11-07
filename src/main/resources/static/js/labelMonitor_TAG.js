@@ -83,7 +83,7 @@ $(document).ready(function () {
 
     //分页查询
     var refresh = function (dataCycle, currentPage, status) {
-        labelName = $("#labelName").val();
+        labelName = $.trim($("#labelName")).val();
         $.ajax({
             type: "GET",
             url: "./alarm/queryLabelInfo",
@@ -95,15 +95,22 @@ $(document).ready(function () {
                 "status": status
             },
             success: function (data) {
+                if (data.code != 0) {
+                    alert(data.msg);
+                    return;
+                }
+                var labelList = data.data.labelList;
+                // var labelStatus = data.data.labelStatus;
                 var $tr = $("<tr></tr>");
                 var $td = $("<td></td>");
+                var $img = $("<img>");
                 totalRecord = data.data.count;
-                normal = data.data.labelStatus.normal;
-                delay = data.data.labelStatus.delay;
-                waved = data.data.labelStatus.waved;
+                // normal = labelStatus.normal;
+                // delay = labelStatus.delay;
+                // waved = labelStatus.waved;
                 //var totalnum=0,notstart=0,success=0,fail=0,process=0,wavestatus=0,timeout=0;
                 $("#tbody").empty();
-                $.each(data.data.labelList, function (k, v) {
+                $.each(labelList, function (k, v) {
                     var $trTmp = $tr.clone();
                     if (totalRecord == 0) {
                         $trTmp.append($td.clone().attr("colspan", "10").text("暂无数据"));
@@ -151,8 +158,8 @@ $(document).ready(function () {
                             }
                             $(".labelName").html(v.labelName);
                             $(".reason").html("暂无");
-                            $(".tableName").html(v.srcTabName + "(" + v.srcTabCode +")");
-                            $(".dataCycle").html(v.dataCycle);
+                            $(".tableName").html(v.srcTabName + "(" + v.srcTabCode + ")");
+                            $(".dataCycle").html(v.dataCycle == 1 ? "日" : "月");
                             $(".dataDate").html(v.dataDate);
                             $(".custom_num").html(v.customNum);
                             $(".updateTime").html(v.cocLabelExt.updateTime);
@@ -166,9 +173,9 @@ $(document).ready(function () {
                 });
                 //if (status == null || status == "") {
                 $("#totalRecord").text(totalRecord);
-                $("#normal").text(normal);
-                $("#delay").text(delay);
-                $("#waved").text(waved);
+                // $("#normal").text(normal);
+                // $("#delay").text(delay);
+                // $("#waved").text(waved);
                 //}
 
                 //分页初始化
@@ -177,7 +184,7 @@ $(document).ready(function () {
                     pagesize: 8,
                     count: totalRecord,
                     current: currentPage,
-                    callback: function (currentPage, size, count) {
+                    callback: function (currentPage) {
                         refresh(dataCycle, currentPage, status);
                     }
                 });

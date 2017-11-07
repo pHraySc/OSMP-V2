@@ -64,6 +64,14 @@ public class CocLabel {
      */
     private CocLabelExt cocLabelExt;
 
+    public String getSrcTabCode() {
+        return srcTabCode;
+    }
+
+    public void setSrcTabCode(String srcTabCode) {
+        this.srcTabCode = srcTabCode;
+    }
+
     public String getErrMsg() {
         return errMsg;
     }

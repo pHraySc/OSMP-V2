@@ -64,7 +64,7 @@ public interface IAlarmService {
      * @param page      分页信息
      * @return
      */
-    List<CocLabel> queryLabelInfo(int dataCycle, String labelName, Page page, String opTime, String dataDate);
+    List<CocLabel> queryLabelInfo(int dataCycle, String labelName, Page page, String dOpTime, String dDataDate, String mOpTime, String mDataDate);
 
     /**
      * 查询标签波动情况-计算具体数量

@@ -94,8 +94,10 @@ public class AlarmServiceImpl implements IAlarmService {
      * @return
      */
     @Override
-    public List<CocLabel> queryLabelInfo(int dataCycle, String labelName, Page page, String opTime, String dataDate) {
-        return cocAlarmDao.queryLabelInfo(dataCycle, labelName, page, opTime, dataDate);
+    public List<CocLabel> queryLabelInfo(int dataCycle, String labelName, Page page,
+                                         String dOpTime, String dDataDate,
+                                         String mOpTime, String mDataDate) {
+        return cocAlarmDao.queryLabelInfo(dataCycle, labelName, page, dOpTime, dDataDate, mOpTime, mDataDate);
     }
 
     /**
@@ -150,11 +152,16 @@ public class AlarmServiceImpl implements IAlarmService {
      */
     @Override
     public float calculateMoM(CocLabel cocLabel, CocLabelExt cocLabelExt, String opTime, String dataDate) {
+        float moM;
         long previousNum = 0;
         previousNum = cocAlarmDao.queryPreCusNum(cocLabel.getLabelId(), opTime, dataDate);
         long ringNum = Math.abs(cocLabelExt.getWavedCustomNum());
-        float moM = (ringNum * 1.0f) / previousNum * 100;
-        return moM;
+        if (previousNum != 0) {
+            moM = (ringNum * 1.0f) / previousNum * 100;
+            return moM;
+        } else {
+            return -1.00f;
+        }
     }
 
 

@@ -2,86 +2,102 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.asiainfo.alarm.dao.coc.ICocAlarmDao">
     <select id="getSourceTableInfoCount" resultType="int">
-		select
-			count(*)
-		from
-		(
-			select
-				e.data_src_code sourceTableCode,
-				e.data_src_tab_name sourceTableName,
-				e.table_data_cycle dataCycle,
-				max(f.data_source_time) dataDate
-			from
-			(
-				select label_id from ci_label_info where data_status_id=2 and parent_id=-1
-				union all
-				select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1)
-				union all
-				select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1))
-				union all
-				select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1)))
-				union all
-				select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1))))
-			) a
-			left join ci_label_ext_info b on a.label_id=b.label_id
-			left join dim_coc_label_count_rules c on b.count_rules_code=c.count_rules_code
-			left join dim_coc_index_info d on c.depend_index=d.index_code
-			left join dim_coc_index_table_info e on d.data_src_code=e.data_src_code
-			left join dim_coc_data_source_status f on e.data_src_code=f.data_source_id
-            where e.data_src_tab_name like '%'||#{sourceTableName}||'%'
-            <if test="dataCycle!=0">
-                and e.table_data_cycle=#{dataCycle}
-            </if>
-			group by e.data_src_code,e.data_src_tab_name,e.table_data_cycle
-		)
-	</select>
-    <select id="getSourceTableInfo" resultType="com.asiainfo.alarm.model.CocSourceTable">
-		select
-			sourceTableCode,
-			sourceTableName,
-			dataCycle,
-			dataDate
-		from
-		(
-			select
-				sourceTableCode,
-				sourceTableName,
-				dataCycle,
-				dataDate,
-				row_number() over(order by dataCycle,dataDate) row_number
-			from
-			(
-				select
-					e.data_src_code sourceTableCode,
-					e.data_src_tab_name sourceTableName,
-					e.table_data_cycle dataCycle,
-					max(f.data_source_time) dataDate
-				from
-				(
-					select label_id from ci_label_info where data_status_id=2 and parent_id=-1
-					union all
-					select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1)
-					union all
-					select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1))
-					union all
-					select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1)))
-					union all
-					select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1))))
-				) a
-				left join ci_label_ext_info b on a.label_id=b.label_id
-				left join dim_coc_label_count_rules c on b.count_rules_code=c.count_rules_code
-				left join dim_coc_index_info d on c.depend_index=d.index_code
-				left join dim_coc_index_table_info e on d.data_src_code=e.data_src_code
-				left join dim_coc_data_source_status f on e.data_src_code=f.data_source_id
-				where e.data_src_tab_name like '%'||#{sourceTableName}||'%'
-			    <if test="dataCycle!=0">
-			        and e.table_data_cycle=#{dataCycle}
-			    </if>
-				group by e.data_src_code,e.data_src_tab_name,e.table_data_cycle
-			)
-		) where row_number between #{page.startPosition} and #{page.endPosition}
+        select
+        count(*)
+        from
+        (
+        select
+        e.data_src_code sourceTableCode,
+        e.data_src_tab_name sourceTableName,
+        e.table_data_cycle dataCycle,
+        max(f.data_source_time) dataDate
+        from
+        (
+        select label_id from ci_label_info where data_status_id=2 and parent_id=-1
+        union all
+        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
+        where data_status_id=2 and parent_id=-1)
+        union all
+        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
+        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and
+        parent_id=-1))
+        union all
+        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
+        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id
+        in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1)))
+        union all
+        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
+        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id
+        in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from
+        ci_label_info where data_status_id=2 and parent_id=-1))))
+        ) a
+        left join ci_label_ext_info b on a.label_id=b.label_id
+        left join dim_coc_label_count_rules c on b.count_rules_code=c.count_rules_code
+        left join dim_coc_index_info d on c.depend_index=d.index_code
+        left join dim_coc_index_table_info e on d.data_src_code=e.data_src_code
+        left join dim_coc_data_source_status f on e.data_src_code=f.data_source_id
+        where e.data_src_tab_name like '%'||#{sourceTableName}||'%'
+        <if test="dataCycle!=0">
+            and e.table_data_cycle=#{dataCycle}
+        </if>
+        group by e.data_src_code,e.data_src_tab_name,e.table_data_cycle
+        )
     </select>
-	<select id="getSourceTableInfoByCode" parameterType="string" resultType="com.asiainfo.alarm.model.CocSourceTable">
+    <select id="getSourceTableInfo" resultType="com.asiainfo.alarm.model.CocSourceTable">
+        select
+        sourceTableCode,
+        sourceTableName,
+        dataCycle,
+        dataDate
+        from
+        (
+        select
+        sourceTableCode,
+        sourceTableName,
+        dataCycle,
+        dataDate,
+        row_number() over(order by dataCycle,dataDate) row_number
+        from
+        (
+        select
+        e.data_src_code sourceTableCode,
+        e.data_src_tab_name sourceTableName,
+        e.table_data_cycle dataCycle,
+        max(f.data_source_time) dataDate
+        from
+        (
+        select label_id from ci_label_info where data_status_id=2 and parent_id=-1
+        union all
+        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
+        where data_status_id=2 and parent_id=-1)
+        union all
+        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
+        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and
+        parent_id=-1))
+        union all
+        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
+        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id
+        in (select label_id from ci_label_info where data_status_id=2 and parent_id=-1)))
+        union all
+        select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from ci_label_info
+        where data_status_id=2 and parent_id in (select label_id from ci_label_info where data_status_id=2 and parent_id
+        in (select label_id from ci_label_info where data_status_id=2 and parent_id in (select label_id from
+        ci_label_info where data_status_id=2 and parent_id=-1))))
+        ) a
+        left join ci_label_ext_info b on a.label_id=b.label_id
+        left join dim_coc_label_count_rules c on b.count_rules_code=c.count_rules_code
+        left join dim_coc_index_info d on c.depend_index=d.index_code
+        left join dim_coc_index_table_info e on d.data_src_code=e.data_src_code
+        left join dim_coc_data_source_status f on e.data_src_code=f.data_source_id
+        where e.data_src_tab_name like '%'||#{sourceTableName}||'%'
+        <if test="dataCycle!=0">
+            and e.table_data_cycle=#{dataCycle}
+        </if>
+        group by e.data_src_code,e.data_src_tab_name,e.table_data_cycle
+        )
+        ) where row_number between #{page.startPosition} and #{page.endPosition}
+    </select>
+    <select id="getSourceTableInfoByCode" parameterType="string" resultType="com.asiainfo.alarm.model.CocSourceTable">
 		select
 			a.data_src_code sourceTableCode,
 			a.data_src_tab_name sourceTableName,
@@ -234,10 +250,21 @@
         dim_coc_index_table_info e on d.data_src_code=e.data_src_code left join
         (select label_id,count(*) as use_times from ci_user_use_label group by label_id) h on a.label_id=h.label_id left
         join
-        (select label_id,sum(custom_num) AS custom_num from ci_label_stat_dm_${opTime}
+        <choose>
+            <when test="">
+                (select label_id,sum(custom_num) AS custom_num from ci_label_stat_dm_${dOpTime}
+                where city_id=-1 and vip_level_id=-1 and brand_id=-1
+                <if test="null != dDataDate and '' != dDataDate">
+                    and data_date=#{dDataDate}
+                </if>
+                group by label_id) j on a.label_id=j.label_id
+            </when>
+        </choose>
+        LEFT JOIN
+        (select label_id,sum(custom_num) AS custom_num from ci_label_stat_mm_${mOpTime}
         where city_id=-1 and vip_level_id=-1 and brand_id=-1
-        <if test="null != dataDate and '' != dataDate">
-            and data_date=#{dataDate}
+        <if test="null != mDataDate and '' != mDataDate">
+            and data_date=#{mDataDate}
         </if>
         group by label_id) j on a.label_id=j.label_id
         WHERE f.label_name like '%'||#{labelName}||'%'
