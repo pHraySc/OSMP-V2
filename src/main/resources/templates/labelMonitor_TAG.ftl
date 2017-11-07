@@ -34,7 +34,7 @@
             <div class="col-md-4">
             <#--<div style="display: inline-block;align-items: center;">-->
                <#-- <div class="base-header-item" onclick="location.href='labelMonitor'">
-                    <img src="../images/icon_pool01.png">
+                    <img src="./images/icon_pool01.png">
                     <span>汇总</span>
                 </div>-->
                 <div class="base-header-item" onclick="location.href='cocAlarm'">
@@ -42,7 +42,7 @@
                     <span>源表监控</span>
                 </div>
                 <!--<div class="base-header-item">
-                  <img src="../images/icon_a.png">
+                  <img src="./images/icon_a.png">
                   <span>主机性能</span>
                </div>-->
                 <div class="base-header-item base-header-item-active" onclick="location.href='labelMonitor_TAG'">
@@ -105,7 +105,7 @@
         <div class="base-label">
             <div class="col-md-3">
                 <div class="base-label-left">
-                    <img src="../images/icon_line.png"/>
+                    <img src="./images/icon_line.png"/>
                     <span><span id="navBtn"></span>标签列表(<span id="totalRecord">0</span>)</span>
                 </div>
             </div>

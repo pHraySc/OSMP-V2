@@ -60,7 +60,7 @@
    margin-right: 10px;
  }
  .base-opt-btn-item{
-    width:width: 90px;
+    width: 90px;
     border-radius: 0px;
     border:solid 1px #d7d7d7;
     background-color:#F3F3F3;
@@ -181,7 +181,7 @@
 .pr:hover .hint{
    display:block;
 }
- /*ÏêÇé*/
+ /*ï¿½ï¿½ï¿½ï¿½*/
  .foundaods {
     background-color:rgba(12, 11, 11, 0.6);
     position: fixed;
@@ -242,7 +242,7 @@
     outline: 1px solid #EAEAEA;
     text-align: center;
 }
-/*Ôö¼Ó*/
+/*ï¿½ï¿½ï¿½ï¿½*/
 .foundaodadd{
     background-color:rgba(12, 11, 11, 0.6);
     position: fixed;
@@ -292,7 +292,7 @@
 	height: 30px;
     width: 80px;
 }
-/*ÐÞ¸Ä*/
+/*ï¿½Þ¸ï¿½*/
 .foundaodxg{
     background-color:rgba(12, 11, 11, 0.6);
     position: fixed;
