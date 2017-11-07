@@ -4,9 +4,11 @@ import com.asiainfo.alarm.model.CocLabel;
 import com.asiainfo.alarm.model.CocSourceTable;
 import com.asiainfo.alarm.model.Page;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface ICocAlarmDao {
     /**
      * 获取源表信息总记录数
@@ -66,9 +68,11 @@ public interface ICocAlarmDao {
     long queryPreCusNum(@Param("labelId") long labelId, @Param("opTime") String opTime, @Param("dataDate") String dataDate);
 
     /**
-     * 判断前一天用户数是否存在
-     *
-     * @return
+     * 查询ci_label_stat_dm_${opTime}中是否有要查询数据日期的标签
+     * @param labelId
+     * @param opTime
+     * @param dataDate
+     * @return true/false
      */
     boolean doPreCusNumExist(@Param("labelId") long labelId, @Param("opTime") String opTime, @Param("dataDate") String dataDate);
 
@@ -79,4 +83,12 @@ public interface ICocAlarmDao {
      * @return opTime相对于dataDate的环比值-具体数值
      */
     long queryRingNum(@Param("labelId") long labelId, @Param("opTime") String opTime, @Param("dataDate") String dataDate);
+
+    /**
+     * 判断 ci_label_stat_dm_${opTime} 是否存在
+     *
+     * @param tabName
+     * @return
+     */
+    boolean doPreCusNumTabExist(@Param("tabName") String tabName);
 }

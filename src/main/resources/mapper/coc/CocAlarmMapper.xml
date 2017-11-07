@@ -287,4 +287,17 @@
             and label_id=#{labelId}
         </if>
     </select>
+
+    <select id="doPreCusNumTabExist" resultType="Boolean">
+        SELECT
+        count(1)
+        FROM
+        (SELECT 1
+        FROM
+        syscat.tables
+        WHERE
+        tabName=#{tabName}
+        FETCH FIRST 1 ROWS ONLY
+        )
+    </select>
 </mapper>

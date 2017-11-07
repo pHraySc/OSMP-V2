@@ -163,31 +163,51 @@ public class AlarmController {
         for (CocLabel cocLabel : labelList) {
             CocLabelExt cocLabelExt = new CocLabelExt();
             cocLabelExt.setLabelId(cocLabel.getLabelId());
-            if (alarmService.cusNumWaved(cocLabel, DateUtil.twoDaysAgo, DateUtil.twoDaysAgo) != -1) {
+
+            if (alarmService.doPreCusNumExist(cocLabel.getLabelId(), DateUtil.twoDaysAgo, DateUtil.twoDaysAgo)) {
                 cocLabelExt.setWavedCustomNum(alarmService.cusNumWaved(cocLabel, DateUtil.twoDaysAgo, DateUtil.twoDaysAgo));
-                cocLabelExt.setMoM(alarmService.calculateMoM(cocLabel, cocLabelExt, DateUtil.twoDaysAgo, DateUtil.threeDaysAgo));
+
+                if (alarmService.doPreCusNumExist(cocLabel.getLabelId(), DateUtil.twoDaysAgo, DateUtil.threeDaysAgo)) {
+                    cocLabelExt.setMoM(alarmService.calculateMoM(cocLabel, cocLabelExt, DateUtil.twoDaysAgo, DateUtil.threeDaysAgo));
+
+                } else {
+                    cocLabel.setStatus(-2);     //3天前数据不存在，无法计算环比，状态为3天前数据异常
+                    cocLabel.setErrMsg("3天前数据异常，无法计算环比，请检查!!!");
+                }
             } else {
-                cocLabel.setStatus(-1);
+                cocLabel.setStatus(-1);     //两天前数据不存在：1.可能源表还没到（进行中）；2.源表已经到了还是没有数据（数据延迟异常）。
+                cocLabel.setErrMsg("2天前数据异常，无法计算数据波动量，请检查!!!");
             }
+
             System.out.println(cocLabel.getLabelId() + "----" + cocLabel.getLabelName() + "====" + cocLabel.getDataDate());
+
             if (cocLabel.getDataCycle() == 1) {
                 cocLabelExt.setDelayValue(DateUtil.delayValDay);
+
                 if (!DateUtil.isDelay(cocLabel.getDataDate(), cocLabelExt.getDelayValue())) {
+
                     if (cocLabelExt.getMoM() > labelUtil.wavedPercent || cocLabelExt.getMoM() == -1.00f || cocLabelExt.getMoM() == 0) {
                         waved++;
                         cocLabel.setStatus(3);
+                        cocLabel.setErrMsg("数据波动异常，请检查源表数据!!!");
+
                     } else {
                         normal++;
                         cocLabel.setStatus(1);
+
                     }
                 } else {
                     delay++;
                     cocLabel.setStatus(2);
+                    cocLabel.setErrMsg("数据延迟异常，请检查源表到达时间!!!");
+
                 }
             } else {
                 cocLabelExt.setDelayValue(DateUtil.delayValMonth);
+
             }
             cocLabel.setCocLabelExt(cocLabelExt);
+
         }
 
         labelStatus.put("normal", normal);

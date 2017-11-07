@@ -81,4 +81,21 @@ public interface IAlarmService {
      * @return 波动百分比
      */
     float calculateMoM(CocLabel cocLabel, CocLabelExt cocLabelExt, String opTime, String dataDate);
+
+    /**
+     * 查询ci_label_stat_dm_${opTime}中是否有要查询数据日期的标签
+     * @param labelId
+     * @param opTime
+     * @param dataDate
+     * @return true/false
+     */
+    boolean doPreCusNumExist(long labelId, String opTime, String dataDate);
+
+    /**
+     * 判断 ci_label_stat_dm_${opTime} 是否存在
+     *
+     * @param opTime
+     * @return
+     */
+    boolean doPreCusNumTabExist(String opTime);
 }

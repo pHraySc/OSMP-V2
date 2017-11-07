@@ -33,10 +33,10 @@
             <div class="col-md-4"></div>
             <div class="col-md-4">
             <#--<div style="display: inline-block;align-items: center;">-->
-            <#-- <div class="base-header-item" onclick="location.href='labelMonitor'">
-                 <img src="./images/icon_pool01.png">
-                 <span>汇总</span>
-             </div>-->
+               <#-- <div class="base-header-item" onclick="location.href='labelMonitor'">
+                    <img src="../images/icon_pool01.png">
+                    <span>汇总</span>
+                </div>-->
                 <div class="base-header-item" onclick="location.href='cocAlarm'">
                     <img src="./images/icon_lib01.png">
                     <span>源表监控</span>
@@ -64,9 +64,6 @@
             <div class="col-md-6">
                 <div class="btn-group base-opt-btn" data-toggle="buttons" id="baseoptbtn">
                     <label class="btn base-opt-btn-item base-opt-btn-active">
-                        <input type="radio" dataCycle="0">全部</input>
-                    </label>
-                    <label class="btn base-opt-btn-item">
                         <input type="radio" dataCycle="1">日</input>
                     </label>
                     <label class="btn base-opt-btn-item ">
@@ -94,8 +91,8 @@
                 <#--<option value="base">基础接口</option>-->
                 <#--</select>-->
                     <input class="base-opt-qry-txt" type="text" placeholder="搜索标签名称" id="labelName"><img
-                        src="./images/icon_search.png"/></input>
-                    <button class="base-opt-qry-btn" id="refresh"><img src="./images/icon_d.png"/>刷新</button>
+                        src="../images/icon_search.png"/></input>
+                    <button class="base-opt-qry-btn" id="refresh"><img src="../images/icon_d.png"/>刷新</button>
                 </div>
             </div>
         </div>
@@ -105,7 +102,7 @@
         <div class="base-label">
             <div class="col-md-3">
                 <div class="base-label-left">
-                    <img src="./images/icon_line.png"/>
+                    <img src="../images/icon_line.png"/>
                     <span><span id="navBtn"></span>标签列表(<span id="totalRecord">0</span>)</span>
                 </div>
             </div>

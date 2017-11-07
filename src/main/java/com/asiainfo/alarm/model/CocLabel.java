@@ -55,9 +55,22 @@ public class CocLabel {
     private int status;
 
     /**
+     * 标签异常信息
+     */
+    private String errMsg;
+
+    /**
      * 标签扩展信息
      */
     private CocLabelExt cocLabelExt;
+
+    public String getErrMsg() {
+        return errMsg;
+    }
+
+    public void setErrMsg(String errMsg) {
+        this.errMsg = errMsg;
+    }
 
     public int getStatus() {
         return status;

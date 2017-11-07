@@ -110,11 +110,36 @@ public class AlarmServiceImpl implements IAlarmService {
      */
     @Override
     public long cusNumWaved(CocLabel cocLabel, String opTime, String dataDate) {
-        if (cocAlarmDao.doPreCusNumExist(cocLabel.getLabelId(), opTime, dataDate)) {
-            return cocAlarmDao.queryRingNum(cocLabel.getLabelId(), opTime, dataDate);
+        return cocAlarmDao.queryRingNum(cocLabel.getLabelId(), opTime, dataDate);
+    }
+
+    /**
+     * 查询ci_label_stat_dm_${opTime}中是否有要查询数据日期的标签
+     *
+     * @param labelId
+     * @param opTime
+     * @param dataDate
+     * @return true/false
+     */
+    public boolean doPreCusNumExist(long labelId, String opTime, String dataDate) {
+        if (cocAlarmDao.doPreCusNumTabExist(opTime)) {
+            if (cocAlarmDao.doPreCusNumExist(labelId, opTime, dataDate)) return Boolean.TRUE;
+            else return Boolean.FALSE;
         } else {
-            return -1;
+            return Boolean.FALSE;
         }
+    }
+
+    /**
+     * 判断 ci_label_stat_dm_${opTime} 是否存在
+     *
+     * @param opTime
+     * @return
+     */
+    @Override
+    public boolean doPreCusNumTabExist(String opTime) {
+        String tabName = "ci_label_stat_dm_" + opTime;
+        return cocAlarmDao.doPreCusNumTabExist(tabName);
     }
 
     /**
@@ -126,13 +151,11 @@ public class AlarmServiceImpl implements IAlarmService {
     @Override
     public float calculateMoM(CocLabel cocLabel, CocLabelExt cocLabelExt, String opTime, String dataDate) {
         long previousNum = 0;
-        if (cocAlarmDao.doPreCusNumExist(cocLabel.getLabelId(), opTime, dataDate)) {
-            previousNum = cocAlarmDao.queryPreCusNum(cocLabel.getLabelId(), opTime, dataDate);
-            long ringNum = Math.abs(cocLabelExt.getWavedCustomNum());
-            float moM = (ringNum * 1.0f) / previousNum *100;
-            return moM;
-        } else {
-            return -1.00f;
-        }
+        previousNum = cocAlarmDao.queryPreCusNum(cocLabel.getLabelId(), opTime, dataDate);
+        long ringNum = Math.abs(cocLabelExt.getWavedCustomNum());
+        float moM = (ringNum * 1.0f) / previousNum * 100;
+        return moM;
     }
+
+
 }
