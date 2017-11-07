@@ -101,7 +101,7 @@
            if (!isExit) {
            $.ajax({
         		   type:"GET",
-        		   url:"/configManagerController/saveTableSpaceConfigInfo",
+        		   url:"./configManagerController/saveTableSpaceConfigInfo",
         		   dataType:"json",
         		   async : false,
         		   data:{"tableSpaceName":tableSpaceName,"dataSource":dataSource,"threshold":threshold,"creator":creator},
@@ -150,7 +150,7 @@
          if (!isExit) {
 	         $.ajax({
 	         	  type:"GET",
-	  	      	  url:"/configManagerController/updateTableSpaceConfigInfo",
+	  	      	  url:"./configManagerController/updateTableSpaceConfigInfo",
 	  	      	  dataType:"json",
 	  	      	  data:{"tableSpaceName":tableSpaceName,"dataSource":dataSource,"threshold":threshold,"creator":creator,"tableSpaceId":tableSpaceId},
 	               success: function (data) {
@@ -170,7 +170,7 @@
    	   var checkExit = function(tableSpaceName,dataSource,tableSpaceId){
    		 $.ajax({
           	  type:"GET",
-   	      	  url:"/configManagerController/checkTableSpaceExit",
+   	      	  url:"./configManagerController/checkTableSpaceExit",
    	      	  dataType:"json",
    	          async : false,
    	      	  data:{"tableSpaceName":tableSpaceName,"dataSource":dataSource},
@@ -199,7 +199,7 @@
    	      var queryOdsInterNum = function(tableSpaceName){
  	    	 $.ajax({
  	    		 type:"GET",
- 	    		 url:"/configManagerController/queryTableSpaceConfigList",//查询总条数
+ 	    		 url:"./configManagerController/queryTableSpaceConfigList",//查询总条数
  	    		 dataType:"json",
  	    		 data:{"tableSpaceName":tableSpaceName},
  	    		 async : false,
@@ -222,7 +222,7 @@
    	    	if (confirm("确定删除配置吗?")) {
    	    	 $.ajax({
  	    		 type:"GET",
- 	    		 url:"/configManagerController/deleteTableSpaceInfo",//查询总条数
+ 	    		 url:"./configManagerController/deleteTableSpaceInfo",//查询总条数
  	    		 dataType:"json",
  	    		 data:{"tableSpaceId":tableSpaceId},
  	    		 async : false,
@@ -246,7 +246,7 @@
 			 queryOdsInterNum(tableSpaceName);
 			 $.ajax({
 	   	      	  type:"GET",
-	   	      	  url:"/configManagerController/queryTableSpaceConfigList",
+	   	      	  url:"./configManagerController/queryTableSpaceConfigList",
 	   	      	  dataType:"json",
 	   	      	  data:{"page":page,"tableSpaceName":tableSpaceName},
 	   	      	  success:function(data){
@@ -265,7 +265,7 @@
 		   	      	        $trTmp.append($td.clone().text(v.threshold+"G"));
 		   	      	        $trTmp.append($td.clone().text(v.creator));
 		   	      	        $trTmp.append($td.clone().text(v.createTime));
-		   	      	       // $trTmp.append($td.clone().addClass("last-th").append("<img src='../images/icon_detials.png'>"));
+		   	      	       // $trTmp.append($td.clone().addClass("last-th").append("<img src='./images/icon_detials.png'>"));
 	      	        		var $tdLast=$td.clone();
 	      	        		$($tdLast).bind("click",function(){
 	      	        			$(".foundaods").show();
@@ -275,7 +275,7 @@
 	      	        			$(".creator").html((v.creator));
 	      	        			$(".createTime").html(v.createTime);
 	      	        		});
-	      	        		$trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='../images/icon_detials.png'>"));
+	      	        		$trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='./images/icon_detials.png'>"));
 	      	        		
 	      	        		var $tdModify=$td.clone();
 	     	        		$($tdModify).bind("click",function(){
@@ -287,13 +287,13 @@
 	     	        			$(".foundaodxg #creator").val(v.creator);
 	     	        			$(".foundaodxg #createTime").val(v.createTime);
 	     	        		});
-	     	        		$trTmp.append($tdModify.addClass("InterDeatil_click").append("<img src='../images/icon_revise1.png'>"));
+	     	        		$trTmp.append($tdModify.addClass("InterDeatil_click").append("<img src='./images/icon_revise1.png'>"));
 	     	        		
 	     	        		var $tdDelete=$td.clone();
 	     	        		$($tdDelete).bind("click",function(){
 	     	        			deleteInfo(v.id);
 	     	        		});
-	     	        		$trTmp.append($tdDelete.addClass("InterDeatil_click").append("<img src='../images/icon_clean01.png'>"));
+	     	        		$trTmp.append($tdDelete.addClass("InterDeatil_click").append("<img src='./images/icon_clean01.png'>"));
 	   	      	        }
 	   	      	         $("#tbody").append($trTmp);
 	   	      	    });

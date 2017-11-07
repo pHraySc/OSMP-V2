@@ -41,7 +41,7 @@ public class CocLabel {
     private String srcTabName;
 
     /**
-     * 对应源表code
+     * 对应SrdCode
      */
     private String srcTabCode;
     /**

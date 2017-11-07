@@ -123,7 +123,7 @@
            if (!isExit) {
            $.ajax({
         		   type:"GET",
-        		   url:"/configManagerController/saveDispatcConfigInfo",
+        		   url:"./configManagerController/saveDispatcConfigInfo",
         		   dataType:"json",
         		   async : false,
         		   data:{"isDay":isDay,"nodeId":nodeId,"dataSource":dataSource,"dispatcType":dispatcType,"demainTime":demainTime,"creator":creator},
@@ -157,7 +157,7 @@
          if (!isExit) {
 	         $.ajax({
 	         	  type:"GET",
-	  	      	  url:"/configManagerController/updateDispatcConfigInfo",
+	  	      	  url:"./configManagerController/updateDispatcConfigInfo",
 	  	      	  dataType:"json",
 	  	      	  data:{"isDay":isDay,"nodeId":nodeId,"dataSource":dataSource,"dispatcType":dispatcType,"demainTime":demainTime,"creator":creator,"dispatcId":dispatcId},
 	               success: function (data) {
@@ -177,7 +177,7 @@
    	   var checkExit = function(nodeId,dispatcId){
    		 $.ajax({
           	  type:"GET",
-   	      	  url:"/configManagerController/checkDispatcExit",
+   	      	  url:"./configManagerController/checkDispatcExit",
    	      	  dataType:"json",
    	          async : false,
    	      	  data:{"nodeId":nodeId},
@@ -207,7 +207,7 @@
    	      var queryOdsInterNum = function(nodeId){
  	    	 $.ajax({
  	    		 type:"GET",
- 	    		 url:"/configManagerController/queryDispatcConfigList",//查询总条数
+ 	    		 url:"./configManagerController/queryDispatcConfigList",//查询总条数
  	    		 dataType:"json",
  	    		 data:{"nodeId":nodeId},
  	    		 async : false,
@@ -236,7 +236,7 @@
    	    	if (confirm("确定删除配置吗?")) {
    	    	 $.ajax({
  	    		 type:"GET",
- 	    		 url:"/configManagerController/deleteDispatcInfo",//查询总条数
+ 	    		 url:"./configManagerController/deleteDispatcInfo",//查询总条数
  	    		 dataType:"json",
  	    		 data:{"dispatcId":dispatcId},
  	    		 async : false,
@@ -260,7 +260,7 @@
 			 queryOdsInterNum(nodeId);
 			 $.ajax({
 	   	      	  type:"GET",
-	   	      	  url:"/configManagerController/queryDispatcConfigList",
+	   	      	  url:"./configManagerController/queryDispatcConfigList",
 	   	      	  dataType:"json",
 	   	      	  data:{"page":page,"nodeId":nodeId},
 	   	      	  success:function(data){
@@ -286,7 +286,7 @@
 		   	      	        $trTmp.append($td.clone().text(v.dispatcType));
 		   	      	        $trTmp.append($td.clone().text(v.creator));
 		   	      	        $trTmp.append($td.clone().text(v.createTime));
-		   	      	       // $trTmp.append($td.clone().addClass("last-th").append("<img src='../images/icon_detials.png'>"));
+		   	      	       // $trTmp.append($td.clone().addClass("last-th").append("<img src='./images/icon_detials.png'>"));
 	      	        		var $tdLast=$td.clone();
 	      	        		$($tdLast).bind("click",function(){
 	      	        			$(".foundaods").show();
@@ -300,7 +300,7 @@
 	      	        			$(".dispatcType").html(v.dispatcType);
 	      	        			
 	      	        		});
-	      	        		$trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='../images/icon_detials.png'>"));
+	      	        		$trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='./images/icon_detials.png'>"));
 	      	        		
 	      	        		var $tdModify=$td.clone();
 	     	        		$($tdModify).bind("click",function(){
@@ -313,13 +313,13 @@
 	     	        			$(".foundaodxg #isDay").val(v.isDay);
 	     	        			$(".foundaodxg #dispatcType").val(v.dispatcType);
 	     	        		});
-	     	        		$trTmp.append($tdModify.addClass("InterDeatil_click").append("<img src='../images/icon_revise1.png'>"));
+	     	        		$trTmp.append($tdModify.addClass("InterDeatil_click").append("<img src='./images/icon_revise1.png'>"));
 	     	        		
 	     	        		var $tdDelete=$td.clone();
 	     	        		$($tdDelete).bind("click",function(){
 	     	        			deleteInfo(v.id);
 	     	        		});
-	     	        		$trTmp.append($tdDelete.addClass("InterDeatil_click").append("<img src='../images/icon_clean01.png'>"));
+	     	        		$trTmp.append($tdDelete.addClass("InterDeatil_click").append("<img src='./images/icon_clean01.png'>"));
 	   	      	        }
 	   	      	         $("#tbody").append($trTmp);
 	   	      	    });

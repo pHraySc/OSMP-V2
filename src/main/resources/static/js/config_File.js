@@ -107,7 +107,7 @@
            if (!isExit) {
            $.ajax({
         		   type:"GET",
-        		   url:"/configManagerController/saveFileConfigInfo",
+        		   url:"./configManagerController/saveFileConfigInfo",
         		   dataType:"json",
         		   async : false,
         		   data:{"fileIp":fileIp,"filePath":filePath,"threshold":threshold,"creator":creator},
@@ -172,7 +172,7 @@
          if (!isExit) {
 	         $.ajax({
 	         	  type:"GET",
-	  	      	  url:"/configManagerController/updateFileConfigInfo",
+	  	      	  url:"./configManagerController/updateFileConfigInfo",
 	  	      	  dataType:"json",
 	  	      	  data:{"fileIp":fileIp,"filePath":filePath,"threshold":threshold,"creator":creator,"fileId":fileId},
 	               success: function (data) {
@@ -192,7 +192,7 @@
    	   var checkExit = function(fileIp,filePath,fileId){
    		 $.ajax({
           	  type:"GET",
-   	      	  url:"/configManagerController/checkFileExit",
+   	      	  url:"./configManagerController/checkFileExit",
    	      	  dataType:"json",
    	          async : false,
    	      	  data:{"fileIp":fileIp,"filePath":filePath},
@@ -221,7 +221,7 @@
    	      var queryOdsInterNum = function(fileIp){
  	    	 $.ajax({
  	    		 type:"GET",
- 	    		 url:"/configManagerController/queryfileconfigList",//查询总条数
+ 	    		 url:"./configManagerController/queryfileconfigList",//查询总条数
  	    		 dataType:"json",
  	    		 data:{"fileIp":fileIp},
  	    		 async : false,
@@ -245,7 +245,7 @@
    	    	if (confirm("确定删除配置吗?")) {
    	    	 $.ajax({
  	    		 type:"GET",
- 	    		 url:"/configManagerController/deleteFileInfo",//查询总条数
+ 	    		 url:"./configManagerController/deleteFileInfo",//查询总条数
  	    		 dataType:"json",
  	    		 data:{"fileId":fileId},
  	    		 async : false,
@@ -269,7 +269,7 @@
 			 queryOdsInterNum(fileIp);
 			 $.ajax({
 	   	      	  type:"GET",
-	   	      	  url:"/configManagerController/queryfileconfigList",
+	   	      	  url:"./configManagerController/queryfileconfigList",
 	   	      	  dataType:"json",
 	   	      	  data:{"page":page,"fileIp":fileIp},
 	   	      	  success:function(data){
@@ -288,7 +288,7 @@
 		   	      	        $trTmp.append($td.clone().text(v.threshold+"G"));
 		   	      	        $trTmp.append($td.clone().text(v.creator));
 		   	      	        $trTmp.append($td.clone().text(v.createTime));
-		   	      	       // $trTmp.append($td.clone().addClass("last-th").append("<img src='../images/icon_detials.png'>"));
+		   	      	       // $trTmp.append($td.clone().addClass("last-th").append("<img src='./images/icon_detials.png'>"));
 	      	        		var $tdLast=$td.clone();
 	      	        		$($tdLast).bind("click",function(){
 	      	        			$(".foundaods").show();
@@ -298,7 +298,7 @@
 	      	        			$(".creator").html((v.creator));
 	      	        			$(".createTime").html(v.createTime);
 	      	        		});
-	      	        		$trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='../images/icon_detials.png'>"));
+	      	        		$trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='./images/icon_detials.png'>"));
 	      	        		
 	      	        		var $tdModify=$td.clone();
 	     	        		$($tdModify).bind("click",function(){
@@ -310,13 +310,13 @@
 	     	        			$(".foundaodxg #creator").val(v.creator);
 	     	        			$(".foundaodxg #createTime").val(v.createTime);
 	     	        		});
-	     	        		$trTmp.append($tdModify.addClass("InterDeatil_click").append("<img src='../images/icon_revise1.png'>"));
+	     	        		$trTmp.append($tdModify.addClass("InterDeatil_click").append("<img src='./images/icon_revise1.png'>"));
 	     	        		
 	     	        		var $tdDelete=$td.clone();
 	     	        		$($tdDelete).bind("click",function(){
 	     	        			deleteInfo(v.id);
 	     	        		});
-	     	        		$trTmp.append($tdDelete.addClass("InterDeatil_click").append("<img src='../images/icon_clean01.png'>"));
+	     	        		$trTmp.append($tdDelete.addClass("InterDeatil_click").append("<img src='./images/icon_clean01.png'>"));
 	   	      	        }
 	   	      	         $("#tbody").append($trTmp);
 	   	      	    });

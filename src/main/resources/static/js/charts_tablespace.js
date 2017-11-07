@@ -8,7 +8,7 @@ $(document).ready(function(){
 	  
 	  require.config({
 		   paths: {
-		   echarts: '../js/echarts-2.2.7/build/dist'
+		   echarts: './js/echarts-2.2.7/build/dist'
 		          }
 		     });
 	  
@@ -26,7 +26,7 @@ $(document).ready(function(){
 	                
 	                $.ajax({
 	             		 type:"post",
-	             		 url:"/chartsController/queryTableSpaceNum",//查询总条数
+	             		 url:"./chartsController/queryTableSpaceNum",//查询总条数
 	             		 dataType:"json",
 	             		 data:{},
 	             		 async : false,

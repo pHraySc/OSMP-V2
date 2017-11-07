@@ -123,7 +123,7 @@
            if (!isExit) {
            $.ajax({
         		   type:"GET",
-        		   url:"/configManagerController/saveInterFaceConfigInfo",
+        		   url:"./configManagerController/saveInterFaceConfigInfo",
         		   dataType:"json",
         		   async : false,
         		   data:{"isImport":isImport,"interNo":interNo,"dataSource":dataSource,"interType":interType,"demainTime":demainTime,"creator":creator},
@@ -187,7 +187,7 @@
          if (!isExit) {
 	         $.ajax({
 	         	  type:"GET",
-	  	      	  url:"/configManagerController/updateInterFaceConfigInfo",
+	  	      	  url:"./configManagerController/updateInterFaceConfigInfo",
 	  	      	  dataType:"json",
 	  	          async : false,
 	  	      	  data:{"isImport":isImport,"interNo":interNo,"dataSource":dataSource,"interType":interType,"demainTime":demainTime,"creator":creator,"interfaceId":interfaceId},
@@ -208,7 +208,7 @@
    	   var checkExit = function(interNo,interfaceId,dataSource){
    		 $.ajax({
           	  type:"GET",
-   	      	  url:"/configManagerController/checkInterFaceExit",
+   	      	  url:"./configManagerController/checkInterFaceExit",
    	      	  dataType:"json",
    	          async : false,
    	      	  data:{"interNo":interNo,"dataSource":dataSource},
@@ -238,7 +238,7 @@
    	      var queryOdsInterNum = function(interNo){
  	    	 $.ajax({
  	    		 type:"GET",
- 	    		 url:"/configManagerController/queryInterFaceConfigList",//查询总条数
+ 	    		 url:"./configManagerController/queryInterFaceConfigList",//查询总条数
  	    		 dataType:"json",
  	    		 data:{"interNo":interNo},
  	    		 async : false,
@@ -267,7 +267,7 @@
    	    	if (confirm("确定删除配置吗?")) {
    	    	 $.ajax({
  	    		 type:"GET",
- 	    		 url:"/configManagerController/deleteInterFaceInfo",//查询总条数
+ 	    		 url:"./configManagerController/deleteInterFaceInfo",//查询总条数
  	    		 dataType:"json",
  	    		 data:{"interfaceId":interfaceId},
  	    		 async : false,
@@ -291,7 +291,7 @@
 			 queryOdsInterNum(interNo);
 			 $.ajax({
 	   	      	  type:"GET",
-	   	      	  url:"/configManagerController/queryInterFaceConfigList",
+	   	      	  url:"./configManagerController/queryInterFaceConfigList",
 	   	      	  dataType:"json",
 	   	      	  data:{"page":page,"interNo":interNo},
 	   	      	  success:function(data){
@@ -317,7 +317,7 @@
 		   	      	        $trTmp.append($td.clone().text(v.interType));
 		   	      	        $trTmp.append($td.clone().text(v.creator));
 		   	      	        $trTmp.append($td.clone().text(v.createTime));
-		   	      	       // $trTmp.append($td.clone().addClass("last-th").append("<img src='../images/icon_detials.png'>"));
+		   	      	       // $trTmp.append($td.clone().addClass("last-th").append("<img src='./images/icon_detials.png'>"));
 	      	        		var $tdLast=$td.clone();
 	      	        		$($tdLast).bind("click",function(){
 	      	        			$(".foundaods").show();
@@ -331,7 +331,7 @@
 	      	        			$(".interType").html(v.interType);
 	      	        			
 	      	        		});
-	      	        		$trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='../images/icon_detials.png'>"));
+	      	        		$trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='./images/icon_detials.png'>"));
 	      	        		
 	      	        		var $tdModify=$td.clone();
 	     	        		$($tdModify).bind("click",function(){
@@ -349,13 +349,13 @@
 	     	        			$(".foundaodxg #isImport").val(v.isImport);
 	     	        			$(".foundaodxg #interType").val(v.interType);
 	     	        		});
-	     	        		$trTmp.append($tdModify.addClass("InterDeatil_click").append("<img src='../images/icon_revise1.png'>"));
+	     	        		$trTmp.append($tdModify.addClass("InterDeatil_click").append("<img src='./images/icon_revise1.png'>"));
 	     	        		
 	     	        		var $tdDelete=$td.clone();
 	     	        		$($tdDelete).bind("click",function(){
 	     	        			deleteInfo(v.id);
 	     	        		});
-	     	        		$trTmp.append($tdDelete.addClass("InterDeatil_click").append("<img src='../images/icon_clean01.png'>"));
+	     	        		$trTmp.append($tdDelete.addClass("InterDeatil_click").append("<img src='./images/icon_clean01.png'>"));
 	   	      	        }
 	   	      	         $("#tbody").append($trTmp);
 	   	      	    });

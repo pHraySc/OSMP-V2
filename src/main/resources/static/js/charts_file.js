@@ -12,7 +12,7 @@ $(document).ready(function(){
 
 	  require.config({
 		   paths: {
-		   echarts: '../js/echarts-2.2.7/build/dist'
+		   echarts: './js/echarts-2.2.7/build/dist'
 		          }
 		     });
 	  
@@ -45,7 +45,7 @@ $(document).ready(function(){
 	              	  //获取数量
 	                    $.ajax({
 	                		 type:"post",
-	                		 url:"/chartsController/queryFileNum",//查询总条数
+	                		 url:"./chartsController/queryFileNum",//查询总条数
 	                		 dataType:"json",
 	                		 data:{},
 	                		 async : false,
