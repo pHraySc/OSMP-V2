@@ -151,7 +151,7 @@ $(document).ready(function () {
                             }
                             $(".labelName").html(v.labelName);
                             $(".reason").html("暂无");
-                            $(".tableName").html(v.srcTabName + "(" +  +")");
+                            $(".tableName").html(v.srcTabName + "(" + v.srcTabCode +")");
                             $(".dataCycle").html(v.dataCycle);
                             $(".dataDate").html(v.dataDate);
                             $(".custom_num").html(v.customNum);

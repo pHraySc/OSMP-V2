@@ -75,7 +75,7 @@ $(document).ready(function(){
         //var attIdString = attIds.substring(0,attIds.length-1);
         $.ajax({
         	  type:"GET",
- 	      	  url:"/knowledgeController/saveFaultInfo",
+ 	      	  url:"./knowledgeController/saveFaultInfo",
  	      	  dataType:"json",
  	      	  data:{"faultname":faultname,"typeName":typeName,"dealmethod":dealmethod,"faultcontent":faultcontent,"addusername":addusername,"attIds":attIdString,"faultId":faultId},
               success: function (data) {
@@ -138,7 +138,7 @@ $(document).ready(function(){
         
         $.ajax({
         	  type:"GET",
- 	      	  url:"/knowledgeController/updateFaultInfo",
+ 	      	  url:"./knowledgeController/updateFaultInfo",
  	      	  dataType:"json",
  	      	  data:{"faultname":faultname,"typeName":typeName,"dealmethod":dealmethod,"addusername":addusername,"faultcontent":faultcontent,"faultId":faultId,"attIds":attIdString},
               success: function (data) {
@@ -201,7 +201,7 @@ $(document).ready(function(){
    	      var queryKnowNum = function(tableSpaceName,dataSouceId,status){
 	 	    	 $.ajax({
 	 	    		 type:"GET",
-	 	    		 url:"/knowledgeController/queryKnowNum",//查询总条数
+	 	    		 url:"./knowledgeController/queryKnowNum",//查询总条数
 	 	    		 dataType:"json",
 	 	    		 data:{},
 	 	    		 async : false,
@@ -216,7 +216,7 @@ $(document).ready(function(){
 			 queryKnowNum(faultName);
 			 $.ajax({
 	   	      	  type:"GET",
-	   	      	  url:"/knowledgeController/queryList",
+	   	      	  url:"./knowledgeController/queryList",
 	   	      	  dataType:"json",
 	   	      	  data:{"page":page,"faultFlowName":qryStr},
 	   	      	  success:function(data){
@@ -246,7 +246,7 @@ $(document).ready(function(){
 	     	        			$(".dealMethod").html(v.dealMethod);
 	     	        			$(".dealDate").html(v.lastDealDate);
 	     	        		});
-	     	        		$trTmp.append($tdDetail.addClass("faultDeatil_click").append("<img src='../images/icon_detials.png'>"));
+	     	        		$trTmp.append($tdDetail.addClass("faultDeatil_click").append("<img src='./images/icon_detials.png'>"));
 	     	        		
 	     	        		var $tdModify=$td.clone();
 	     	        		$($tdModify).bind("click",function(){
@@ -261,13 +261,13 @@ $(document).ready(function(){
 	     	        			$(".foundaodxg #dealMethod").val(v.dealMethod);
 	     	        			$(".foundaodxg #addusername").val(v.dealPersons);
 	     	        		});
-	     	        		$trTmp.append($tdModify.addClass("InterDeatil_click").append("<img src='../images/icon_revise1.png'>"));
+	     	        		$trTmp.append($tdModify.addClass("InterDeatil_click").append("<img src='./images/icon_revise1.png'>"));
 	     	        		
 	     	        		var $tdDelete=$td.clone();
 	     	        		$($tdDelete).bind("click",function(){
 	     	        			deleteInfo(v.id);
 	     	        		});
-	     	        		$trTmp.append($tdDelete.addClass("InterDeatil_click").append("<img src='../images/icon_clean01.png'>"));
+	     	        		$trTmp.append($tdDelete.addClass("InterDeatil_click").append("<img src='./images/icon_clean01.png'>"));
 	   	      	        }
 	      	            $("#tbody").append($trTmp);
 	   	      	    });
@@ -296,7 +296,7 @@ $(document).ready(function(){
 		 var findAttList = function(faultId) {
 			 $.ajax({
 				  type:"GET",
-	   	      	  url:"/knowledgeController/queryAttachList",
+	   	      	  url:"./knowledgeController/queryAttachList",
 	   	      	  dataType:"json",
 	   	      	  data:{"faultId":faultId},
 		   	      success:function(data){
@@ -313,7 +313,7 @@ $(document).ready(function(){
 		var findAttachList = function(faultId) {
 			 $.ajax({
 				  type:"GET",
-	   	      	  url:"/knowledgeController/queryAttachList",
+	   	      	  url:"./knowledgeController/queryAttachList",
 	   	      	  dataType:"json",
 	   	      	  data:{"faultId":faultId},
 		   	      success:function(data){
@@ -337,7 +337,7 @@ $(document).ready(function(){
    	    	if (confirm("确定删除配置吗?")) {
    	    	 $.ajax({
  	    		 type:"GET",
- 	    		 url:"/knowledgeController/deleteFaultInfo",//查询总条数
+ 	    		 url:"./knowledgeController/deleteFaultInfo",//查询总条数
  	    		 dataType:"json",
  	    		 data:{"faultId":faultId},
  	    		 async : false,
@@ -357,7 +357,7 @@ $(document).ready(function(){
 		
 		 //新增上传文件
 		$('#uploadFile').fileupload({
-			url:"/fileUploadContoller/upload",
+			url:"./fileUploadContoller/upload",
 			dataType: 'json',
 			progressall: function (e, data) {
 		        var progress = parseInt(data.loaded / data.total * 100, 10);
@@ -388,7 +388,7 @@ $(document).ready(function(){
 		
 		 //更新上传文件
 		$('#uploadFile1').fileupload({
-			url:"/fileUploadContoller/upload",
+			url:"./fileUploadContoller/upload",
 			dataType: 'json',
 			progressall: function (e, data) {
 		        var progress = parseInt(data.loaded / data.total * 100, 10);
@@ -423,7 +423,7 @@ $(document).ready(function(){
 			var attIdString = attIds.join(",");
 			$.ajax({
 				type:"GET",
-				url:"/knowledgeController/bindInfo",
+				url:"./knowledgeController/bindInfo",
 				dataType:"json",
 				data:{"faultId":faultId,"attIds":attIdString},
 				success:function(data){
@@ -438,7 +438,7 @@ $(document).ready(function(){
 			var attIdString = attIds.join(",");
 			$.ajax({
 				type:"GET",
-				url:"/knowledgeController/bindInfo",
+				url:"./knowledgeController/bindInfo",
 				dataType:"json",
 				data:{"faultId":faultId,"attIds":attIdString},
 				success:function(data){
@@ -455,7 +455,7 @@ $(document).ready(function(){
 	var deleteAtt = function(attId,attIds){
 		$.ajax({
 			type:"GET",
-			url:"/fileUploadContoller/deleteAtt",
+			url:"./fileUploadContoller/deleteAtt",
 			dataType:"json",
 			data:{"attId":attId},
 			success:function(data){

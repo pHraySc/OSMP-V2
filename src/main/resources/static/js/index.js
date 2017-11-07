@@ -9,7 +9,7 @@ $(document).ready(function(){
 	var queryFileNum = function(){
     	 $.ajax({
     		 type:"GET",
-    		 url:"/fileSystemController/queryFileSystemNum",//查询总条数
+    		 url:"./fileSystemController/queryFileSystemNum",//查询总条数
     		 dataType:"json",
     		 data:{"fileSystemName":fileSystemName,"dataSouceId":dataSouceId,"status":status},
     		 async : false,

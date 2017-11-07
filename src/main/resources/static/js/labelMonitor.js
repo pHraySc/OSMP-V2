@@ -101,7 +101,7 @@ $(document).ready(function(){
         //interName = $("#interName").val();
         $.ajax({
             type:"GET",
-            url:"/interfaceInfoController/queryIntermNum",//查询总条数
+            url:"./interfaceInfoController/queryIntermNum",//查询总条数
             dataType:"json",
             data:{"interName":interName,"dataSouceId":dataSouceId,"interType":interType,"isImport":isImport,"status":status},
             async : false,
@@ -154,7 +154,7 @@ $(document).ready(function(){
         queryOdsInterNum(interName,dataSouceId,isImport,interType,status);
         $.ajax({
             type:"GET",
-            url:"/interfaceInfoController/queryList",
+            url:"./interfaceInfoController/queryList",
             dataType:"json",
             data:{"page":page,"interName":interName,"interType":interType,"isImport":isImport,"dataSouceId":dataSouceId,"status":status},
             success:function(data){
@@ -194,9 +194,9 @@ $(document).ready(function(){
                         $trTmp.append($td.clone().text(v.sumMum));
                         var waveNum="";
                         if(v.waveNum>=0){
-                            waveNum="<img src='../images/icon_up.png'/>"+ Header.dataformat(v.waveNum,2)+"%";
+                            waveNum="<img src='./images/icon_up.png'/>"+ Header.dataformat(v.waveNum,2)+"%";
                         }else{
-                            waveNum="<img src='../images/icon_down.png'/>"+Header.dataformat(-v.waveNum,2)+"%";
+                            waveNum="<img src='./images/icon_down.png'/>"+Header.dataformat(-v.waveNum,2)+"%";
                         }
                         $trTmp.append($td.clone().append(waveNum));
                         $trTmp.append($td.clone().text(v.updateTime));
@@ -228,7 +228,7 @@ $(document).ready(function(){
                             $(".sumMum").html(v.sumMum);
                             $(".waveNum").html(v.waveNum+"%");
                         });
-                        $trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='../images/icon_detials.png'>"));
+                        $trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='./images/icon_detials.png'>"));
                     }
                     $("#tbody").append($trTmp);
                 });
@@ -256,7 +256,7 @@ $(document).ready(function(){
     var queryDataSource = function(moduleId) {
         $.ajax({
             type:"GET",
-            url:"/commonUtilController/queryTypeByModuleId",
+            url:"./commonUtilController/queryTypeByModuleId",
             dataType:"json",
             data:{"moduleId":moduleId},
             success:function(data){
