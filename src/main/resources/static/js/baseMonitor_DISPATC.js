@@ -102,7 +102,7 @@
    	    	 //dispatcName = $("#dispatcName").val();
  	    	 $.ajax({
  	    		 type:"GET",
- 	    		 url:"/dispatcController/queryDisptacmNum",//查询总条数
+ 	    		 url:"./dispatcController/queryDisptacmNum",//查询总条数
  	    		 dataType:"json",
  	    		 data:{"dispatcName":dispatcName,"dataSouceId":dataSouceId,"dispatcType":dispatcType,"isDay":isDay},
  	    		 async : false,
@@ -151,7 +151,7 @@
 			 queryOdsInterNum(dispatcName,dataSouceId,isDay,dispatcType,status);
 			 $.ajax({
 	   	      	  type:"GET",
-	   	      	  url:"/dispatcController/queryList",
+	   	      	  url:"./dispatcController/queryList",
 	   	      	  dataType:"json",
 	   	      	  data:{"page":page,"dispatcName":dispatcName,"dispatcType":dispatcType,"isDay":isDay,"dataSouceId":dataSouceId,"status":status},
 	   	      	  success:function(data){
@@ -211,7 +211,7 @@
 	     	        			$(".actualDate").html(v.actualDate);
 	     	        			$(".demainDate").html(v.demainDate);
 	     	        		});
-	     	        		$trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='../images/icon_detials.png'>"));
+	     	        		$trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='./images/icon_detials.png'>"));
 	   	      	        }
 	   	      	         $("#tbody").append($trTmp);
 	   	      	    });
@@ -238,7 +238,7 @@
 		 var queryDataSource = function(moduleId) {
 			 $.ajax({
 				 type:"GET",
-	   	      	  url:"/commonUtilController/queryTypeByModuleId",
+	   	      	  url:"./commonUtilController/queryTypeByModuleId",
 	   	      	  dataType:"json",
 	   	      	  data:{"moduleId":moduleId},
 		   	      success:function(data){

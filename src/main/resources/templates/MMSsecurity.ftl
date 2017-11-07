@@ -8,13 +8,13 @@
     <title>二经运维平台-彩信保障</title>
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" type="text/css" href="../css/public/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../css/public/paging.css">
-    <link rel="stylesheet" type="text/css" href="../css/header.css">
+    <link rel="stylesheet" type="text/css" href="./css/public/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/public/paging.css">
+    <link rel="stylesheet" type="text/css" href="./css/header.css">
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script type="text/javascript" src="../js/public/html5shiv.min.js"></script>
-    <script type="text/javascript" src="../js/public/respond.min.js"></script>
+    <script type="text/javascript" src="./js/public/html5shiv.min.js"></script>
+    <script type="text/javascript" src="./js/public/respond.min.js"></script>
     <![endif]--> 
     <style>
  .base-header{
@@ -166,15 +166,15 @@
              <div class="col-md-4"></div>
              <div class="col-md-4">
 	             <div class="base-header-item base-header-item-active">
-	                 <img src="../images/icon_b.png">
+	                 <img src="./images/icon_b.png">
 	                 <span>4G彩信</span>
 	             </div>
 	             <div class="base-header-item">
-	             	<img src="../images/icon_c.png">
+	             	<img src="./images/icon_c.png">
 	             	<span>宽带彩信</span>
 	             </div>
 	             <div class="base-header-item">
-	                <img src="../images/icon_a.png">
+	                <img src="./images/icon_a.png">
 	                <span>全省彩信</span>
 	             </div>
 	             <div style="clear:both;"></div>
@@ -206,8 +206,8 @@
              </div>
              <div class="col-md-6">
 	             <div class="base-opt-qry">
-	                <input class="base-opt-qry-txt" type="text" placeholder="搜索接口名称"><img src="../images/icon_search.png"/></input>
-	                <button class="base-opt-qry-btn"><img src="../images/icon_d.png"/>刷新</button>
+	                <input class="base-opt-qry-txt" type="text" placeholder="搜索接口名称"><img src="./images/icon_search.png"/></input>
+	                <button class="base-opt-qry-btn"><img src="./images/icon_d.png"/>刷新</button>
 	             </div>
              </div>
           </div>
@@ -217,19 +217,19 @@
           <div class="base-label">
              <div class="col-md-3">
                 <div class="base-label-left">
-                	<img src="../images/icon_line.png"/>
+                	<img src="./images/icon_line.png"/>
                     <span><span>ODS监控</span>结果列表(<span>0</span>)</span>
                 </div>
              </div>
              <div class="col-md-9">
                  <div class="base-label-right">
                     <ul>
-                      <li><img src="../images/icon_h.png"/><span>加载成功</span>(<span>0</span>条)</li>
-                      <li><img src="../images/icon_i.png"/><span>加载失败</span>(<span>0</span>条)</li>
-                      <li><img src="../images/icon_j.png"/><span>波动异常</span>(<span>0</span>条)</li>
-                      <li><img src="../images/icon_k.png"/><span>进行中</span>(<span>0</span>条)</li>
-                      <li><img src="../images/icon_l.png"/><span>未开始</span>(<span>0</span>条)</li>
-                      <li><img src="../images/icon_g.png"/><span>延迟</span>(<span>0</span>条)</li>
+                      <li><img src="./images/icon_h.png"/><span>加载成功</span>(<span>0</span>条)</li>
+                      <li><img src="./images/icon_i.png"/><span>加载失败</span>(<span>0</span>条)</li>
+                      <li><img src="./images/icon_j.png"/><span>波动异常</span>(<span>0</span>条)</li>
+                      <li><img src="./images/icon_k.png"/><span>进行中</span>(<span>0</span>条)</li>
+                      <li><img src="./images/icon_l.png"/><span>未开始</span>(<span>0</span>条)</li>
+                      <li><img src="./images/icon_g.png"/><span>延迟</span>(<span>0</span>条)</li>
                     </ul>
                  </div>
              </div>
@@ -287,11 +287,11 @@
    </div>
 </div>
 
-<script type="text/javascript" src="../js/public/jquery-1.11.3.min.js"></script>
-<script type="text/javascript" src="../js/public/bootstrap.min.js"></script>
-<script type="text/javascript" src="../js/public/query.js"></script>
-<script type="text/javascript" src="../js/public/paging.js"></script>
-<script type="text/javascript" src="../js/header.js"></script>
+<script type="text/javascript" src="./js/public/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="./js/public/bootstrap.min.js"></script>
+<script type="text/javascript" src="./js/public/query.js"></script>
+<script type="text/javascript" src="./js/public/paging.js"></script>
+<script type="text/javascript" src="./js/header.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
 		 //初始化网页导航模块

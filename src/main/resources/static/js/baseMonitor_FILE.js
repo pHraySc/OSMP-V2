@@ -83,7 +83,7 @@
    	    	 fileSystemName = $("#fileSystemName").val();
  	    	 $.ajax({
  	    		 type:"GET",
- 	    		 url:"/fileSystemController/queryFileSystemNum",//查询总条数
+ 	    		 url:"./fileSystemController/queryFileSystemNum",//查询总条数
  	    		 dataType:"json",
  	    		 data:{"fileSystemName":fileSystemName,"dataSouceId":dataSouceId},
  	    		 async : false,
@@ -127,7 +127,7 @@
 			 queryOdsInterNum(fileSystemName,dataSouceId,status);
 			 $.ajax({
 	   	      	  type:"GET",
-	   	      	  url:"/fileSystemController/queryList",
+	   	      	  url:"./fileSystemController/queryList",
 	   	      	  dataType:"json",
 	   	      	  data:{"page":page,"dataSouceId":dataSouceId,"fileSystemName":fileSystemName,"status":status},
 	   	      	  success:function(data){
@@ -167,7 +167,7 @@
 		   	      	        $trTmp.append($td.clone().text(v.status==98?"-":v.remainSpace));
 		   	      	        $trTmp.append($td.clone().text(v.threshold+"%"));
 		   	      	        $trTmp.append($td.clone().text(v.updateTime));
-		   	      	       // $trTmp.append($td.clone().addClass("last-th").append("<img src='../images/icon_detials.png'>"));
+		   	      	       // $trTmp.append($td.clone().addClass("last-th").append("<img src='./images/icon_detials.png'>"));
 	      	        		var $tdLast=$td.clone();
 	      	        		$($tdLast).bind("click",function(){
 	      	        			$(".foundaods").show();
@@ -185,7 +185,7 @@
 	      	        			$(".remainSpace").html((v.status==98?"-":v.remainSpace));
 	      	        			$(".threshold").html(v.threshold+"%");
 	      	        		});
-	      	        		$trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='../images/icon_detials.png'>"));
+	      	        		$trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='./images/icon_detials.png'>"));
 	   	      	        }
 	   	      	         $("#tbody").append($trTmp);
 	   	      	    });

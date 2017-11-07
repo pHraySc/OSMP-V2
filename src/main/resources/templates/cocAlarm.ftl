@@ -11,14 +11,14 @@
     <title>经分运维一体化平台-标签库监控</title>
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" type="text/css" href="../css/public/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../css/public/paging.css">
-    <link rel="stylesheet" type="text/css" href="../css/header.css">
-    <link rel="stylesheet" type="text/css" href="../css/baseMonitor.css">
+    <link rel="stylesheet" type="text/css" href="./css/public/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/public/paging.css">
+    <link rel="stylesheet" type="text/css" href="./css/header.css">
+    <link rel="stylesheet" type="text/css" href="./css/baseMonitor.css">
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script type="text/javascript" src="../js/public/html5shiv.min.js" charset="utf-8"></script>
-    <script type="text/javascript" src="../js/public/respond.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/public/html5shiv.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/public/respond.min.js" charset="utf-8"></script>
     <![endif]-->
     <style>
         .table_content {
@@ -30,7 +30,7 @@
         }
 
         .form_content {
-            margin: 50px auto;
+            margin: 30px auto;
             width: 900px;
             z-index: 1000;
             background: #fff;
@@ -76,7 +76,7 @@
 
         .Wdate {
             cursor: auto !important;;
-            background: #fff url(../images/data.png) no-repeat right !important;
+            background: #fff url(./images/data.png) no-repeat right !important;
         }
     </style>
 </head>
@@ -92,11 +92,11 @@
             <div class="col-md-4"></div>
             <div class="col-md-4">
                 <div class="base-header-item base-header-item-active" onclick="location.href='cocAlarm'">
-                    <img src="../images/icon_lib01.png">
+                    <img src="./images/icon_lib01.png">
                     <span>源表监控</span>
                 </div>
                 <div class="base-header-item" onclick="location.href='labelMonitor_TAG'">
-                    <img src="../images/icon_tag01.png">
+                    <img src="./images/icon_tag01.png">
                     <span>标签监控</span>
                 </div>
                 <div style="clear:both;"></div>
@@ -123,8 +123,8 @@
             <div class="col-md-6">
                 <div class="base-opt-qry">
                     <input class="base-opt-qry-txt" type="text" placeholder="搜索源表名称" id="sourceTableName"><img
-                        src="../images/icon_search.png"/></input>
-                <#--<button class="base-opt-qry-btn" id="refresh"><img src="../images/icon_d.png"/>刷新</button>-->
+                        src="./images/icon_search.png"/></input>
+                <#--<button class="base-opt-qry-btn" id="refresh"><img src="./images/icon_d.png"/>刷新</button>-->
                 </div>
             </div>
         </div>
@@ -134,7 +134,7 @@
         <div class="base-label">
             <div class="col-md-3">
                 <div class="base-label-left">
-                    <img src="../images/icon_line.png"/>
+                    <img src="./images/icon_line.png"/>
                     <span><span id="navBtn"></span>源表列表(<span id="totalnum">0</span>)</span>
                 </div>
             </div>
@@ -174,7 +174,7 @@
                 <div class="jishd" style="background-color:#fff; margin-left: 20px; "></div>
                 源表详情
                 <button type="button" class="close" id="ods-close" style="margin:10px">
-                    <img src="../images/close.png" alt="">
+                    <img src="./images/close.png" alt="">
                 </button>
             </div>
             <div id="detail">
@@ -252,22 +252,23 @@
                 <div class="jishd" style="background-color:#fff; margin-left: 20px; "></div>
                 编辑源表详情
                 <button type="button" class="close" id="closea" style="margin:10px">
-                    <img src="../images/close.png" alt="">
+                    <img src="./images/close.png" alt="">
                 </button>
             </div>
             <div id="edit" style="width: 90%;margin: auto;">
                 <form id="edit-form" class="form-horizontal" role="form">
 
-                    <div class="form-group" role="form">
+                    <div class="form-group">
                         <label for="sourceTableCode" class="col-sm-2 control-label">源表编码</label>
                         <div class="col-sm-4">
                             <input type="hidden" class="form-control" id="sourceTableCode">
-                            <p class="form-control-static"></p>
+                            <p class="form-control-static" id="sourceTableCodeP"></p>
                         </div>
-
+                    </div>
+                    <div class="form-group">
                         <label class="col-sm-2 control-label">源表表名</label>
-                        <div class="col-sm-4">
-                            <p class="form-control-static" id="sourceTableName"></p>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="sourceTableNameP"></p>
                         </div>
                     </div>
 
@@ -377,12 +378,12 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="../js/public/jquery-1.11.3.min.js"></script>
-<script type="text/javascript" src="../js/public/bootstrap.min.js"></script>
-<script type="text/javascript" src="../js/public/query.js"></script>
-<script type="text/javascript" src="../js/public/paging.js"></script>
-<script type="text/javascript" src="../js/DatePicker/WdatePicker.js"></script>
-<script type="text/javascript" src="../js/header.js"></script>
-<script type="text/javascript" src="../js/cocAlarm.js"></script>
+<script type="text/javascript" src="./js/public/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="./js/public/bootstrap.min.js"></script>
+<script type="text/javascript" src="./js/public/query.js"></script>
+<script type="text/javascript" src="./js/public/paging.js"></script>
+<script type="text/javascript" src="./js/DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="./js/header.js"></script>
+<script type="text/javascript" src="./js/cocAlarm.js"></script>
 </body>
 </html>

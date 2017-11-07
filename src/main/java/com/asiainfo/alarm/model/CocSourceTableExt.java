@@ -4,7 +4,7 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Pattern;
 
 /**
  * 标签库源表扩展信息
@@ -67,7 +67,7 @@ public class CocSourceTableExt {
     /**
      * 联系人电话
      */
-    @Size(min = 11, max = 11, message = "联系人电话格式不正确！")
+    @Pattern(regexp = "^1\\d{10}$", message = "联系人电话格式不正确！")
     private String contactTel;
     /**
      * 联系人电子邮箱

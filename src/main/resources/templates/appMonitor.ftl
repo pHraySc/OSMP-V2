@@ -8,12 +8,12 @@
     <title>Spring Boot - hello</title>
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" type="text/css" href="../css/public/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../css/header.css">
+    <link rel="stylesheet" type="text/css" href="./css/public/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/header.css">
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script type="text/javascript" src="../js/public/html5shiv.min.js"></script>
-    <script type="text/javascript" src="../js/public/respond.min.js"></script>
+    <script type="text/javascript" src="./js/public/html5shiv.min.js"></script>
+    <script type="text/javascript" src="./js/public/respond.min.js"></script>
     <![endif]--> 
     <style>
  .base-header{
@@ -37,9 +37,9 @@
    </div>
 </div>
 
-<script type="text/javascript" src="../js/public/jquery-1.11.3.min.js"></script>
-<script type="text/javascript" src="../js/public/bootstrap.min.js"></script>
-<script type="text/javascript" src="../js/header.js"></script>
+<script type="text/javascript" src="./js/public/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="./js/public/bootstrap.min.js"></script>
+<script type="text/javascript" src="./js/header.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
 		 //初始化网页导航模块

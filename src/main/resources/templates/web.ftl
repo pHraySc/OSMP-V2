@@ -8,15 +8,15 @@
     <title>Spring Boot - hello</title>
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
-    <link href="../css/omp.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+    <link href="./css/omp.css" rel="stylesheet">
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script type="text/javascript" src="../js/html5shiv.min.js"></script>
-    <script type="text/javascript" src="../js/respond.min.js"></script>
+    <script type="text/javascript" src="./js/html5shiv.min.js"></script>
+    <script type="text/javascript" src="./js/respond.min.js"></script>
     <![endif]--> 
-	<script type="text/javascript" src="../js/jquery-1.11.3.min.js"></script>
-	<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="./js/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="./js/bootstrap.min.js"></script>
     <style>
     	html{
     position: relative;
@@ -117,7 +117,7 @@ body{
 		var getData=function(opt){
 		$.ajax({
 			type:"GET",
-			url:"../api/city",
+			url:"./api/city",
 			dataType:"json",
 			data:{"cityName":"3","opt":opt},
 			success:function(data,textStatus){

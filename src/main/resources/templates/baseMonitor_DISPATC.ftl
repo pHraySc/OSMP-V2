@@ -8,14 +8,14 @@
     <title>经分运维一体化平台-基础监控</title>
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" type="text/css" href="../css/public/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../css/public/paging.css">
-    <link rel="stylesheet" type="text/css" href="../css/header.css">
-    <link rel="stylesheet" type="text/css" href="../css/baseMonitor.css">
+    <link rel="stylesheet" type="text/css" href="./css/public/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/public/paging.css">
+    <link rel="stylesheet" type="text/css" href="./css/header.css">
+    <link rel="stylesheet" type="text/css" href="./css/baseMonitor.css">
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script type="text/javascript" src="../js/public/html5shiv.min.js"></script>
-    <script type="text/javascript" src="../js/public/respond.min.js"></script>
+    <script type="text/javascript" src="./js/public/html5shiv.min.js"></script>
+    <script type="text/javascript" src="./js/public/respond.min.js"></script>
     <![endif]--> 
 </head>
 <body>
@@ -31,23 +31,23 @@
              <div class="col-md-3"></div>
              <div class="col-md-7">
 	             <div class="base-header-item" onclick="location.href='baseMonitor'">
-	                 <img src="../images/icon_mon.png">
+	                 <img src="./images/icon_mon.png">
 	                 <span>接口加载</span>
 	             </div>
 	             <div class="base-header-item base-header-item-active">
-	             	<img src="../images/icon_c.png">
+	             	<img src="./images/icon_c.png">
 	             	<span>调度运行</span>
 	             </div>
 	             <!--<div class="base-header-item">
-	                <img src="../images/icon_a.png">
+	                <img src="./images/icon_a.png">
 	                <span>主机性能</span>
 	             </div>-->
 	              <div class="base-header-item" onclick="location.href='baseMonitor_TABLESPACE'">
-	                <img src="../images/icon_a.png">
+	                <img src="./images/icon_a.png">
 	                <span>表空间监控</span>
 	             </div>
 	              <div class="base-header-item"  onclick="location.href='baseMonitor_FILE'">
-	                <img src="../images/icon_a.png">
+	                <img src="./images/icon_a.png">
 	                <span>文件系统监控</span>
 	             </div>
 	             <div style="clear:both;"></div>
@@ -76,8 +76,8 @@
 					    <option value="4g">4G彩信调度</option>
 					    <option value="wide">宽带彩信</option>
 				</select>
-	                <input class="base-opt-qry-txt" type="text" placeholder="搜索任务名称" id="dispatcName"><img src="../images/icon_search.png"/></input>
-	                <button class="base-opt-qry-btn" id="refresh"><img src="../images/icon_d.png"/>刷新</button>
+	                <input class="base-opt-qry-txt" type="text" placeholder="搜索任务名称" id="dispatcName"><img src="./images/icon_search.png"/></input>
+	                <button class="base-opt-qry-btn" id="refresh"><img src="./images/icon_d.png"/>刷新</button>
 	             </div>
              </div>
           </div>
@@ -87,18 +87,18 @@
           <div class="base-label">
              <div class="col-md-3">
                 <div class="base-label-left">
-                	<img src="../images/icon_line.png"/>
+                	<img src="./images/icon_line.png"/>
                     <span>调度列表(<span id="totalnum">0</span>)</span>
                 </div>
              </div>
              <div class="col-md-9">
                  <div class="base-label-right">
                     <ul>
-                      <li><img src="../images/icon_h.png"/><span>运行成功</span>(<span id="success" class="spanclass">0</span>条)</li>
-                      <li><img src="../images/icon_i.png"/><span>运行失败</span>(<span id="fail" class="spanclass">0</span>条)</li>
-                      <li><img src="../images/icon_k.png"/><span>运行中</span>(<span id="process" class="spanclass">0</span>条)</li>
-                      <li><img src="../images/icon_l.png"/><span>未开始</span>(<span id="notstart" class="spanclass">0</span>条)</li>
-                      <li><img src="../images/icon_g.png"/><span>延迟</span>(<span id="timeout" class="spanclass">0</span>条)</li>
+                      <li><img src="./images/icon_h.png"/><span>运行成功</span>(<span id="success" class="spanclass">0</span>条)</li>
+                      <li><img src="./images/icon_i.png"/><span>运行失败</span>(<span id="fail" class="spanclass">0</span>条)</li>
+                      <li><img src="./images/icon_k.png"/><span>运行中</span>(<span id="process" class="spanclass">0</span>条)</li>
+                      <li><img src="./images/icon_l.png"/><span>未开始</span>(<span id="notstart" class="spanclass">0</span>条)</li>
+                      <li><img src="./images/icon_g.png"/><span>延迟</span>(<span id="timeout" class="spanclass">0</span>条)</li>
                     </ul>
                  </div>
              </div>
@@ -163,11 +163,11 @@
    
 </div>
 
-<script type="text/javascript" src="../js/public/jquery-1.11.3.min.js"></script>
-<script type="text/javascript" src="../js/public/bootstrap.min.js"></script>
-<script type="text/javascript" src="../js/public/query.js"></script>
-<script type="text/javascript" src="../js/public/paging.js"></script>
-<script type="text/javascript" src="../js/baseMonitor_DISPATC.js"></script>
-<script type="text/javascript" src="../js/header.js"></script>
+<script type="text/javascript" src="./js/public/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="./js/public/bootstrap.min.js"></script>
+<script type="text/javascript" src="./js/public/query.js"></script>
+<script type="text/javascript" src="./js/public/paging.js"></script>
+<script type="text/javascript" src="./js/baseMonitor_DISPATC.js"></script>
+<script type="text/javascript" src="./js/header.js"></script>
 </body>
 </html>  

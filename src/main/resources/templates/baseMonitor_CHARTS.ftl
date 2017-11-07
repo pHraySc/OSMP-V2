@@ -7,14 +7,14 @@
     <title>经分运维一体化平台-首页 </title>
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" type="text/css" href="../css/public/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../css/public/paging.css">
-    <link rel="stylesheet" type="text/css" href="../css/header.css">
-    <link rel="stylesheet" type="text/css" href="../css/baseMonitor.css">
+    <link rel="stylesheet" type="text/css" href="./css/public/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/public/paging.css">
+    <link rel="stylesheet" type="text/css" href="./css/header.css">
+    <link rel="stylesheet" type="text/css" href="./css/baseMonitor.css">
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script type="text/javascript" src="../js/public/html5shiv.min.js"></script>
-    <script type="text/javascript" src="../js/public/respond.min.js"></script>
+    <script type="text/javascript" src="./js/public/html5shiv.min.js"></script>
+    <script type="text/javascript" src="./js/public/respond.min.js"></script>
     <![endif]--> 
 </head>
 <body>
@@ -42,15 +42,15 @@
        </div>
        <!-- 页面图表结束 end -->
  	</div>
-<script type="text/javascript" src="../js/public/jquery-1.11.3.min.js"></script>
-<script type="text/javascript" src="../js/public/bootstrap.min.js"></script>
-<script type="text/javascript" src="../js/public/query.js"></script>
-<script type="text/javascript" src="../js/public/paging.js"></script>
-<script type="text/javascript" src="../js/charts_file.js"></script>
-<script type="text/javascript" src="../js/charts_tablespace.js"></script>
-<script type="text/javascript" src="../js/charts_interface.js"></script>
-<script type="text/javascript" src="../js/charts_dispatc.js"></script>
-<script type="text/javascript" src="../js/header.js"></script>
-<script type="text/javascript" src="../js/echarts-2.2.7/build/dist/echarts.js"></script>  
+<script type="text/javascript" src="./js/public/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="./js/public/bootstrap.min.js"></script>
+<script type="text/javascript" src="./js/public/query.js"></script>
+<script type="text/javascript" src="./js/public/paging.js"></script>
+<script type="text/javascript" src="./js/charts_file.js"></script>
+<script type="text/javascript" src="./js/charts_tablespace.js"></script>
+<script type="text/javascript" src="./js/charts_interface.js"></script>
+<script type="text/javascript" src="./js/charts_dispatc.js"></script>
+<script type="text/javascript" src="./js/header.js"></script>
+<script type="text/javascript" src="./js/echarts-2.2.7/build/dist/echarts.js"></script>
 </body>
 </html>

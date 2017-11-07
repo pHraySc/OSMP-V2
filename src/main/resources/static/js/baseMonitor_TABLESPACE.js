@@ -46,7 +46,7 @@
    	     var DetailInfo = function(id){
    	    	 $.ajax({
    	    		 type:"GET",
-   	    		 url:"/tableSapceController/queryDetailInfo",//查询总条数
+   	    		 url:"./tableSapceController/queryDetailInfo",//查询总条数
    	    		 dataType:"json",
    	    		 data:{"id":id},
    	    		 async : false,
@@ -93,7 +93,7 @@
    	    	 tableSpaceName = $("#interface").val();
    	    	 $.ajax({
    	    		 type:"GET",
-   	    		 url:"/tableSapceController/queryOdsInterNum",//查询总条数
+   	    		 url:"./tableSapceController/queryOdsInterNum",//查询总条数
    	    		 dataType:"json",
    	    		 data:{"tableSpaceName":tableSpaceName,"dataSouceId":dataSouceId},
    	    		 async : false,
@@ -126,7 +126,7 @@
    	     var tableInfo = function(tableSpaceName,dataSouceId){
    	    	$.ajax({
    	    		  type:"GET",
-	   	      	  url:"/tableSapceController/queryInfoList",//查询list
+	   	      	  url:"./tableSapceController/queryInfoList",//查询list
 	   	      	  dataType:"json",
 	   	      	  data:{"tableSpaceName":tableSpaceName,"dataSouceId":dataSouceId},
 	   	      	  success:function(data){
@@ -152,7 +152,7 @@
 			 queryOdsInterNum(tableSpaceName,dataSouceId,status);//查询总条数
 			 $.ajax({
 	   	      	  type:"GET",
-	   	      	  url:"/tableSapceController/queryList",//查询list
+	   	      	  url:"./tableSapceController/queryList",//查询list
 	   	      	  dataType:"json",
 	   	      	  data:{"page":page,"tableSpaceName":tableSpaceName,"dataSouceId":dataSouceId,"status":status},
 	   	      	  success:function(data){
@@ -199,7 +199,7 @@
 	      	        			}
 	      	        			$(".tableSpaceName").html(v.tableSpaceName);
 	      	        		});
-	      	        		$trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='../images/icon_detials.png'>"));
+	      	        		$trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='./images/icon_detials.png'>"));
 	      	        		//}
 	      	        		$("#tbody").append($trTmp);
 	      	        	});
@@ -222,7 +222,7 @@
 		 var queryDataSource = function(moduleId) {
 			 $.ajax({
 				 type:"GET",
-	   	      	  url:"/commonUtilController/queryTypeByModuleId",
+	   	      	  url:"./commonUtilController/queryTypeByModuleId",
 	   	      	  dataType:"json",
 	   	      	  data:{"moduleId":moduleId},
 		   	      success:function(data){

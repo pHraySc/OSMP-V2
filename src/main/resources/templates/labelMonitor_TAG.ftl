@@ -11,14 +11,14 @@
     <title>经分运维一体化平台-基础监控</title>
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" type="text/css" href="../css/public/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../css/public/paging.css">
-    <link rel="stylesheet" type="text/css" href="../css/header.css">
-    <link rel="stylesheet" type="text/css" href="../css/baseMonitor.css">
+    <link rel="stylesheet" type="text/css" href="./css/public/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/public/paging.css">
+    <link rel="stylesheet" type="text/css" href="./css/header.css">
+    <link rel="stylesheet" type="text/css" href="./css/baseMonitor.css">
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script type="text/javascript" src="../js/public/html5shiv.min.js"></script>
-    <script type="text/javascript" src="../js/public/respond.min.js"></script>
+    <script type="text/javascript" src="./js/public/html5shiv.min.js"></script>
+    <script type="text/javascript" src="./js/public/respond.min.js"></script>
     <![endif]-->
 </head>
 <body>
@@ -31,31 +31,31 @@
         <!--页面内容头部 start-->
         <div class="base-header">
             <div class="col-md-4"></div>
-            <div class="col-md-7">
+            <div class="col-md-4">
             <#--<div style="display: inline-block;align-items: center;">-->
-               <#-- <div class="base-header-item" onclick="location.href='labelMonitor'">
-                    <img src="../images/icon_pool01.png">
-                    <span>汇总</span>
-                </div>-->
+            <#-- <div class="base-header-item" onclick="location.href='labelMonitor'">
+                 <img src="./images/icon_pool01.png">
+                 <span>汇总</span>
+             </div>-->
                 <div class="base-header-item" onclick="location.href='cocAlarm'">
-                    <img src="../images/icon_lib01.png">
+                    <img src="./images/icon_lib01.png">
                     <span>源表监控</span>
                 </div>
                 <!--<div class="base-header-item">
                   <img src="../images/icon_a.png">
                   <span>主机性能</span>
                </div>-->
-                <div class="base-header-item base-header-item-active">
-                    <img src="../images/icon_tag01.png">
+                <div class="base-header-item base-header-item-active" onclick="location.href='labelMonitor_TAG'">
+                    <img src="./images/icon_tag01.png">
                     <span>标签监控</span>
                 </div>
             <#--<div class="base-header-item"  onclick="location.href='baseMonitor_FILE'">-->
-            <#--<img src="../images/icon_a.png">-->
+            <#--<img src="./images/icon_a.png">-->
             <#--<span>文件系统监控</span>-->
             <#--</div>-->
                 <div style="clear:both;"></div>
             </div>
-            <div class="col-md-3"></div>
+            <div class="col-md-4"></div>
         </div>
         <!--页面内容头部 end-->
 
@@ -64,6 +64,9 @@
             <div class="col-md-6">
                 <div class="btn-group base-opt-btn" data-toggle="buttons" id="baseoptbtn">
                     <label class="btn base-opt-btn-item base-opt-btn-active">
+                        <input type="radio" dataCycle="0">全部</input>
+                    </label>
+                    <label class="btn base-opt-btn-item">
                         <input type="radio" dataCycle="1">日</input>
                     </label>
                     <label class="btn base-opt-btn-item ">
@@ -91,8 +94,8 @@
                 <#--<option value="base">基础接口</option>-->
                 <#--</select>-->
                     <input class="base-opt-qry-txt" type="text" placeholder="搜索标签名称" id="labelName"><img
-                        src="../images/icon_search.png"/></input>
-                    <button class="base-opt-qry-btn" id="refresh"><img src="../images/icon_d.png"/>刷新</button>
+                        src="./images/icon_search.png"/></input>
+                    <button class="base-opt-qry-btn" id="refresh"><img src="./images/icon_d.png"/>刷新</button>
                 </div>
             </div>
         </div>
@@ -102,25 +105,25 @@
         <div class="base-label">
             <div class="col-md-3">
                 <div class="base-label-left">
-                    <img src="../images/icon_line.png"/>
+                    <img src="./images/icon_line.png"/>
                     <span><span id="navBtn"></span>标签列表(<span id="totalRecord">0</span>)</span>
                 </div>
             </div>
-            <div class="col-md-9">
-                <div class="base-label-right">
-                    <ul>
-                        <li><img src="../images/icon_h.png"/><span>正常</span>(<span id="normal"
-                                                                                   class="spanclass">0</span>条)
-                        </li>
-                        <li><img src="../images/icon_i.png"/><span>延迟异常</span>(<span id="delay"
-                                                                                     class="spanclass">0</span>条)
-                        </li>
-                        <li><img src="../images/icon_j.png"/><span>波动异常</span>(<span id="waved"
-                                                                                     class="spanclass">0</span>条)
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            <#--<div class="col-md-9">-->
+                <#--<div class="base-label-right">-->
+                    <#--<ul>-->
+                        <#--<li><img src="./images/icon_h.png"/><span>正常</span>(<span id="normal"-->
+                                                                                  <#--class="spanclass">0</span>条)-->
+                        <#--</li>-->
+                        <#--<li><img src="./images/icon_i.png"/><span>延迟异常</span>(<span id="delay"-->
+                                                                                    <#--class="spanclass">0</span>条)-->
+                        <#--</li>-->
+                        <#--<li><img src="./images/icon_j.png"/><span>波动异常</span>(<span id="waved"-->
+                                                                                    <#--class="spanclass">0</span>条)-->
+                        <#--</li>-->
+                    <#--</ul>-->
+                <#--</div>-->
+            <#--</div>-->
         </div>
         <!--页面内容标示栏 end-->
 
@@ -159,9 +162,9 @@
 
             <div class="found_top">
                 <div class="jishd" style="background-color:#fff; margin-left: 20px; "></div>
-                标签加载详情
+                标签详情
                 <button type="button" class="close" id="ods-close" style="margin:10px">
-                    <img src="./static/images/close.png" alt="">
+                    <img src="./images/close.png" alt="">
                 </button>
             </div>
             <div class="dska">
@@ -174,7 +177,7 @@
 
                 </span></div>
                 <div class="conduct-ods">
-                    <div class="conduct-ods1">依赖源表名</div>
+                    <div class="conduct-ods1">依赖源表名(SrcCode)</div>
                     <div class="conduct-ods2 tableName"></div>
                 </div>
                 <div class="conduct-ods">
@@ -210,11 +213,11 @@
     </div>
 
 
-    <script type="text/javascript" src="../js/public/jquery-1.11.3.min.js"></script>
-    <script type="text/javascript" src="../js/public/bootstrap.min.js"></script>
-    <script type="text/javascript" src="../js/public/query.js"></script>
-    <script type="text/javascript" src="../js/public/paging.js"></script>
-    <script type="text/javascript" src="../js/labelMonitor_TAG.js"></script>
-    <script type="text/javascript" src="../js/header.js"></script>
+    <script type="text/javascript" src="./js/public/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="./js/public/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./js/public/query.js"></script>
+    <script type="text/javascript" src="./js/public/paging.js"></script>
+    <script type="text/javascript" src="./js/labelMonitor_TAG.js"></script>
+    <script type="text/javascript" src="./js/header.js"></script>
 </body>
 </html>
