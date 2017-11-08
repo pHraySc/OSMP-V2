@@ -41,14 +41,15 @@ $(document).ready(function () {
 
 
     /**详情模态框**/
-    $(".odsInterDeatil_click").click(function () {
-        $(".foundaods").show();
-    });
+    var showLabelDetail = function () {
+        $("#labelDetail").empty();
+        $(".foundaods.labelDetail").show();
+    }
     /**详情模态框的关闭**/
     $("#closea").click(function () {
         $(".founda").hide();
     });
-    $("#ods-close").click(function () {
+    $("#label-close").click(function () {
         $(".foundaods").hide();
     });
 
@@ -83,7 +84,7 @@ $(document).ready(function () {
 
     //分页查询
     var refresh = function (dataCycle, currentPage, status) {
-        labelName = $.trim($("#labelName")).val();
+        labelName = $.trim($("#labelName").val());
         $.ajax({
             type: "GET",
             url: "./alarm/queryLabelInfo",
@@ -167,7 +168,9 @@ $(document).ready(function () {
                             $(".finishTime").html(v.cocLabelExt.finishTime);
                             $(".contactP").html(v.cocLabelExt.official);
                         });
-                        $trTmp.append($tdLast.addClass("odsInterDeatil_click").append("<img src='./images/icon_detials.png'>"));
+                        $trTmp.append($tdLast.addClass("labelDetail").attr("src", "./images/icon_detials.png").bind(function () {
+                           showLabelDetail();
+                        }));
                     }
                     $("#tbody").append($trTmp);
                 });

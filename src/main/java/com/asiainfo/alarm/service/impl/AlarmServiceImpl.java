@@ -4,6 +4,7 @@ import com.asiainfo.alarm.dao.bass.IAlarmDao;
 import com.asiainfo.alarm.dao.coc.ICocAlarmDao;
 import com.asiainfo.alarm.model.*;
 import com.asiainfo.alarm.service.IAlarmService;
+import com.asiainfo.alarm.util.labelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -112,22 +113,30 @@ public class AlarmServiceImpl implements IAlarmService {
      */
     @Override
     public long cusNumWaved(CocLabel cocLabel, String opTime, String dataDate) {
-        return cocAlarmDao.queryRingNum(cocLabel.getLabelId(), opTime, dataDate);
+        return cocAlarmDao.queryRingNum(cocLabel.getLabelId(), cocLabel.getDataCycle(), opTime, dataDate);
     }
 
     /**
      * 查询ci_label_stat_dm_${opTime}中是否有要查询数据日期的标签
      *
-     * @param labelId
+     * @param cocLabel
      * @param opTime
      * @param dataDate
      * @return true/false
      */
-    public boolean doPreCusNumExist(long labelId, String opTime, String dataDate) {
-        if (cocAlarmDao.doPreCusNumTabExist(opTime)) {
-            if (cocAlarmDao.doPreCusNumExist(labelId, opTime, dataDate)) return Boolean.TRUE;
+    @Override
+    public boolean doPreCusNumExist(CocLabel cocLabel, String opTime, String dataDate) {
+
+        if (this.doPreCusNumTabExist(cocLabel.getDataCycle(), opTime)) {
+
+            if (cocAlarmDao.doPreCusNumExist(cocLabel.getLabelId(), cocLabel.getDataCycle(), opTime, dataDate))
+
+                return Boolean.TRUE;
+
             else return Boolean.FALSE;
+
         } else {
+
             return Boolean.FALSE;
         }
     }
@@ -139,9 +148,20 @@ public class AlarmServiceImpl implements IAlarmService {
      * @return
      */
     @Override
-    public boolean doPreCusNumTabExist(String opTime) {
-        String tabName = "ci_label_stat_dm_" + opTime;
-        return cocAlarmDao.doPreCusNumTabExist(tabName);
+    public boolean doPreCusNumTabExist(int dataCycle, String opTime) {
+
+        StringBuffer tabN = new StringBuffer();
+        String tabName;
+
+        if (dataCycle == 1) {
+
+            tabName = tabN.append("ci_label_stat_dm_").append(opTime).toString();
+        } else {
+
+            tabName = tabN.append("ci_label_stat_mm_").append(opTime).toString();
+        }
+
+        return cocAlarmDao.doesTableExist(labelUtil.labelSchema, tabName);
     }
 
     /**
@@ -153,8 +173,8 @@ public class AlarmServiceImpl implements IAlarmService {
     @Override
     public float calculateMoM(CocLabel cocLabel, CocLabelExt cocLabelExt, String opTime, String dataDate) {
         float moM;
-        long previousNum = 0;
-        previousNum = cocAlarmDao.queryPreCusNum(cocLabel.getLabelId(), opTime, dataDate);
+        long previousNum;
+        previousNum = cocAlarmDao.queryPreCusNum(cocLabel.getLabelId(), cocLabel.getDataCycle(), opTime, dataDate);
         long ringNum = Math.abs(cocLabelExt.getWavedCustomNum());
         if (previousNum != 0) {
             moM = (ringNum * 1.0f) / previousNum * 100;

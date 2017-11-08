@@ -52,12 +52,14 @@ public interface ICocAlarmDao {
      * @param labelName 标签名
      * @param dataCycle 数据周期：0，全部；1，日；2，月
      * @param page      分页信息
-     * @param opTime    数据表账期
-     * @param dataDate  数据日期
+     * @param dOpTime   日数据表账期
+     * @param dDataDate 日数据日期
+     * @param mOpTime   月数据表账期
+     * @param mDataDate 月数据日期
      * @return
      */
     List<CocLabel> queryLabelInfo(@Param("dataCycle") int dataCycle, @Param("labelName") String labelName,
-                                  @Param("page") Page page, @Param("dOpTime") String dOpTime, @Param("dDataDate") String dDataDat,
+                                  @Param("page") Page page, @Param("dOpTime") String dOpTime, @Param("dDataDate") String dDataDate,
                                   @Param("mOpTime") String mOpTime, @Param("mDataDate") String mDataDate);
 
     /**
@@ -66,16 +68,17 @@ public interface ICocAlarmDao {
      * @param labelId
      * @return 前一天的该标签Id的用户数
      */
-    long queryPreCusNum(@Param("labelId") long labelId, @Param("opTime") String opTime, @Param("dataDate") String dataDate);
+    long queryPreCusNum(@Param("labelId") long labelId, @Param("dataCycle") int dataCycle, @Param("opTime") String opTime, @Param("dataDate") String dataDate);
 
     /**
      * 查询ci_label_stat_dm_${opTime}中是否有要查询数据日期的标签
+     *
      * @param labelId
      * @param opTime
      * @param dataDate
      * @return true/false
      */
-    boolean doPreCusNumExist(@Param("labelId") long labelId, @Param("opTime") String opTime, @Param("dataDate") String dataDate);
+    boolean doPreCusNumExist(@Param("labelId") long labelId, @Param("dataCycle") int dataCycle, @Param("opTime") String opTime, @Param("dataDate") String dataDate);
 
     /**
      * 获取前一天的用户数与当天的做比较-具体数量的比较
@@ -83,13 +86,14 @@ public interface ICocAlarmDao {
      * @param labelId
      * @return opTime相对于dataDate的环比值-具体数值
      */
-    long queryRingNum(@Param("labelId") long labelId, @Param("opTime") String opTime, @Param("dataDate") String dataDate);
+    long queryRingNum(@Param("labelId") long labelId, @Param("dataCycle") int dataCycle, @Param("opTime") String opTime, @Param("dataDate") String dataDate);
 
     /**
-     * 判断 ci_label_stat_dm_${opTime} 是否存在
+     * 判断表是否存在
      *
-     * @param tabName
+     * @param tabSchema tableSchema
+     * @param tabName   tableName
      * @return
      */
-    boolean doPreCusNumTabExist(@Param("tabName") String tabName);
+    boolean doesTableExist(@Param("tabSchema") String tabSchema, @Param("tabName") String tabName);
 }

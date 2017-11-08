@@ -20,6 +20,11 @@
     <script type="text/javascript" src="./js/public/html5shiv.min.js"></script>
     <script type="text/javascript" src="./js/public/respond.min.js"></script>
     <![endif]-->
+    <style>
+        .labelDetail {
+            z-index: 3;
+        }
+    </style>
 </head>
 <body>
 <!-- Begin page content -->
@@ -33,10 +38,10 @@
             <div class="col-md-4"></div>
             <div class="col-md-4">
             <#--<div style="display: inline-block;align-items: center;">-->
-               <#-- <div class="base-header-item" onclick="location.href='labelMonitor'">
-                    <img src="./images/icon_pool01.png">
-                    <span>汇总</span>
-                </div>-->
+            <#-- <div class="base-header-item" onclick="location.href='labelMonitor'">
+                 <img src="./images/icon_pool01.png">
+                 <span>汇总</span>
+             </div>-->
                 <div class="base-header-item" onclick="location.href='cocAlarm'">
                     <img src="./images/icon_lib01.png">
                     <span>源表监控</span>
@@ -109,21 +114,21 @@
                     <span><span id="navBtn"></span>标签列表(<span id="totalRecord">0</span>)</span>
                 </div>
             </div>
-            <#--<div class="col-md-9">-->
-                <#--<div class="base-label-right">-->
-                    <#--<ul>-->
-                        <#--<li><img src="./images/icon_h.png"/><span>正常</span>(<span id="normal"-->
-                                                                                  <#--class="spanclass">0</span>条)-->
-                        <#--</li>-->
-                        <#--<li><img src="./images/icon_i.png"/><span>延迟异常</span>(<span id="delay"-->
-                                                                                    <#--class="spanclass">0</span>条)-->
-                        <#--</li>-->
-                        <#--<li><img src="./images/icon_j.png"/><span>波动异常</span>(<span id="waved"-->
-                                                                                    <#--class="spanclass">0</span>条)-->
-                        <#--</li>-->
-                    <#--</ul>-->
-                <#--</div>-->
-            <#--</div>-->
+        <#--<div class="col-md-9">-->
+        <#--<div class="base-label-right">-->
+        <#--<ul>-->
+        <#--<li><img src="./images/icon_h.png"/><span>正常</span>(<span id="normal"-->
+        <#--class="spanclass">0</span>条)-->
+        <#--</li>-->
+        <#--<li><img src="./images/icon_i.png"/><span>延迟异常</span>(<span id="delay"-->
+        <#--class="spanclass">0</span>条)-->
+        <#--</li>-->
+        <#--<li><img src="./images/icon_j.png"/><span>波动异常</span>(<span id="waved"-->
+        <#--class="spanclass">0</span>条)-->
+        <#--</li>-->
+        <#--</ul>-->
+        <#--</div>-->
+        <#--</div>-->
         </div>
         <!--页面内容标示栏 end-->
 
@@ -157,17 +162,17 @@
     </div>
 
     <!--详情-->
-    <div class="foundaods pa">
+    <div class="foundaods labelDetail">
         <div class="ods_content">
 
             <div class="found_top">
                 <div class="jishd" style="background-color:#fff; margin-left: 20px; "></div>
                 标签详情
-                <button type="button" class="close" id="ods-close" style="margin:10px">
+                <button type="button" class="close" id="label-close" style="margin:10px">
                     <img src="./images/close.png" alt="">
                 </button>
             </div>
-            <div class="dska">
+            <div id="labelDetail">
                 <div class="load">
                     <div class="load-img labelStatus"></div>
                     <div class="load-name labelName">掌上冲浪客户（日）</div>
@@ -177,7 +182,7 @@
 
                 </span></div>
                 <div class="conduct-ods">
-                    <div class="conduct-ods1">依赖源表名(SrcCode)</div>
+                    <div class="conduct-ods1">依赖源表名</div>
                     <div class="conduct-ods2 tableName"></div>
                 </div>
                 <div class="conduct-ods">

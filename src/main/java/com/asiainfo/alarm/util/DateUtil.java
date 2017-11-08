@@ -73,13 +73,23 @@ public class DateUtil {
         return isAfter;
     }
 
-    public static boolean isDelay(String dataDate, int delayValDay) {
-        LocalDate localDate = LocalDate.parse(LocalDate.now().minusDays(delayValDay + 1).format(dayFormatter), dayFormatter);
-        LocalDate labelDataDate = LocalDate.parse(dataDate, dayFormatter);
-        if (localDate.isAfter(labelDataDate)) {
-            return Boolean.TRUE;
+    public static boolean isDelay(int dataCycle, String dataDate, int delayValDay) {
+        if (dataCycle == 1) {
+            LocalDate localDate = LocalDate.now().minusDays(delayValDay + 1);
+            LocalDate labelDataDate = LocalDate.parse(dataDate, dayFormatter);
+            if (localDate.isAfter(labelDataDate)) {
+                return Boolean.TRUE;
+            } else {
+                return Boolean.FALSE;
+            }
         } else {
-            return Boolean.FALSE;
+            LocalDate localDate = LocalDate.now().minusMonths(delayValDay + 1);
+             LocalDate labelDataDate = LocalDate.parse(dataDate + "01", dayFormatter);
+            if (localDate.isAfter(labelDataDate)) {
+                return Boolean.TRUE;
+            } else {
+                return Boolean.FALSE;
+            }
         }
     }
 
@@ -87,6 +97,6 @@ public class DateUtil {
         System.out.println(DateUtil.getMonthDataDate(1));
         System.out.println(DateUtil.getDayDataDate(1));
         System.out.println(DateUtil.twoDaysAgo + DateUtil.threeDaysAgo);
-        System.out.println(isDelay("20171029", 2));
+        System.out.println(isDelay(2, "201710" ,1));
     }
 }

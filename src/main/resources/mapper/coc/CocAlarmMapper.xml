@@ -118,17 +118,17 @@
         </if>
     </select>
 
-    <select id="doesTableExist" resultType="Boolean" parameterType="Map">
+    <select id="doesTableExist" resultType="Boolean">
         SELECT
         count(1)
         FROM
         syscat.tables
         WHERE 1=1
-        <if test="">
-            and tabschema=#{tabschema}
+        <if test="null != tabSchema and '' != tabSchema">
+            and lower(tabschema)=#{tabSchema}
         </if>
-        <if test="">
-            and tabname=#{tabname}
+        <if test="null != tabName and '' != tabName">
+            and lower(tabname)=#{tabName}
         </if>
     </select>
 
@@ -154,6 +154,12 @@
     <select id="queryLabelNum" resultType="Integer">
         SELECT
         COUNT(*)
+        FROM
+        (
+        select
+        a.label_id AS labelId,
+        f.label_name AS labelName,
+        f.update_cycle AS dataCycle
         from
         (
         select label_id from ci_label_info where data_status_id=2 and parent_id=-1
@@ -178,13 +184,13 @@
         ci_label_ext_info b on a.label_id=b.label_id left join
         dim_coc_label_count_rules c on b.count_rules_code=c.count_rules_code left join
         dim_coc_index_info d on c.depend_index=d.index_code left join
-        dim_coc_index_table_info e on d.data_src_code=e.data_src_code left join
-        dim_coc_data_source_status g on e.data_src_code=g.data_source_id
+        dim_coc_index_table_info e on d.data_src_code=e.data_src_code
         WHERE 1=1 and f.label_name like '%'||#{labelName}||'%'
         <if test="dataCycle != 0">
             and f.update_cycle=#{dataCycle}
         </if>
         and b.IS_STAT_USER_NUM = 1
+        )
     </select>
 
     <select id="queryLabelInfo" resultType="com.asiainfo.alarm.model.CocLabel">
@@ -210,7 +216,7 @@
         srcTabCode,
         srcTabColName,
         customNum,
-        row_number() over(order by srcTabCode DESC ,labelId ASC ) AS row_number
+        row_number() over(order by substr(srcTabCode,3) ASC ,labelId ASC ) AS row_number
         FROM
         (
         select
@@ -221,7 +227,21 @@
         e.data_src_tab_name AS srcTabName,
         e.data_src_code as srcTabCode,
         d.data_src_col_name AS srcTabColName,
-        j.custom_num AS customNum,
+        <choose>
+            <when test="dataCycle == 1">
+                j.custom_num AS customNum,
+            </when>
+            <when test="dataCycle == 2">
+                k.custom_num AS customNum,
+            </when>
+            <otherwise>
+                CASE f.update_cycle
+                WHEN 1 THEN j.custom_num
+                WHEN 2 THEN k.custom_num
+                END
+                AS customNum,
+            </otherwise>
+        </choose>
         f.data_date AS dataDate
         from
         (
@@ -248,25 +268,25 @@
         dim_coc_label_count_rules c on b.count_rules_code=c.count_rules_code left join
         dim_coc_index_info d on c.depend_index=d.index_code left join
         dim_coc_index_table_info e on d.data_src_code=e.data_src_code left join
-        (select label_id,count(*) as use_times from ci_user_use_label group by label_id) h on a.label_id=h.label_id left
-        join
-        <choose>
-            <when test="">
-                (select label_id,sum(custom_num) AS custom_num from ci_label_stat_dm_${dOpTime}
-                where city_id=-1 and vip_level_id=-1 and brand_id=-1
-                <if test="null != dDataDate and '' != dDataDate">
-                    and data_date=#{dDataDate}
-                </if>
-                group by label_id) j on a.label_id=j.label_id
-            </when>
-        </choose>
-        LEFT JOIN
-        (select label_id,sum(custom_num) AS custom_num from ci_label_stat_mm_${mOpTime}
-        where city_id=-1 and vip_level_id=-1 and brand_id=-1
-        <if test="null != mDataDate and '' != mDataDate">
-            and data_date=#{mDataDate}
+        (select label_id,count(*) as use_times from ci_user_use_label group by label_id) h on a.label_id=h.label_id
+        <if test="dataCycle == 1 or dataCycle == 0">
+            LEFT JOIN
+            (select label_id,sum(custom_num) AS custom_num from ci_label_stat_dm_${dOpTime}
+            where city_id=-1 and vip_level_id=-1 and brand_id=-1
+            <if test="null != dDataDate and '' != dDataDate">
+                and data_date=#{dDataDate}
+            </if>
+            group by label_id) j on a.label_id=j.label_id
         </if>
-        group by label_id) j on a.label_id=j.label_id
+        <if test="dataCycle == 2 or dataCycle == 0">
+            LEFT JOIN
+            (select label_id,sum(custom_num) AS custom_num from ci_label_stat_mm_${mOpTime}
+            where city_id=-1 and vip_level_id=-1 and brand_id=-1
+            <if test="null != mDataDate and '' != mDataDate">
+                and data_date=#{mDataDate}
+            </if>
+            group by label_id) k on a.label_id=k.label_id
+        </if>
         WHERE f.label_name like '%'||#{labelName}||'%'
         <if test="dataCycle != 0">
             and f.update_cycle=#{dataCycle}
@@ -278,7 +298,15 @@
     </select>
 
     <select id="queryPreCusNum" resultType="java.lang.Long">
-        select sum(custom_num) AS custom_num from ci_label_stat_dm_${opTime}
+        select sum(custom_num) AS custom_num from
+        <choose>
+            <when test="dataCycle == 1">
+                ci_label_stat_dm_${opTime}
+            </when>
+            <when test="dataCycle == 2">
+                ci_label_stat_mm_${opTime}
+            </when>
+        </choose>
         where city_id=-1 and vip_level_id=-1 and brand_id=-1
         <if test="null != dataDate and '' != dataDate">
             and data_date=#{dataDate}
@@ -293,7 +321,15 @@
         count(1)
         FROM
         (SELECT
-        1 FROM ci_label_stat_dm_${opTime}
+        1 FROM
+        <choose>
+            <when test="dataCycle == 1">
+                ci_label_stat_dm_${opTime}
+            </when>
+            <when test="dataCycle == 2">
+                ci_label_stat_mm_${opTime}
+            </when>
+        </choose>
         WHERE 1=1
         <if test="null != dataDate and '' != dataDate">
             AND data_date=#{dataDate}
@@ -305,7 +341,15 @@
     </select>
 
     <select id="queryRingNum" resultType="java.lang.Long">
-        select ring_num AS ringNum from ci_label_stat_dm_${opTime}
+        select ring_num AS ringNum from
+        <choose>
+            <when test="dataCycle == 1">
+                ci_label_stat_dm_${opTime}
+            </when>
+            <when test="dataCycle == 2">
+                ci_label_stat_mm_${opTime}
+            </when>
+        </choose>
         where city_id=-1 and vip_level_id=-1 and brand_id=-1
         <if test="null != dataDate and '' != dataDate">
             and data_date=#{dataDate}
@@ -315,16 +359,4 @@
         </if>
     </select>
 
-    <select id="doPreCusNumTabExist" resultType="Boolean">
-        SELECT
-        count(1)
-        FROM
-        (SELECT 1
-        FROM
-        syscat.tables
-        WHERE
-        tabName=#{tabName}
-        FETCH FIRST 1 ROWS ONLY
-        )
-    </select>
 </mapper>

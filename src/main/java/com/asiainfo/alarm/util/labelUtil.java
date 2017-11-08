@@ -15,4 +15,9 @@ public class labelUtil {
      * 指定波动百分比，超过指定值为波动异常
      */
     public static final float wavedPercent = 10.00f;
+
+    /**
+     * 默认schema
+     */
+    public static final String labelSchema = "sccoc";
 }
