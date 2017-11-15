@@ -9,7 +9,10 @@ $(document).ready(function () {
             $(".base-header-item-active").removeClass("base-header-item-active");
             $(this).addClass("base-header-item-active");
         });
-        var dataCycle = "";
+
+        var dataCycle = 0;
+        var pageSize = 8;
+        var currentPage = 1;
 
         var _status = {};
         // 1.正常 2.延迟异常 3.波动异常 4.tcl为执行 5.tcl执行异常
@@ -59,7 +62,7 @@ $(document).ready(function () {
                 data: {"srcTabCode": cocLabel.srcTabCode},
                 success: function (data) {
                     if (data.code == 0) {
-                        var cocSourceTableExt = data.data;
+                        var cocSourceTable = data.data;
 
 
                         var $table = $("<table class='table table-bordered'></table>");
@@ -69,7 +72,7 @@ $(document).ready(function () {
 
                         //标签详情
                         var $tmpTr = $tr.clone();
-                        $tmpTr.append($th.clone().addClass("Basic-th").attr("colspan", 3).text("标签详情"));
+                        $tmpTr.append($th.clone().addClass("Basic-th").attr("colspan", "3").text("标签详情"));
                         $tmpTr.append($th.clone().addClass("Basic-th").html(Header.setLabelStatus(cocLabel.status)));
                         $table.append($tmpTr);
 
@@ -108,19 +111,34 @@ $(document).ready(function () {
                         $tmpTr.append($td.clone().addClass("Basic-td-value").text(cocLabel.srcTabCode));
                         $table.append($tmpTr);
 
+                        //源表信息
                         $tmpTr = $tr.clone();
-                        $tmpTr.append($td.clone().addClass("Basic-td-key").text("源表生成时间："));
-                        $tmpTr.append($td.clone().addClass("Basic-td-value").text(cocSourceTableExt.updateTime));
-                        $tmpTr.append($td.clone().addClass("Basic-td-key").text("数据时效性："));
-                        $tmpTr.append($td.clone().addClass("Basic-td-value").text("T-" + cocSourceTableExt.delayValue + (cocSourceTableExt.dataCycle == 1 ? "日" : "月")));
+                        $tmpTr.append($th.clone().addClass("Basic-th").attr("colspan", "4").text("源表信息"));
                         $table.append($tmpTr);
 
-                        $tmpTr = $tr.clone();
-                        $tmpTr.append($td.clone().addClass("Basic-td-key").text("联系人姓名："));
-                        $tmpTr.append($td.clone().addClass("Basic-td-value").text(cocSourceTableExt.contactName));
-                        $tmpTr.append($td.clone().addClass("Basic-td-key").text("联系电话/邮箱："));
-                        $tmpTr.append($td.clone().addClass("Basic-td-value").text(cocSourceTableExt.contactTel + "/" + cocSourceTableExt.contactEmail));
-                        $table.append($tmpTr);
+                        if (cocSourceTable.dataStatus == 0) {
+
+                            $tmpTr = $tr.clone();
+                            $tmpTr.append($td.clone().addClass("Basic-td-center").attr("colspan", "4").text("未录入源表信息!"));
+                            $table.append($tmpTr);
+
+                        } else {
+
+
+                            $tmpTr = $tr.clone();
+                            $tmpTr.append($td.clone().addClass("Basic-td-key").text("源表生成时间："));
+                            $tmpTr.append($td.clone().addClass("Basic-td-value").text(cocSourceTable.cocSourceTableExt.updateTime));
+                            $tmpTr.append($td.clone().addClass("Basic-td-key").text("数据时效性："));
+                            $tmpTr.append($td.clone().addClass("Basic-td-value").text("T-" + cocSourceTable.cocSourceTableExt.delayValue + (cocSourceTable.cocSourceTableExt.dataCycle == 1 ? "日" : "月")));
+                            $table.append($tmpTr);
+
+                            $tmpTr = $tr.clone();
+                            $tmpTr.append($td.clone().addClass("Basic-td-key").text("联系人姓名："));
+                            $tmpTr.append($td.clone().addClass("Basic-td-value").text(cocSourceTable.cocSourceTableExt.contactName));
+                            $tmpTr.append($td.clone().addClass("Basic-td-key").text("联系电话/邮箱："));
+                            $tmpTr.append($td.clone().addClass("Basic-td-value").text(cocSourceTable.cocSourceTableExt.contactTel + "/" + cocSourceTable.cocSourceTableExt.contactEmail));
+                            $table.append($tmpTr);
+                        }
 
 
                         $("#labelDetail").append($table);
@@ -143,55 +161,44 @@ $(document).ready(function () {
             $("#busiCaliber").val(cocLabel.busiCaliber);
 
             $(".foundaods.edit").show();
+        };
+        /**提交模态框数据**/
+        $("#post").click(function () {
+            var cocLabel = {};
 
-            $(".editBtn").click(function () {
-                var input = $(".BusiCali");
-                var txt = $("#busiCaliber").val();
+            cocLabel.labelId = $("#labelId").val();
+            cocLabel.labelName = $("#labelNameP").text();
+            cocLabel.busiCaliber = $("#busiCaliber").val();
 
-                input.removeProp("readonly");
-
-                input.click(function () {
-                    return false;
-                });
-                //获取焦点
-                input.trigger("focus");
-                //失去焦点后
-                input.blur(function () {
-                    var newtxt = $(this).val();
-                    //判断文本是否被修改
-                    if (newtxt != txt) {
-                        input.val(newtxt);
-                        $.ajax({
-                            type: "GET",
-                            url: "./alarm/updateLabelInfo",
-                            dataType: "json",
-                            data: {
-                                "labelId": cocLabel.labelId,
-                                "labelCaliber": newtxt
-                            },
-                            success: function (data) {
-                                if (data.code != 0) {
-                                    alert(data.msg);
-                                    input.val(txt);
-                                } else {
-                                    alert(data.msg);
-                                    input.val(newtxt);
-                                }
-                            }
-                        });
+            $.ajax({
+                type: "POST",
+                url: "./alarm/updateLabelInfo",
+                contentType: 'application/json',
+                data: JSON.stringify(cocLabel),
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == 0) {
+                        $(".foundaods.edit").hide();
+                        alert(data.msg);
+                        refresh(dataCycle, currentPage);
                     } else {
-                        input.val(newtxt);
+                        alert(data.msg);
                     }
-                })
-            })
-        }
+                }
+            });
+        });
+
+        /**取消模态框**/
+        $("#cancel").click(function () {
+            $(".foundaods.edit").hide();
+        });
 
         /**详情模态框的关闭**/
-        $("#closea").click(function () {
-            $(".founda").hide();
+        $("#label-detailClose").click(function () {
+            $(".foundaods.labelDetail").hide();
         });
-        $("#label-close").click(function () {
-            $(".foundaods").hide();
+        $("#label-EditClose").click(function () {
+            $(".foundaods.edit").hide();
         });
 
         //刷新按钮点击事件
@@ -280,11 +287,11 @@ $(document).ready(function () {
 
                             var $tdLast = $td.clone();
 
-                            $tdLast.append($img.clone().addClass("labelDetail").attr("src", "./images/icon_detials.png").bind("click", function () {
+                            $tdLast.append($img.clone().addClass("labelDetailImg").attr("src", "./images/icon_detials.png").bind("click", function () {
                                 showLabelDetail(v);
                             }));
 
-                            $tdLast.append($img.clone().addClass("labelEdit").attr("src", "./images/icon_revise1.png").bind("click", function () {
+                            $tdLast.append($img.clone().addClass("labelEditImg").attr("src", "./images/icon_revise1.png").bind("click", function () {
                                 updateLabelInfo(v);
                             }));
 

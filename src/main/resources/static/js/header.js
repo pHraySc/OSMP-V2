@@ -111,7 +111,8 @@ Header = function () {
             images[1] = "./images/icon_h.png";
             images[2] = "./images/icon_i.png";
             images[3] = "./images/icon_j.png";
-            images[-1] = "./images/icon_k.png";
+            images[4] = "./images/icon_k.png";
+            images[5] = "./images/icon_l.png";
             return "<img src= " + images[index] + " >";
         },
         dataformat: function (s, n) {

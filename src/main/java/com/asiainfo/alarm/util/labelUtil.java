@@ -20,4 +20,14 @@ public class labelUtil {
      * 默认schema
      */
     public static final String labelSchema = "sccoc";
+
+    /**
+     * ci_label_stat_dm/mm表还未到更新时间10:00
+     */
+    public static final int ciLabelStatNotArr = -99;
+
+    /**
+     * ci_label_stat_dm/mm当前周期的数据暂无
+     */
+    public static final int ciLabelStatNoCurOptimeData = -98;
 }

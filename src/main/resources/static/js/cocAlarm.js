@@ -381,7 +381,6 @@ $(document).ready(function () {
                 } else {
                     $.each(data, function (k, v) {
                         var $trTmp = $tr.clone();
-
                         $trTmp.append($td.clone().text(v.sourceTableCode));
                         $trTmp.append($td.clone().text(v.sourceTableName));
                         $trTmp.append($td.clone().text(v.dataCycle == 1 ? "日" : "月"));

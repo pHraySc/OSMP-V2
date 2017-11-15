@@ -21,9 +21,64 @@
     <script type="text/javascript" src="./js/public/respond.min.js"></script>
     <![endif]-->
     <style>
+
         .labelDetail {
             z-index: 3;
         }
+
+        .table_content {
+            margin: 20px auto;
+            width: 900px;
+            z-index: 1000;
+            background: #fff;
+            outline: 1px solid #EAEAEA;
+        }
+
+        .label_content {
+            margin: 20px auto;
+            width: 900px;
+            z-index: 1000;
+            background: #fff;
+            outline: 1px solid #EAEAEA;
+        }
+
+        .labelDetailImg {
+            margin-top: 1px;
+        }
+
+        .labelEditImg {
+            margin-left: 12px;
+        }
+
+        #labelDetail, #edit {
+            padding: 20px;
+        }
+
+        .labelDetail, .edit {
+            z-index: 3;
+        }
+
+        .Basic-th {
+            text-align: left;
+        }
+
+        .Basic-td-key {
+            text-align: right;
+        }
+
+        .Basic-td-value {
+            text-align: left;
+        }
+
+        .Basic-td-center {
+            text-align: center;
+            color: red;
+        }
+
+        .init-hide {
+            display: none;
+        }
+
     </style>
 </head>
 <body>
@@ -140,13 +195,13 @@
                     <tr>
                         <th width="5%">状态</th>
                         <th width="20%">标签名</th>
+                        <th width="5%">数据周期</th>
                         <th width="10%">数据日期</th>
                         <th width="10%">数据量</th>
                         <th width="5%">数据量波动</th>
                         <th width="5%">环比</th>
                         <th width="10%">对应源表</th>
-                        <th width="10%">对应源表字段</th>
-                        <th class="last-th" width="5%">详情</th>
+                        <th class="last-th" width="10%">操作</th>
                     </tr>
                     </thead>
                     <tbody id="tbody">
@@ -163,56 +218,73 @@
 
     <!--详情-->
     <div class="foundaods labelDetail">
-        <div class="ods_content">
+        <div class="table_content">
 
             <div class="found_top">
                 <div class="jishd" style="background-color:#fff; margin-left: 20px; "></div>
                 标签详情
-                <button type="button" class="close" id="label-close" style="margin:10px">
+                <button type="button" class="close" id="label-detailClose" style="margin:10px">
                     <img src="./images/close.png" alt="">
                 </button>
             </div>
             <div id="labelDetail">
-                <div class="load">
-                    <div class="load-img labelStatus"></div>
-                    <div class="load-name labelName">掌上冲浪客户（日）</div>
-                    <div class="load-state result"></div>
-                </div>
-                <div class="cause">原因：<span class="odsWarningReason reason" title="">
 
-                </span></div>
-                <div class="conduct-ods">
-                    <div class="conduct-ods1">依赖源表名</div>
-                    <div class="conduct-ods2 tableName"></div>
-                </div>
-                <div class="conduct-ods">
-                    <div class="conduct-ods1">数据周期</div>
-                    <div class="conduct-ods2 dataCycle"></div>
-                </div>
-                <div class="conduct-ods">
-                    <div class="conduct-ods1">数据日期</div>
-                    <div class="conduct-ods2 dataDate"></div>
-                </div>
-                <div class="conduct-ods">
-                    <div class="conduct-ods1">数据量</div>
-                    <div class="conduct-ods2 custom_num"></div>
-                </div>
-                <div class="conduct-ods">
-                    <div class="conduct-ods1">更新时间</div>
-                    <div class="conduct-ods2 updateTime"></div>
-                </div>
-                <div class="conduct-ods">
-                    <div class="conduct-ods1">要求更新时间</div>
-                    <div class="conduct-ods2 shouldUpdateTime"></div>
-                </div>
-                <div class="conduct-ods">
-                    <div class="conduct-ods1">完成时间</div>
-                    <div class="conduct-ods2 finishTime"></div>
-                </div>
-                <div class="conduct-ods">
-                    <div class="conduct-ods1">依赖表联系人</div>
-                    <div class="conduct-ods2" contactP></div>
-                </div>
+            </div>
+        </div>
+    </div>
+
+<#--编辑源表信息-->
+
+    <div class="foundaods edit">
+        <div class="label_content">
+
+            <div class="found_top">
+                <div class="jishd" style="background-color:#fff; margin-left: 20px; "></div>
+                编辑标签详情
+                <button type="button" class="close" id="label-EditClose" style="margin:10px">
+                    <img src="./images/close.png" alt="">
+                </button>
+            </div>
+            <div id="edit" style="width: 90%;margin: auto;">
+                <form id="edit-form" class="form-horizontal" role="form">
+
+                    <div class="form-group">
+                        <label for="labelId" class="col-sm-2 control-label">标签ID</label>
+                        <div class="col-sm-4">
+                            <input type="hidden" class="form-control" id="labelId">
+                            <p class="form-control-static" id="labelIdP"></p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">标签名</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static" id="labelNameP"></p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="busiCaliber" class="col-sm-2 control-label">标签口径</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="busiCaliber">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-9 col-sm-3">
+                            <button id="cancel" type="button" class="btn btn-default">取消</button>
+                            <button id="post" type="button" class="btn btn-primary">提交</button>
+                        </div>
+                    </div>
+                        <#--<div class="form-group">-->
+                            <#--<label for="sourceTableCode" class="col-sm-2 control-label">源表编码</label>-->
+                            <#--<div class="col-sm-4">-->
+                                <#--<input type="hidden" class="form-control" id="sourceTableCode">-->
+                                <#--<p class="form-control-static" id="sourceTableCodeP"></p>-->
+                            <#--</div>-->
+                        <#--</div>-->
+
+                </form>
             </div>
         </div>
     </div>

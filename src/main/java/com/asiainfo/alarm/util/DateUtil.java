@@ -15,13 +15,21 @@ public class DateUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(DateUtil.class);
 
-    private static final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("yyyyMM");
+    public static final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("yyyyMM");
 
-    private static final DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+    public static final DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     public static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    public static final LocalTime nowTime = LocalTime.now();
+
+    public static final LocalDate nowDate = LocalDate.now();
+
+    public static final LocalTime tclShouldTime = LocalTime.of(10,0,0);
+
+    public static final LocalDate tclShouldDate = LocalDate.of(nowDate.getYear(),nowDate.getMonth(),3);
 
     public static final String twoDaysAgo = DateUtil.getDayDataDate(2);     //两天前
 
@@ -84,7 +92,7 @@ public class DateUtil {
             }
         } else {
             LocalDate localDate = LocalDate.now().minusMonths(delayValDay + 1);
-             LocalDate labelDataDate = LocalDate.parse(dataDate + "01", dayFormatter);
+            LocalDate labelDataDate = LocalDate.parse(dataDate + "01", dayFormatter);
             if (localDate.isAfter(labelDataDate)) {
                 return Boolean.TRUE;
             } else {
@@ -97,6 +105,8 @@ public class DateUtil {
         System.out.println(DateUtil.getMonthDataDate(1));
         System.out.println(DateUtil.getDayDataDate(1));
         System.out.println(DateUtil.twoDaysAgo + DateUtil.threeDaysAgo);
-        System.out.println(isDelay(2, "201710" ,1));
+        System.out.println(isDelay(2, "201710", 1));
+        System.out.println(nowTime.isAfter(tclShouldTime));
+        System.out.println(LocalDate.parse(DateUtil.nowDate.format(DateUtil.monthFormatter) + "01", DateUtil.dayFormatter));
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AlarmServiceImpl implements IAlarmService {
@@ -125,19 +126,19 @@ public class AlarmServiceImpl implements IAlarmService {
      * @return true/false
      */
     @Override
-    public boolean doPreCusNumExist(CocLabel cocLabel, String opTime, String dataDate) {
+    public int doPreCusNumExist(CocLabel cocLabel, String opTime, String dataDate) {
 
         if (this.doPreCusNumTabExist(cocLabel.getDataCycle(), opTime)) {
 
             if (cocAlarmDao.doPreCusNumExist(cocLabel.getLabelId(), cocLabel.getDataCycle(), opTime, dataDate))
 
-                return Boolean.TRUE;
+                return 1;
 
-            else return Boolean.FALSE;
+            else return Integer.valueOf(labelUtil.ciLabelStatNoCurOptimeData);
 
         } else {
 
-            return Boolean.FALSE;
+            return Integer.valueOf(labelUtil.ciLabelStatNotArr);
         }
     }
 
@@ -162,6 +163,27 @@ public class AlarmServiceImpl implements IAlarmService {
         }
 
         return cocAlarmDao.doesTableExist(labelUtil.labelSchema, tabName);
+    }
+
+    /**
+     * 根据labelId查询标签详情
+     *
+     * @param labelId
+     * @return
+     */
+    @Override
+    public Map queryLabelDetailInfoByLabelId(long labelId) {
+        return cocAlarmDao.queryLabelDetailInfoByLabelId(labelId);
+    }
+
+    @Override
+    public int updateLabelInfo(long labelId, String labelCaliber) {
+        if (cocAlarmDao.doesLabelIdExist(labelId)) {
+            cocAlarmDao.updateLabelInfo(labelId, labelCaliber);
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     /**

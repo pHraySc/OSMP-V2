@@ -198,6 +198,8 @@
         labelId,
         labelName,
         dataCycle,
+        busiCaliber,
+        labelRoot,
         dataDate,
         useTimes,
         srcTabName,
@@ -210,6 +212,8 @@
         labelId,
         labelName,
         dataCycle,
+        busiCaliber,
+        labelRoot,
         dataDate,
         useTimes,
         srcTabName,
@@ -223,6 +227,8 @@
         a.label_id AS labelId,
         f.label_name AS labelName,
         f.update_cycle AS dataCycle,
+        f.busi_caliber AS busiCaliber,
+        f.label_level_desc AS labelRoot,
         h.use_times AS useTimes,
         e.data_src_tab_name AS srcTabName,
         e.data_src_code as srcTabCode,
@@ -357,6 +363,32 @@
         <if test="labelId != 0">
             and label_id=#{labelId}
         </if>
+    </select>
+
+    <select id="queryLabelDetailInfoByLabelId" parameterType="long" resultType="Map">
+
+    </select>
+
+    <update id="updateLabelInfo">
+        UPDATE
+        ci_label_info
+        SET busi_caliber=#{labelCaliber}
+        WHERE
+        label_id=#{labelId}
+    </update>
+
+    <select id="doesLabelIdExist" parameterType="long" resultType="Boolean">
+        SELECT
+        count(1)
+        FROM
+        (
+        SELECT
+        1
+        FROM
+        ci_label_info
+        WHERE label_id=#{labelId}
+        FETCH FIRST 1 ROWS ONLY
+        )
     </select>
 
 </mapper>

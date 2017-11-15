@@ -3,6 +3,7 @@ package com.asiainfo.alarm.service;
 import com.asiainfo.alarm.model.*;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IAlarmService {
     /**
@@ -90,7 +91,7 @@ public interface IAlarmService {
      * @param dataDate
      * @return true/false
      */
-    boolean doPreCusNumExist(CocLabel cocLabel, String opTime, String dataDate);
+    int doPreCusNumExist(CocLabel cocLabel, String opTime, String dataDate);
 
     /**
      * 判断 ci_label_stat_dm_${opTime} 是否存在
@@ -99,4 +100,14 @@ public interface IAlarmService {
      * @return
      */
     boolean doPreCusNumTabExist(int dataCycle, String opTime);
+
+    /**
+     * 根据labelId查询标签详情
+     *
+     * @param labelId
+     * @return
+     */
+    Map queryLabelDetailInfoByLabelId(long labelId);
+
+    int updateLabelInfo(long labelId, String labelCaliber);
 }

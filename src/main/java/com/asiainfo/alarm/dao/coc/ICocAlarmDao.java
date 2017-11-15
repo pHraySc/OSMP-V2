@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface ICocAlarmDao {
@@ -96,4 +97,16 @@ public interface ICocAlarmDao {
      * @return
      */
     boolean doesTableExist(@Param("tabSchema") String tabSchema, @Param("tabName") String tabName);
+
+    /**
+     * 根据labelId查询标签详情
+     *
+     * @param labelId
+     * @return
+     */
+    Map queryLabelDetailInfoByLabelId(@Param("labelId") long labelId);
+
+    void updateLabelInfo(@Param("labelId") long labelId, @Param("labelCaliber") String labelCaliber);
+
+    boolean doesLabelIdExist(@Param("labelId") long labelId);
 }

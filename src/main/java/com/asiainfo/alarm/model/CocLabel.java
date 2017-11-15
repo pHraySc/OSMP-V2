@@ -21,6 +21,16 @@ public class CocLabel {
     private int dataCycle;
 
     /**
+     * 标签口径
+     */
+    private String busiCaliber;
+
+    /**
+     * 标签路径
+     */
+    private String labelRoot;
+
+    /**
      * 数据日期
      */
     private String dataDate;
@@ -50,7 +60,7 @@ public class CocLabel {
     private String srcTabColName;
 
     /**
-     * 标签状态：1.正常 2.延迟异常 3.波动异常
+     * 标签状态：1.正常 2.延迟异常 3.波动异常 4.tcl为执行 5.tcl执行异常
      */
     private int status;
 
@@ -90,6 +100,22 @@ public class CocLabel {
 
     public long getLabelId() {
         return labelId;
+    }
+
+    public String getBusiCaliber() {
+        return busiCaliber;
+    }
+
+    public void setBusiCaliber(String busiCaliber) {
+        this.busiCaliber = busiCaliber;
+    }
+
+    public String getLabelRoot() {
+        return labelRoot;
+    }
+
+    public void setLabelRoot(String labelRoot) {
+        this.labelRoot = labelRoot;
     }
 
     public void setLabelId(long labelId) {
