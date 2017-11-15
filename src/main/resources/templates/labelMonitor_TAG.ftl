@@ -276,13 +276,13 @@
                             <button id="post" type="button" class="btn btn-primary">提交</button>
                         </div>
                     </div>
-                        <#--<div class="form-group">-->
-                            <#--<label for="sourceTableCode" class="col-sm-2 control-label">源表编码</label>-->
-                            <#--<div class="col-sm-4">-->
-                                <#--<input type="hidden" class="form-control" id="sourceTableCode">-->
-                                <#--<p class="form-control-static" id="sourceTableCodeP"></p>-->
-                            <#--</div>-->
-                        <#--</div>-->
+                <#--<div class="form-group">-->
+                <#--<label for="sourceTableCode" class="col-sm-2 control-label">源表编码</label>-->
+                <#--<div class="col-sm-4">-->
+                <#--<input type="hidden" class="form-control" id="sourceTableCode">-->
+                <#--<p class="form-control-static" id="sourceTableCodeP"></p>-->
+                <#--</div>-->
+                <#--</div>-->
 
                 </form>
             </div>

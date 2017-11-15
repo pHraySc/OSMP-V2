@@ -2,12 +2,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <metacharset
-    ="utf-8">
-    <metahttp-equiv
-    ="X-UA-Compatible"content="IE=edge">
-    <metaname
-    ="viewport"content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>经分运维一体化平台-标签库监控</title>
 
     <!-- Bootstrap core CSS -->
@@ -74,8 +71,10 @@
             display: none;
         }
 
-        .Wdate {
-            cursor: auto !important;;
+        #updateTime {
+            height: 34px !important;
+            cursor: auto !important;
+            border: 1px solid #ccc !important;
             background: #fff url(./images/data.png) no-repeat right !important;
         }
     </style>

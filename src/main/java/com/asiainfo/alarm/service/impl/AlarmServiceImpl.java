@@ -128,18 +128,14 @@ public class AlarmServiceImpl implements IAlarmService {
     @Override
     public int doPreCusNumExist(CocLabel cocLabel, String opTime, String dataDate) {
 
-        if (this.doPreCusNumTabExist(cocLabel.getDataCycle(), opTime)) {
 
-            if (cocAlarmDao.doPreCusNumExist(cocLabel.getLabelId(), cocLabel.getDataCycle(), opTime, dataDate))
+        if (cocAlarmDao.doPreCusNumExist(cocLabel.getLabelId(), cocLabel.getDataCycle(), opTime, dataDate))
 
-                return 1;
+            return 1;
 
-            else return Integer.valueOf(labelUtil.ciLabelStatNoCurOptimeData);
+        else return Integer.valueOf(labelUtil.ciLabelStatNoCurOptimeData);
 
-        } else {
 
-            return Integer.valueOf(labelUtil.ciLabelStatNotArr);
-        }
     }
 
     /**

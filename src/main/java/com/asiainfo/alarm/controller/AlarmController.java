@@ -1,6 +1,5 @@
 package com.asiainfo.alarm.controller;
 
-import com.asiainfo.alarm.enums.ResultEnum;
 import com.asiainfo.alarm.model.*;
 import com.asiainfo.alarm.service.IAlarmService;
 import com.asiainfo.alarm.util.DateUtil;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -422,7 +420,7 @@ public class AlarmController {
     }
 
     @ResponseBody
-    @GetMapping("/updateLabelInfo")
+    @PostMapping("/updateLabelInfo")
     public Result updateLabelInfo(@RequestBody CocLabel cocLabel, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResultUtil.error(bindingResult.getFieldError().getDefaultMessage());

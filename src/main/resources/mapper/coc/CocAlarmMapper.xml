@@ -277,21 +277,21 @@
         (select label_id,count(*) as use_times from ci_user_use_label group by label_id) h on a.label_id=h.label_id
         <if test="dataCycle == 1 or dataCycle == 0">
             LEFT JOIN
-            (select label_id,sum(custom_num) AS custom_num from ci_label_stat_dm_${dOpTime}
+            (select label_id,custom_num AS custom_num from ci_label_stat_dm_${dOpTime}
             where city_id=-1 and vip_level_id=-1 and brand_id=-1
             <if test="null != dDataDate and '' != dDataDate">
                 and data_date=#{dDataDate}
             </if>
-            group by label_id) j on a.label_id=j.label_id
+            ) j on a.label_id=j.label_id
         </if>
         <if test="dataCycle == 2 or dataCycle == 0">
             LEFT JOIN
-            (select label_id,sum(custom_num) AS custom_num from ci_label_stat_mm_${mOpTime}
+            (select label_id,custom_num AS custom_num from ci_label_stat_mm_${mOpTime}
             where city_id=-1 and vip_level_id=-1 and brand_id=-1
             <if test="null != mDataDate and '' != mDataDate">
                 and data_date=#{mDataDate}
             </if>
-            group by label_id) k on a.label_id=k.label_id
+            ) k on a.label_id=k.label_id
         </if>
         WHERE f.label_name like '%'||#{labelName}||'%'
         <if test="dataCycle != 0">
@@ -304,7 +304,7 @@
     </select>
 
     <select id="queryPreCusNum" resultType="java.lang.Long">
-        select sum(custom_num) AS custom_num from
+        select custom_num AS custom_num from
         <choose>
             <when test="dataCycle == 1">
                 ci_label_stat_dm_${opTime}
