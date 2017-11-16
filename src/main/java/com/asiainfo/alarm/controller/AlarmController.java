@@ -204,12 +204,12 @@ public class AlarmController {
                             }
 
                         } else {
-                            cocLabel.setStatus(1);
+                            cocLabel.setStatus(3);
                             cocLabel.setErrMsg("3天前数据为0，无历史有效数据!!!");
 
                         }
                     } else {
-                        cocLabel.setStatus(1);     //3天前数据不存在，无法计算环比，状态为3天前数据异常
+                        cocLabel.setStatus(3);     //3天前数据不存在，无法计算环比，状态为3天前数据异常
                         cocLabel.setErrMsg("3天前无数据，无法计算环比!!!");
 
                     }
@@ -286,7 +286,7 @@ public class AlarmController {
 
                         } else {
 
-                            cocLabel.setStatus(1);
+                            cocLabel.setStatus(3);
 
                             cocLabel.setErrMsg("两个月前数据为0，无法进行环比计算，请检查!!!");
 
@@ -294,7 +294,7 @@ public class AlarmController {
 
                     } else {
 
-                        cocLabel.setStatus(1);
+                        cocLabel.setStatus(3);
 
                     }
 
