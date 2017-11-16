@@ -159,7 +159,7 @@ public class AlarmController {
 
         Page page = new Page(currentPage, pageSize, count);
 
-        List<CocLabel> labelList = alarmService.queryLabelInfo(dataCycle, labelName, page, DateUtil.twoDaysAgo, DateUtil.twoDaysAgo, DateUtil.oneMonthAgo, DateUtil.oneMonthAgo);
+        List<CocLabel> labelList = alarmService.queryLabelInfo(dataCycle, labelName, page, DateUtil.getDayDataDate(2), DateUtil.getDayDataDate(2), DateUtil.getMonthDataDate(1), DateUtil.getMonthDataDate(1));
 
         for (CocLabel cocLabel : labelList) {
             logger.info(cocLabel.getLabelId() + "-->" + cocLabel.getLabelName() + "-->" + cocLabel.getDataDate());
@@ -177,19 +177,19 @@ public class AlarmController {
                     (2).如果两天前的数据不存在，则判断当前时间是否到达该标签的源表的更新时间，如果已到源表更新时间，则延迟；如果还没到则正常。
                 2.如果不存在则表示两天前数据还未开始跑（没到10点），标签状态设为未开始（-1）。
                  */
-                int doPreCusNumExistCurOptime = alarmService.doPreCusNumExist(cocLabel, DateUtil.twoDaysAgo, DateUtil.twoDaysAgo);
+                int doPreCusNumExistCurOptime = alarmService.doPreCusNumExist(cocLabel, DateUtil.getDayDataDate(2), DateUtil.getDayDataDate(2));
 
-                int doPreCusNumExistPreOptime = alarmService.doPreCusNumExist(cocLabel, DateUtil.twoDaysAgo, DateUtil.threeDaysAgo);
+                int doPreCusNumExistPreOptime = alarmService.doPreCusNumExist(cocLabel, DateUtil.getDayDataDate(2), DateUtil.getDayDataDate(3));
 
                 if (doPreCusNumExistCurOptime == 1) {
 
-                    cocLabelExt.setWavedCustomNum(alarmService.cusNumWaved(cocLabel, DateUtil.twoDaysAgo, DateUtil.twoDaysAgo));
+                    cocLabelExt.setWavedCustomNum(alarmService.cusNumWaved(cocLabel, DateUtil.getDayDataDate(2), DateUtil.getDayDataDate(2)));
 
                     if (doPreCusNumExistPreOptime == 1) {
 
-                        if (alarmService.calculateMoM(cocLabel, cocLabelExt, DateUtil.twoDaysAgo, DateUtil.threeDaysAgo) != -1.00f) {
+                        if (alarmService.calculateMoM(cocLabel, cocLabelExt, DateUtil.getDayDataDate(2), DateUtil.getDayDataDate(3)) != -1.00f) {
 
-                            cocLabelExt.setMoM(alarmService.calculateMoM(cocLabel, cocLabelExt, DateUtil.twoDaysAgo, DateUtil.threeDaysAgo));
+                            cocLabelExt.setMoM(alarmService.calculateMoM(cocLabel, cocLabelExt, DateUtil.getDayDataDate(2), DateUtil.getDayDataDate(3)));
 
                             if (cocLabelExt.getMoM() > labelUtil.wavedPercent) {
 
@@ -258,19 +258,19 @@ public class AlarmController {
 
             } else {
 
-                int doPreCusNumExistCurOptime = alarmService.doPreCusNumExist(cocLabel, DateUtil.oneMonthAgo, DateUtil.oneMonthAgo);
+                int doPreCusNumExistCurOptime = alarmService.doPreCusNumExist(cocLabel, DateUtil.getMonthDataDate(1), DateUtil.getMonthDataDate(1));
 
-                int doPreCusNumExistPreOptime = alarmService.doPreCusNumExist(cocLabel, DateUtil.oneMonthAgo, DateUtil.twoMonthAgo);
+                int doPreCusNumExistPreOptime = alarmService.doPreCusNumExist(cocLabel, DateUtil.getMonthDataDate(1), DateUtil.getMonthDataDate(2));
 
                 if (doPreCusNumExistCurOptime == 1) {
 
-                    cocLabelExt.setWavedCustomNum(alarmService.cusNumWaved(cocLabel, DateUtil.oneMonthAgo, DateUtil.oneMonthAgo));
+                    cocLabelExt.setWavedCustomNum(alarmService.cusNumWaved(cocLabel, DateUtil.getMonthDataDate(1), DateUtil.getMonthDataDate(1)));
 
                     if (doPreCusNumExistPreOptime == 1) {
 
-                        if (alarmService.calculateMoM(cocLabel, cocLabelExt, DateUtil.oneMonthAgo, DateUtil.twoMonthAgo) != -1.00f) {
+                        if (alarmService.calculateMoM(cocLabel, cocLabelExt, DateUtil.getMonthDataDate(1), DateUtil.getMonthDataDate(2)) != -1.00f) {
 
-                            cocLabelExt.setMoM(alarmService.calculateMoM(cocLabel, cocLabelExt, DateUtil.oneMonthAgo, DateUtil.twoMonthAgo));
+                            cocLabelExt.setMoM(alarmService.calculateMoM(cocLabel, cocLabelExt, DateUtil.getMonthDataDate(1), DateUtil.getMonthDataDate(2)));
 
                             if (cocLabelExt.getMoM() > labelUtil.wavedPercent) {
 
