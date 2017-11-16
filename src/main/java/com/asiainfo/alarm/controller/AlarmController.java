@@ -242,12 +242,12 @@ public class AlarmController {
 
                             cocLabel.setStatus(1);
 
-                            cocLabel.setErrMsg("No sourceTable");
+                            cocLabel.setErrMsg("未配置源表扩展信息");
                         } else {
 
                             cocLabel.setStatus(1);
 
-                            cocLabel.setErrMsg("Plz configure the updateTime!");
+                            cocLabel.setErrMsg("请配置源表更新时间...");
                         }
                     }
 
@@ -327,12 +327,12 @@ public class AlarmController {
 
                             cocLabel.setStatus(1);
 
-                            cocLabel.setErrMsg("No sourceTable");
+                            cocLabel.setErrMsg("未配置源表扩展信息...");
                         } else {
 
                             cocLabel.setStatus(1);
 
-                            cocLabel.setErrMsg("Plz configure the updateTime!");
+                            cocLabel.setErrMsg("请配置源表更新时间...");
                         }
 
                     }
