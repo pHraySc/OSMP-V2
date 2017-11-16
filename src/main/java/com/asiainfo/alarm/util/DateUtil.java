@@ -31,17 +31,17 @@ public class DateUtil {
 
     public static final LocalDate tclShouldDate = LocalDate.of(nowDate.getYear(),nowDate.getMonth(),3);
 
-    public static final String twoDaysAgo = DateUtil.getDayDataDate(2);     //两天前
-
-    public static final String threeDaysAgo = DateUtil.getDayDataDate(3);   //三天前
-
-
-    public static final String fourDaysAgo = DateUtil.getDayDataDate(4);   //三天前
-
-
-    public static final String oneMonthAgo = DateUtil.getMonthDataDate(1);  //一个月前
-
-    public static final String twoMonthAgo = DateUtil.getMonthDataDate(2);  //两个月前
+//    public String twoDaysAgo = DateUtil.getDayDataDate(2);     //两天前
+//
+//    public String threeDaysAgo = DateUtil.getDayDataDate(3);   //三天前
+//
+//
+//    public String fourDaysAgo = DateUtil.getDayDataDate(4);   //四天前
+//
+//
+//    public String oneMonthAgo = DateUtil.getMonthDataDate(1);  //一个月前
+//
+//    public String twoMonthAgo = DateUtil.getMonthDataDate(2);  //两个月前
 
     /**
      * delayValue 时效性参数：1、两天    2、一个月
@@ -104,7 +104,7 @@ public class DateUtil {
     public static void main(String[] args) {
         System.out.println(DateUtil.getMonthDataDate(1));
         System.out.println(DateUtil.getDayDataDate(1));
-        System.out.println(DateUtil.twoDaysAgo + DateUtil.threeDaysAgo);
+        System.out.println();
         System.out.println(isDelay(2, "201710", 1));
         System.out.println(nowTime.isAfter(tclShouldTime));
         System.out.println(LocalDate.parse(DateUtil.nowDate.format(DateUtil.monthFormatter) + "01", DateUtil.dayFormatter));
